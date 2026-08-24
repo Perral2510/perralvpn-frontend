@@ -177,6 +177,21 @@ PAGES['#/dashboard'] = async (root) => {
   qs('#btnZalo', root).addEventListener('click', () => window.open(ZALO_GROUP_URL, '_blank', 'noopener,noreferrer'));
   qs('#btnTelegram', root).addEventListener('click', () => window.open(TELEGRAM_GROUP_URL, '_blank', 'noopener,noreferrer'));
   qs('#btnAppleId', root).addEventListener('click', () => window.open(APPLE_ID_TRIAL_URL, '_blank', 'noopener,noreferrer'));
+  qs('#btnSyncApp', root).addEventListener('click', () => {
+    openConfirm({
+      title: 'Đồng bộ gói VPN với máy chủ?', message: 'Backend sẽ tạo hoặc cập nhật client của gói đang hoạt động trên 3x-ui và tải lại subscription URL/QR.', confirmLabel: t('sync_app'), danger: false,
+      onConfirm: async () => {
+        showToast({ type: 'info', title: t('loading') });
+        const result = await RealAPI.syncVpnSubscription();
+        if (!result.ok) {
+          showToast({ type: 'error', title: 'Lỗi server' });
+          return;
+        }
+        showToast({ type: 'success', title: result.message || t('toast_sync_app_ok') });
+        await PAGES['#/dashboard'](root);
+      }
+    });
+  });
   const copyVpnValue = async (id) => {
     const input = qs(id, root);
     if (!input) return;

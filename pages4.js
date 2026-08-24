@@ -233,7 +233,7 @@ PAGES['#/login'] = async (root) => {
         </div>
         <div class="auth-card auth-card--glass">
           <div class="auth-card__brand">
-            <div class="auth-card__brand-mark">DA</div>
+            <div class="auth-card__brand-mark">PR</div>
             <strong>${t('app_name')}</strong>
             <span class="auth-live-dot">Trực tuyến</span>
           </div>
@@ -265,7 +265,7 @@ PAGES['#/login'] = async (root) => {
   `;
 
   qs('#goRegister', root).addEventListener('click', (e) => { e.preventDefault(); location.hash = '#/register'; });
-  qs('#forgotLink', root).addEventListener('click', (e) => { e.preventDefault(); showToast({ type: 'info', title: t('forgot_password') }); });
+  qs('#forgotLink', root).addEventListener('click', (e) => { e.preventDefault(); location.hash = '#/forgot-password'; });
 
   qs('#btnLogin', root).addEventListener('click', async (e) => {
     const emailField = qs('#loginEmailField', root), pwField = qs('#loginPwField', root);
@@ -293,6 +293,123 @@ PAGES['#/login'] = async (root) => {
 };
 
 /* ---------------------------------------------------------
+   12B) FORGOT PASSWORD
+   --------------------------------------------------------- */
+PAGES['#/forgot-password'] = async (root) => {
+  root.innerHTML = `
+    <div class="page-container page-enter">
+      <div class="auth-wrap auth-wrap--scene">
+        <div class="auth-scene__glow auth-scene__glow--one"></div>
+        <div class="auth-scene__glow auth-scene__glow--two"></div>
+        <div class="auth-promo">
+          <div class="auth-promo__eyebrow">PERRALVPN · KHÔI PHỤC TÀI KHOẢN</div>
+          <h2>Lấy lại quyền truy cập,<br><span>an toàn và nhanh chóng.</span></h2>
+          <p>Nhận mã xác nhận qua email để tạo mật khẩu mới cho tài khoản PerralVPN của bạn.</p>
+        </div>
+        <div class="auth-card auth-card--glass">
+          <div class="auth-card__brand">
+            <div class="auth-card__brand-mark">PR</div>
+            <strong>${t('app_name')}</strong>
+            <span class="auth-live-dot">Trực tuyến</span>
+          </div>
+          <h1>${t('forgot_title')}</h1>
+          <p class="auth-desc">${t('forgot_desc')}</p>
+
+          <div class="field" id="resetEmailField">
+            <label for="resetEmail">Email</label>
+            <input class="input" id="resetEmail" type="email" placeholder="${t('email_placeholder')}" autocomplete="email">
+            <div class="error-msg">${t('required_field')}</div>
+          </div>
+          <button class="btn btn-primary btn-block" id="btnSendResetCode">${t('send_code_btn')}</button>
+
+          <div id="resetFields" hidden>
+            <div class="field" id="resetCodeField">
+              <label for="resetCode">${t('reset_code')}</label>
+              <input class="input" id="resetCode" inputmode="numeric" maxlength="6" placeholder="${t('reset_code_placeholder')}" autocomplete="one-time-code">
+              <div class="error-msg">${t('required_field')}</div>
+            </div>
+            <div class="field" id="newPasswordField">
+              <label for="newPassword">${t('new_password')}</label>
+              <input class="input" id="newPassword" type="password" placeholder="${t('password_placeholder')}" autocomplete="new-password">
+              <div class="error-msg">${t('required_field')}</div>
+            </div>
+            <div class="field" id="confirmNewPasswordField">
+              <label for="confirmNewPassword">${t('confirm_new_password')}</label>
+              <input class="input" id="confirmNewPassword" type="password" placeholder="${t('password_placeholder')}" autocomplete="new-password">
+              <div class="error-msg">${t('required_field')}</div>
+            </div>
+            <button class="btn btn-primary btn-block" id="btnResetPassword">${t('reset_password_btn')}</button>
+          </div>
+
+          <div class="auth-footer">
+            <a href="#/login" class="link-btn" id="backToLogin">${t('back_to_login')}</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+
+  qs('#backToLogin', root).addEventListener('click', (e) => { e.preventDefault(); location.hash = '#/login'; });
+  const emailInput = qs('#resetEmail', root);
+  const resetFields = qs('#resetFields', root);
+  const sendButton = qs('#btnSendResetCode', root);
+  const emailField = qs('#resetEmailField', root);
+
+  sendButton.addEventListener('click', async (e) => {
+    const email = emailInput.value.trim();
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      emailField.classList.add('has-error');
+      emailField.querySelector('.error-msg').textContent = t('reset_error');
+      return;
+    }
+    emailField.classList.remove('has-error');
+    sendButton.disabled = true;
+    sendButton.innerHTML = `<span class="spinner"></span> ${t('loading')}`;
+    const result = await RealAPI.requestPasswordReset(email);
+    sendButton.disabled = false;
+    sendButton.innerHTML = t('send_code_btn');
+    if (!result.ok) {
+      showToast({ type: 'error', title: result.error || t('reset_error') });
+      return;
+    }
+    resetFields.hidden = false;
+    emailInput.readOnly = true;
+    sendButton.hidden = true;
+    showToast({ type: 'success', title: t('reset_code_sent') });
+    qs('#resetCode', root).focus();
+  });
+
+  qs('#btnResetPassword', root).addEventListener('click', async (e) => {
+    const code = qs('#resetCode', root).value.trim();
+    const newPassword = qs('#newPassword', root).value;
+    const confirmPassword = qs('#confirmNewPassword', root).value;
+    if (!/^\\d{6}$/.test(code)) {
+      qs('#resetCodeField', root).classList.add('has-error');
+      return;
+    }
+    qs('#resetCodeField', root).classList.remove('has-error');
+    if (newPassword.length < 8 || newPassword !== confirmPassword) {
+      qs('#confirmNewPasswordField', root).classList.add('has-error');
+      qs('#confirmNewPasswordField .error-msg', root).textContent = newPassword !== confirmPassword ? t('err_password_mismatch') : t('password_minimum');
+      return;
+    }
+    qs('#confirmNewPasswordField', root).classList.remove('has-error');
+    const button = e.currentTarget;
+    button.disabled = true;
+    button.innerHTML = `<span class="spinner"></span> ${t('loading')}`;
+    const result = await RealAPI.resetPassword(emailInput.value.trim(), code, newPassword);
+    button.disabled = false;
+    button.innerHTML = t('reset_password_btn');
+    if (!result.ok) {
+      showToast({ type: 'error', title: result.error || t('reset_error') });
+      return;
+    }
+    showToast({ type: 'success', title: t('reset_success') });
+    setTimeout(() => { location.hash = '#/login'; }, 600);
+  });
+};
+
+/* ---------------------------------------------------------
    13) REGISTER
    --------------------------------------------------------- */
 PAGES['#/register'] = async (root) => {
@@ -309,7 +426,7 @@ PAGES['#/register'] = async (root) => {
         </div>
         <div class="auth-card auth-card--glass">
           <div class="auth-card__brand">
-            <div class="auth-card__brand-mark">DA</div>
+            <div class="auth-card__brand-mark">PR</div>
             <strong>${t('app_name')}</strong>
             <span class="auth-live-dot">Bắt đầu ngay</span>
           </div>

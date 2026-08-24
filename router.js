@@ -8,7 +8,7 @@ async function renderRoute(){
 
   // Auth pages use a standalone full-screen layout. The application shell
   // returns only after the user has completed login or registration.
-  const isAuthRoute = route === '#/login' || route === '#/register';
+  const isAuthRoute = route === '#/login' || route === '#/register' || route === '#/forgot-password';
   if (!isAuthRoute && typeof RealAPI !== 'undefined') {
     const signedInUser = await RealAPI.getUser().catch(() => null);
     if (!signedInUser) {

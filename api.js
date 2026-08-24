@@ -11,6 +11,8 @@ async function apiRequest(path, options = {}) {
 }
 
 const RealAPI = {
+  requestPasswordReset: (email) => apiRequest('/auth/request-password-reset', { method: 'POST', body: JSON.stringify({ email }) }),
+  resetPassword: (email, code, newPassword) => apiRequest('/auth/reset-password', { method: 'POST', body: JSON.stringify({ email, code, newPassword }) }),
   login: async (email, password) => {
     const result = await apiRequest('/auth/login', { method: 'POST', body: JSON.stringify({ email, password }) });
     if (result.ok) sessionUser = result.data;

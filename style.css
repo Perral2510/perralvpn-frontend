@@ -609,6 +609,7 @@ body.auth-mode .site-watermark-bg{display:none}
 @media (min-width:861px){
   .app-shell:not(.auth-mode) .sidebar{position:fixed;left:0;top:0;bottom:0;width:var(--sidebar-w);height:100vh;overflow-y:hidden;overflow-x:hidden;overscroll-behavior:contain;z-index:40}
   .app-shell:not(.auth-mode) .main-content{margin-left:var(--sidebar-w)}
+  .app-shell:not(.auth-mode).sidebar-collapsed .sidebar{width:var(--sidebar-w-collapsed)}
   .app-shell:not(.auth-mode).sidebar-collapsed .main-content{margin-left:var(--sidebar-w-collapsed)}
 }
 @media (max-width:860px){

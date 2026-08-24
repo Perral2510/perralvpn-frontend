@@ -355,7 +355,7 @@ PAGES['#/forgot-password'] = async (root) => {
   const sendButton = qs('#btnSendResetCode', root);
   const emailField = qs('#resetEmailField', root);
 
-  sendButton.addEventListener('click', async (e) => {
+  sendButton.addEventListener('click', async () => {
     const email = emailInput.value.trim();
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
       emailField.classList.add('has-error');
@@ -365,25 +365,31 @@ PAGES['#/forgot-password'] = async (root) => {
     emailField.classList.remove('has-error');
     sendButton.disabled = true;
     sendButton.innerHTML = `<span class="spinner"></span> ${t('loading')}`;
-    const result = await RealAPI.requestPasswordReset(email);
-    sendButton.disabled = false;
-    sendButton.innerHTML = t('send_code_btn');
-    if (!result.ok) {
-      showToast({ type: 'error', title: result.error || t('reset_error') });
-      return;
+    try {
+      const result = await RealAPI.requestPasswordReset(email);
+      if (!result.ok) {
+        showToast({ type: 'error', title: result.error || t('reset_error') });
+        return;
+      }
+      resetFields.hidden = false;
+      emailInput.readOnly = true;
+      sendButton.hidden = true;
+      showToast({ type: 'success', title: t('reset_code_sent') });
+      qs('#resetCode', root).focus();
+    } catch (error) {
+      console.error('Password reset request failed:', error);
+      showToast({ type: 'error', title: t('reset_error') });
+    } finally {
+      sendButton.disabled = false;
+      sendButton.innerHTML = t('send_code_btn');
     }
-    resetFields.hidden = false;
-    emailInput.readOnly = true;
-    sendButton.hidden = true;
-    showToast({ type: 'success', title: t('reset_code_sent') });
-    qs('#resetCode', root).focus();
   });
 
   qs('#btnResetPassword', root).addEventListener('click', async (e) => {
     const code = qs('#resetCode', root).value.trim();
     const newPassword = qs('#newPassword', root).value;
     const confirmPassword = qs('#confirmNewPassword', root).value;
-    if (!/^\\d{6}$/.test(code)) {
+    if (!/^\d{6}$/.test(code)) {
       qs('#resetCodeField', root).classList.add('has-error');
       return;
     }
@@ -397,15 +403,21 @@ PAGES['#/forgot-password'] = async (root) => {
     const button = e.currentTarget;
     button.disabled = true;
     button.innerHTML = `<span class="spinner"></span> ${t('loading')}`;
-    const result = await RealAPI.resetPassword(emailInput.value.trim(), code, newPassword);
-    button.disabled = false;
-    button.innerHTML = t('reset_password_btn');
-    if (!result.ok) {
-      showToast({ type: 'error', title: result.error || t('reset_error') });
-      return;
+    try {
+      const result = await RealAPI.resetPassword(emailInput.value.trim(), code, newPassword);
+      if (!result.ok) {
+        showToast({ type: 'error', title: result.error || t('reset_error') });
+        return;
+      }
+      showToast({ type: 'success', title: t('reset_success') });
+      setTimeout(() => { location.hash = '#/login'; }, 600);
+    } catch (error) {
+      console.error('Password reset failed:', error);
+      showToast({ type: 'error', title: t('reset_error') });
+    } finally {
+      button.disabled = false;
+      button.innerHTML = t('reset_password_btn');
     }
-    showToast({ type: 'success', title: t('reset_success') });
-    setTimeout(() => { location.hash = '#/login'; }, 600);
   });
 };
 

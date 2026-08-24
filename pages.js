@@ -39,10 +39,15 @@ PAGES['#/dashboard'] = async (root) => {
       ${skeletonCards(3)}
     </div>`;
 
-  const [user, promos, menu, billing, vpnResponse] = await Promise.all([
-    RealAPI.getUser().catch(() => null), MockAPI.getPromos(), MockAPI.getQuickMenu(),
-    RealAPI.getBilling().catch(() => null), RealAPI.getVpnSubscription().catch(() => ({ ok: false }))
+  const [user, promosResult, menuResult, billing, vpnResponse] = await Promise.all([
+    RealAPI.getUser().catch(() => null),
+    MockAPI.getPromos().catch(() => []),
+    MockAPI.getQuickMenu().catch(() => []),
+    RealAPI.getBilling().catch(() => null),
+    RealAPI.getVpnSubscription().catch(() => ({ ok: false, data: null }))
   ]);
+  const promos = Array.isArray(promosResult) ? promosResult : [];
+  const menu = Array.isArray(menuResult) ? menuResult : [];
   if (!user) {
     showToast({ type: 'error', title: 'Phiên đăng nhập đã hết hạn' });
     location.hash = '#/login';

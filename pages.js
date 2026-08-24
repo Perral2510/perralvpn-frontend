@@ -228,15 +228,10 @@ PAGES['#/dashboard'] = async (root) => {
         <button class="sync-picker__option" type="button" role="menuitem" data-sync-action="singbox"><span class="sync-picker__app-icon sync-picker__app-icon--box">◈</span><span>Nhập vào Sing-box</span></button>
         <button class="sync-picker__option" type="button" role="menuitem" data-sync-action="clash"><span class="sync-picker__app-icon sync-picker__app-icon--clash">M</span><span>Nhập vào ClashMeta</span></button>
       </div>`,
-      footerHTML: '<button class="btn btn-primary sync-picker__purchase" type="button" data-sync-purchase>Mua gói này nếu bạn đăng ký</button>',
       size: '340px',
       onMount: (modalBackdrop) => {
         modalBackdrop.classList.add('sync-picker-backdrop');
         modalBackdrop.querySelector('.modal')?.classList.add('sync-picker-modal');
-        modalBackdrop.querySelector('[data-sync-purchase]')?.addEventListener('click', () => {
-          closeModal();
-          location.hash = '#/plan';
-        });
         qsa('[data-sync-action]', modalBackdrop).forEach((option) => option.addEventListener('click', async () => {
           const action = option.dataset.syncAction;
           closeModal();

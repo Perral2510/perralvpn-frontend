@@ -653,9 +653,6 @@ body.auth-mode .site-watermark-bg{display:none}
 .sync-picker__app-icon{display:grid;place-items:center;flex:0 0 22px;width:22px;height:22px;border-radius:5px;font-size:15px;font-weight:800;line-height:1}
 .sync-picker__app-icon--box{background:linear-gradient(145deg,#a9b8c0,#42525b);color:#f7fbff}
 .sync-picker__app-icon--clash{background:linear-gradient(145deg,#6b8cca,#31538e);color:#fff;font-family:Georgia,serif;font-size:14px}
-.sync-picker-modal .modal__footer{display:block;padding:7px 8px 8px;background:var(--bg-surface)}
-.sync-picker__purchase{display:block;width:100%;min-height:36px;border-radius:2px!important;background:linear-gradient(180deg,#1682db,#0867bb)!important;color:#fff!important;font-size:12px!important;font-weight:600;box-shadow:0 2px 5px rgba(14,91,169,.22)}
-.sync-picker__purchase:hover{background:linear-gradient(180deg,#2992e4,#0a72ca)!important;transform:none!important}
 :root[data-theme="dark"] .sync-picker-modal{border-color:var(--border-color);box-shadow:0 24px 64px rgba(0,0,0,.56)}
 :root[data-theme="dark"] .sync-picker__option:hover,:root[data-theme="dark"] .sync-picker__option:focus-visible{background:color-mix(in srgb,var(--brand-500) 16%,var(--bg-surface))}
 @media (max-width:520px){.sync-picker-modal{width:min(340px,calc(100vw - 32px));max-width:none!important}.sync-picker__option{min-height:52px}}

@@ -32,7 +32,6 @@ const MockDB = {
     { icon: "shield", labelKey: "nav_plan" },
     { icon: "sliders", labelKey: "nav_changepro" },
     { icon: "receipt", labelKey: "nav_order" },
-    { icon: "users", labelKey: "nav_invite" },
     { icon: "barchart", labelKey: "nav_traffic" },
   ],
   knowledgeArticles: [

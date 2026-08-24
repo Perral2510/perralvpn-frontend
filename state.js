@@ -28,7 +28,6 @@ const NAV_CONFIG = [
   ]},
   { type: 'group', titleKey: 'nav_group_finance', items: [
     { route: '#/order', icon: 'receipt', labelKey: 'nav_order' },
-    { route: '#/invite', icon: 'users', labelKey: 'nav_invite' },
   ]},
   { type: 'group', titleKey: 'nav_group_user', items: [
     { route: '#/control', icon: 'control', labelKey: 'nav_control' },

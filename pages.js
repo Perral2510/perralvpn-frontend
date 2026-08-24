@@ -188,8 +188,8 @@ PAGES['#/dashboard'] = async (root) => {
   qs('#btnCopyClash', root)?.addEventListener('click', () => copyVpnValue('#vpnClashUrl'));
   const syncTrigger = qs('#btnSyncApp', root);
   const syncMenu = qs('#syncOptions', root);
-  const getSyncLink = async () => {
-    if (vpn?.subscriptionUrl) return vpn.subscriptionUrl;
+  const getSyncData = async () => {
+    if (vpn?.subscriptionUrl) return vpn;
     showToast({ type: 'info', title: 'Đang đồng bộ subscription...' });
     const result = await RealAPI.syncVpnSubscription();
     if (!result.ok) {
@@ -197,7 +197,7 @@ PAGES['#/dashboard'] = async (root) => {
       return null;
     }
     const refreshed = await RealAPI.getVpnSubscription();
-    if (refreshed?.ok && refreshed.data?.subscriptionUrl) return refreshed.data.subscriptionUrl;
+    if (refreshed?.ok && refreshed.data?.subscriptionUrl) return refreshed.data;
     showToast({ type: 'error', title: 'Máy chủ chưa trả về liên kết subscription.' });
     return null;
   };
@@ -222,8 +222,9 @@ PAGES['#/dashboard'] = async (root) => {
       showToast({ type: 'warning', title: 'Chưa có gói VPN', message: 'Mua và kích hoạt gói trước khi đồng bộ.' });
       return;
     }
-    const syncLink = await getSyncLink();
-    if (!syncLink) return;
+    const syncData = await getSyncData();
+    if (!syncData?.subscriptionUrl) return;
+    const syncLink = syncData.subscriptionUrl;
     if (action === 'copy') {
       const ok = await copyToClipboard(syncLink);
       showToast({ type: ok ? 'success' : 'error', title: ok ? 'Đã sao chép liên kết' : 'Không thể sao chép liên kết' });
@@ -238,9 +239,12 @@ PAGES['#/dashboard'] = async (root) => {
       });
       return;
     }
+    const importSource = action === 'singbox'
+      ? (syncData.jsonUrl || syncLink)
+      : (syncData.clashUrl || syncLink);
     const importUrl = action === 'singbox'
-      ? `sing-box://import-remote-profile?url=${encodeURIComponent(syncLink)}`
-      : `clash://install-config?url=${encodeURIComponent(syncLink)}`;
+      ? `sing-box://import-remote-profile?url=${encodeURIComponent(importSource)}`
+      : `clash://install-config?url=${encodeURIComponent(importSource)}`;
     window.location.assign(importUrl);
   });
   document.addEventListener('click', closeSyncMenu);

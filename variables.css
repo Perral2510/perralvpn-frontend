@@ -1,0 +1,104 @@
+/* =========================================================
+   DucAnhVPN — Design Tokens
+   Palette: deep signal-blue system with a teal "online" accent
+   Type: Sora (display) / Inter (body) / JetBrains Mono (data)
+   ========================================================= */
+
+:root{
+  /* ---- Brand blues ---- */
+  --brand-900:#0B1220;
+  --brand-800:#101A30;
+  --brand-700:#152241;
+  --brand-600:#1B4FC7;
+  --brand-500:#2F6FED;
+  --brand-400:#5A8CF5;
+  --brand-300:#8FB0F8;
+  --brand-100:#E7EEFE;
+
+  /* ---- Signature accent (teal = "online / connected") ---- */
+  --accent-600:#0D9488;
+  --accent-500:#14B8A6;
+  --accent-400:#5EEAD4;
+
+  /* ---- Status ---- */
+  --success-500:#16A34A;
+  --success-100:#DCFCE7;
+  --warning-500:#F5A524;
+  --warning-100:#FEF3C7;
+  --danger-500:#EF4444;
+  --danger-100:#FEE2E2;
+  --info-500:#2F6FED;
+
+  /* ---- Neutrals (light theme default) ---- */
+  --n-0:#FFFFFF;
+  --n-50:#F5F7FB;
+  --n-100:#EDF1F8;
+  --n-200:#DEE4F0;
+  --n-300:#C6CFE2;
+  --n-400:#9AA6C0;
+  --n-500:#6B7690;
+  --n-600:#4A5470;
+  --n-700:#323C56;
+  --n-800:#1E2740;
+  --n-900:#101728;
+
+  /* ---- Semantic (light) ---- */
+  --bg-app:var(--n-50);
+  --bg-surface:var(--n-0);
+  --bg-surface-2:var(--n-100);
+  --bg-sidebar:var(--brand-900);
+  --text-primary:var(--n-900);
+  --text-secondary:var(--n-500);
+  --text-inverse:var(--n-0);
+  --border-color:var(--n-200);
+  --border-strong:var(--n-300);
+  --shadow-color:220 45% 15%;
+
+  /* ---- Type ---- */
+  --font-display:'Sora', 'Segoe UI', sans-serif;
+  --font-body:'Inter', 'Segoe UI', sans-serif;
+  --font-mono:'JetBrains Mono', 'SFMono-Regular', Consolas, monospace;
+
+  /* ---- Radii / spacing / shadow scale ---- */
+  --radius-sm:8px;
+  --radius-md:12px;
+  --radius-lg:18px;
+  --radius-pill:999px;
+
+  --space-1:4px;
+  --space-2:8px;
+  --space-3:12px;
+  --space-4:16px;
+  --space-5:20px;
+  --space-6:24px;
+  --space-8:32px;
+  --space-10:40px;
+
+  --shadow-sm:0 1px 2px hsl(var(--shadow-color) / .06), 0 1px 1px hsl(var(--shadow-color) / .04);
+  --shadow-md:0 6px 16px hsl(var(--shadow-color) / .10);
+  --shadow-lg:0 16px 40px hsl(var(--shadow-color) / .16);
+
+  --sidebar-w:260px;
+  --sidebar-w-collapsed:78px;
+  --header-h:64px;
+
+  --ease:cubic-bezier(.4,0,.2,1);
+}
+
+/* ---- Dark theme overrides ---- */
+:root[data-theme="dark"]{
+  --bg-app:var(--brand-900);
+  --bg-surface:var(--brand-800);
+  --bg-surface-2:#16213A;
+  --bg-sidebar:#080D18;
+  --text-primary:#EAF0FF;
+  --text-secondary:#93A0C2;
+  --text-inverse:var(--n-900);
+  --border-color:#223055;
+  --border-strong:#2C3C68;
+  --shadow-color:220 70% 3%;
+}
+
+@media (prefers-reduced-motion: reduce){
+  *{ animation-duration:.001ms !important; animation-iteration-count:1 !important; transition-duration:.001ms !important; scroll-behavior:auto !important; }
+}

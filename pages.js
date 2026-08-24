@@ -110,12 +110,7 @@ PAGES['#/dashboard'] = async (root) => {
           </div>
           ${activeSubscription ? `<div class="plan-card__pro-subhead"><span>Hạn sử dụng <b>${activeSubscription.lifetime ? 'Vĩnh viễn' : formatDate(activeSubscription.expiresAt, STATE.lang)}</b></span><span><b>${activeSubscription.devices} thiết bị</b> tối đa</span></div><div class="plan-card__pro-metrics"><div class="plan-metric"><span>Dung lượng</span><strong>${escapeHTML(activeSubscription.capacity)}</strong><small>theo gói đã mua</small></div><div class="plan-metric"><span>Tốc độ</span><strong>${escapeHTML(activeSubscription.speed)}</strong><small>băng thông dịch vụ</small></div><div class="plan-metric"><span>Thiết bị</span><strong>${activeSubscription.devices}</strong><small>thiết bị được phép</small></div></div>` : `<div class="plan-empty-state"><strong>Bạn chưa có gói VPN hoạt động</strong><span>Chọn gói phù hợp và thanh toán qua QR Bank để bắt đầu sử dụng.</span><button class="btn btn-sm btn-primary" data-nav="#/plan">Xem các gói cước</button></div>`}
           <div class="plan-card__actions"><button class="btn btn-sm btn-outline" data-nav="#/changepro">⚙ ${t('change_sni')}</button><button class="btn btn-sm btn-outline" data-nav="#/knowledge">▣ ${t('guide')}</button><button class="btn btn-sm btn-outline" id="btnAppleId"> ${t('get_apple_id')}</button><button class="btn btn-sm btn-outline" id="btnResetLink">⟳ ${t('reset_link')}</button></div>
-          <div class="plan-card__sync"><div class="plan-card__sync-row"><button class="btn btn-sm btn-accent" id="btnSyncApp" ${activeSubscription ? '' : 'disabled'} aria-haspopup="menu" aria-expanded="false"><span class="sync-glyph" aria-hidden="true">⟳</span> Đồng bộ máy chủ về app</button><div class="sync-options" id="syncOptions" role="menu" hidden>
-            <button class="sync-option" type="button" role="menuitem" data-sync-action="copy"><span class="sync-option__icon">${icon('copy')}</span><span>Sao chép liên kết</span></button>
-            <button class="sync-option" type="button" role="menuitem" data-sync-action="qr"><span class="sync-option__icon">${icon('grid')}</span><span>Quét mã QR để đăng ký</span></button>
-            <button class="sync-option" type="button" role="menuitem" data-sync-action="singbox"><span class="sync-option__app-icon sync-option__app-icon--box">◈</span><span>Nhập vào Sing-box</span></button>
-            <button class="sync-option" type="button" role="menuitem" data-sync-action="clash"><span class="sync-option__app-icon sync-option__app-icon--clash">M</span><span>Nhập vào ClashMeta</span></button>
-          </div></div><div class="plan-card__platforms" aria-label="Các hệ điều hành hỗ trợ"><span title="Windows">${platformIcon('windows')}</span><span title="Apple">${platformIcon('apple')}</span><span title="Android">${platformIcon('android')}</span><span title="Linux">${platformIcon('linux')}</span></div></div>
+          <div class="plan-card__sync"><div class="plan-card__sync-row"><button class="btn btn-sm btn-accent" id="btnSyncApp" ${activeSubscription ? '' : 'disabled'} aria-haspopup="dialog"><span class="sync-glyph" aria-hidden="true">⟳</span> Đồng bộ máy chủ về app</button></div><div class="plan-card__platforms" aria-label="Các hệ điều hành hỗ trợ"><span title="Windows">${platformIcon('windows')}</span><span title="Apple">${platformIcon('apple')}</span><span title="Android">${platformIcon('android')}</span><span title="Linux">${platformIcon('linux')}</span></div></div>
         </div>
       </div>
 
@@ -192,11 +187,10 @@ PAGES['#/dashboard'] = async (root) => {
   qs('#btnCopyJson', root)?.addEventListener('click', () => copyVpnValue('#vpnJsonUrl'));
   qs('#btnCopyClash', root)?.addEventListener('click', () => copyVpnValue('#vpnClashUrl'));
   const syncTrigger = qs('#btnSyncApp', root);
-  const syncMenu = qs('#syncOptions', root);
   const getSyncData = async () => {
     if (vpn?.subscriptionUrl) return vpn;
     showToast({ type: 'info', title: 'Đang đồng bộ subscription...' });
-    if (typeof RealAPI.syncVpnSubscription !== 'function') {
+    if (typeof RealAPI.syncVpnSubscription !== 'function' || typeof RealAPI.getVpnSubscription !== 'function') {
       showToast({ type: 'error', title: 'API đồng bộ chưa được cập nhật. Vui lòng tải lại trang.' });
       return null;
     }
@@ -210,53 +204,59 @@ PAGES['#/dashboard'] = async (root) => {
     showToast({ type: 'error', title: 'Máy chủ chưa trả về liên kết subscription.' });
     return null;
   };
-  const closeSyncMenu = () => {
-    if (!syncMenu) return;
-    syncMenu.hidden = true;
-    syncTrigger?.setAttribute('aria-expanded', 'false');
+  const openSyncPicker = () => {
+    const backdrop = openModal({
+      title: 'Đồng bộ máy chủ về app',
+      bodyHTML: `<div class="sync-picker" role="menu" aria-label="Tùy chọn đồng bộ ứng dụng">
+        <button class="sync-picker__option" type="button" role="menuitem" data-sync-action="copy"><span class="sync-picker__icon">${icon('copy')}</span><span>Sao chép liên kết</span></button>
+        <button class="sync-picker__option" type="button" role="menuitem" data-sync-action="qr"><span class="sync-picker__icon">${icon('grid')}</span><span>Quét mã QR để đăng ký</span></button>
+        <button class="sync-picker__option" type="button" role="menuitem" data-sync-action="singbox"><span class="sync-picker__app-icon sync-picker__app-icon--box">◈</span><span>Nhập vào Sing-box</span></button>
+        <button class="sync-picker__option" type="button" role="menuitem" data-sync-action="clash"><span class="sync-picker__app-icon sync-picker__app-icon--clash">M</span><span>Nhập vào ClashMeta</span></button>
+      </div>`,
+      footerHTML: '<button class="btn btn-primary sync-picker__purchase" type="button" data-sync-purchase>Mua gói này nếu bạn đăng ký</button>',
+      size: '340px',
+      onMount: (modalBackdrop) => {
+        modalBackdrop.classList.add('sync-picker-backdrop');
+        modalBackdrop.querySelector('.modal')?.classList.add('sync-picker-modal');
+        modalBackdrop.querySelector('[data-sync-purchase]')?.addEventListener('click', () => {
+          closeModal();
+          location.hash = '#/plan';
+        });
+        qsa('[data-sync-action]', modalBackdrop).forEach((option) => option.addEventListener('click', async () => {
+          const action = option.dataset.syncAction;
+          closeModal();
+          if (!activeSubscription) {
+            showToast({ type: 'warning', title: 'Chưa có gói VPN', message: 'Mua và kích hoạt gói trước khi đồng bộ.' });
+            return;
+          }
+          const syncData = await getSyncData();
+          if (!syncData?.subscriptionUrl) return;
+          const syncLink = syncData.subscriptionUrl;
+          if (action === 'copy') {
+            const ok = await copyToClipboard(syncLink);
+            showToast({ type: ok ? 'success' : 'error', title: ok ? 'Đã sao chép liên kết' : 'Không thể sao chép liên kết' });
+            return;
+          }
+          if (action === 'qr') {
+            const qrUrl = buildDemoQrDataUrl(syncLink);
+            openModal({
+              title: 'Quét mã QR để đăng ký',
+              bodyHTML: `<div class="sync-qr"><div class="topup-modal__qr-wrap"><img src="${qrUrl}" alt="Mã QR liên kết máy chủ" style="width:220px;height:220px;background:#fff;padding:10px;border-radius:12px;"></div><p class="text-secondary text-sm">Dùng camera hoặc ứng dụng VPN để quét liên kết máy chủ.</p></div>`,
+              size: '420px',
+            });
+            return;
+          }
+          const importSource = action === 'singbox' ? (syncData.jsonUrl || syncLink) : (syncData.clashUrl || syncLink);
+          const importUrl = action === 'singbox'
+            ? `sing-box://import-remote-profile?url=${encodeURIComponent(importSource)}`
+            : `clash://install-config?url=${encodeURIComponent(importSource)}`;
+          window.location.assign(importUrl);
+        }));
+      },
+    });
+    return backdrop;
   };
-  syncTrigger?.addEventListener('click', (event) => {
-    event.stopPropagation();
-    const willOpen = Boolean(syncMenu?.hidden);
-    if (syncMenu) syncMenu.hidden = !willOpen;
-    syncTrigger.setAttribute('aria-expanded', String(willOpen));
-  });
-  syncMenu?.addEventListener('click', async (event) => {
-    const option = event.target.closest('[data-sync-action]');
-    if (!option) return;
-    event.stopPropagation();
-    const action = option.dataset.syncAction;
-    closeSyncMenu();
-    if (!activeSubscription) {
-      showToast({ type: 'warning', title: 'Chưa có gói VPN', message: 'Mua và kích hoạt gói trước khi đồng bộ.' });
-      return;
-    }
-    const syncData = await getSyncData();
-    if (!syncData?.subscriptionUrl) return;
-    const syncLink = syncData.subscriptionUrl;
-    if (action === 'copy') {
-      const ok = await copyToClipboard(syncLink);
-      showToast({ type: ok ? 'success' : 'error', title: ok ? 'Đã sao chép liên kết' : 'Không thể sao chép liên kết' });
-      return;
-    }
-    if (action === 'qr') {
-      const qrUrl = buildDemoQrDataUrl(syncLink);
-      openModal({
-        title: 'Quét mã QR để đăng ký',
-        bodyHTML: `<div class="sync-qr"><div class="topup-modal__qr-wrap"><img src="${qrUrl}" alt="Mã QR liên kết máy chủ" style="width:220px;height:220px;background:#fff;padding:10px;border-radius:12px;"></div><p class="text-secondary text-sm">Dùng camera hoặc ứng dụng VPN để quét liên kết máy chủ.</p></div>`,
-        size: '420px',
-      });
-      return;
-    }
-    const importSource = action === 'singbox'
-      ? (syncData.jsonUrl || syncLink)
-      : (syncData.clashUrl || syncLink);
-    const importUrl = action === 'singbox'
-      ? `sing-box://import-remote-profile?url=${encodeURIComponent(importSource)}`
-      : `clash://install-config?url=${encodeURIComponent(importSource)}`;
-    window.location.assign(importUrl);
-  });
-  document.addEventListener('click', closeSyncMenu);
+  syncTrigger?.addEventListener('click', openSyncPicker);
   qs('#btnResetLink', root).addEventListener('click', () => {
     openConfirm({
       title: t('reset_link'), message: t('cancel_confirm_desc'), confirmLabel: t('confirm'), danger: false,

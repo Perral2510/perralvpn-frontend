@@ -550,7 +550,7 @@ body.auth-mode .site-watermark{display:none}
 
 
 /* ---------- Full-screen anime watermark background ---------- */
-.site-watermark-bg{position:fixed;inset:0;z-index:0;pointer-events:none;background-image:url('assets/anime-cute-watermark-transparent.png?v=96ce004');background-repeat:no-repeat;background-position:center bottom;background-size:min(78vw,88vh) auto;opacity:.145;filter:saturate(.82) contrast(.96);transition:opacity .25s var(--ease),background-size .25s var(--ease)}
+.site-watermark-bg{position:fixed;inset:0;z-index:0;pointer-events:none;background-image:url('assets/anime-cute-watermark-transparent.png?v=watermark-cutout-1');background-repeat:no-repeat;background-position:center bottom;background-size:min(78vw,88vh) auto;opacity:.145;filter:saturate(.82) contrast(.96);transition:opacity .25s var(--ease),background-size .25s var(--ease)}
 .app-shell{position:relative;z-index:1;background:transparent}.main-content{position:relative;z-index:1;background:radial-gradient(circle at 75% 0%,color-mix(in srgb,var(--brand-100) 30%,transparent),transparent 34%),linear-gradient(180deg,color-mix(in srgb,var(--bg-app) 84%,transparent),color-mix(in srgb,var(--bg-app) 88%,transparent))}.topbar,.sidebar{position:relative;z-index:2}.support-fab,.toast-region{z-index:10}
 :root[data-theme="dark"] .site-watermark-bg{opacity:.095;filter:saturate(.72) brightness(.72) contrast(1.02)}
 :root[data-theme="dark"] .main-content{background:radial-gradient(circle at 80% 0%,rgba(47,111,237,.11),transparent 34%),linear-gradient(180deg,color-mix(in srgb,var(--bg-app) 82%,transparent),color-mix(in srgb,var(--bg-app) 88%,transparent))}

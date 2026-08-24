@@ -1,4 +1,4 @@
-/* PerralVPN — real backend API client */
+/* PerralVPN — real backend API client  */
 const API_BASE = window.PERRAL_API_BASE || '/api';
 let sessionUser = null;
 

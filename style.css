@@ -616,3 +616,22 @@ body.auth-mode .site-watermark-bg{display:none}
   .app-shell .sidebar{position:fixed;left:0;top:0;bottom:0;height:100vh;overflow-y:auto;overflow-x:hidden;overscroll-behavior:contain;z-index:40}
   .app-shell .main-content{margin-left:0}
 }
+
+/* ---------- Server sync action menu ---------- */
+.plan-card__sync-row{position:relative;display:flex;justify-content:center}
+.sync-options{position:absolute;z-index:60;top:calc(100% + 8px);left:50%;width:258px;transform:translateX(-50%);padding:4px 0;border:1px solid var(--border-color);border-radius:10px;background:var(--bg-surface);box-shadow:0 16px 34px rgba(15,39,78,.22);overflow:hidden;text-align:left}
+.sync-options[hidden]{display:none}
+.sync-option{display:flex;align-items:center;gap:12px;width:100%;min-height:46px;padding:10px 14px;border:0;border-bottom:1px solid var(--border-color);background:transparent;color:var(--text-primary);font:500 12px/1.2 var(--font-body);text-align:left;cursor:pointer;transition:background .16s var(--ease),color .16s var(--ease)}
+.sync-option:last-child{border-bottom:0}
+.sync-option:hover,.sync-option:focus-visible{background:color-mix(in srgb,var(--brand-500) 10%,var(--bg-surface));color:var(--brand-600);outline:0}
+.sync-option__icon{display:grid;place-items:center;flex:0 0 22px;width:22px;height:22px;color:var(--text-secondary)}
+.sync-option__icon .icon{width:20px;height:20px}
+.sync-option__app-icon{display:grid;place-items:center;flex:0 0 22px;width:22px;height:22px;border-radius:6px;font-size:15px;font-weight:800;line-height:1}
+.sync-option__app-icon--box{background:linear-gradient(145deg,#91a5b0,#344854);color:#f7fbff}
+.sync-option__app-icon--clash{background:linear-gradient(145deg,#6b8cca,#31538e);color:#fff;font-family:Georgia,serif;font-size:14px}
+.sync-qr{text-align:center;padding:6px 0 2px}
+.sync-qr p{margin:14px 0 0}
+@media (max-width:520px){.sync-options{left:0;right:0;width:min(258px,calc(100vw - 48px));transform:none}.plan-card__sync-row{width:100%}}
+
+:root[data-theme="dark"] .sync-options{box-shadow:0 18px 38px rgba(0,0,0,.42)}
+:root[data-theme="dark"] .sync-option:hover,:root[data-theme="dark"] .sync-option:focus-visible{background:color-mix(in srgb,var(--brand-500) 18%,var(--bg-surface))}

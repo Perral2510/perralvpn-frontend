@@ -39,8 +39,9 @@ PAGES['#/dashboard'] = async (root) => {
       ${skeletonCards(3)}
     </div>`;
 
-  const [user, promos, menu, billing] = await Promise.all([
-    RealAPI.getUser().catch(() => null), MockAPI.getPromos(), MockAPI.getQuickMenu(), RealAPI.getBilling().catch(() => null)
+  const [user, promos, menu, billing, vpnResponse] = await Promise.all([
+    RealAPI.getUser().catch(() => null), MockAPI.getPromos(), MockAPI.getQuickMenu(),
+    RealAPI.getBilling().catch(() => null), RealAPI.getVpnSubscription().catch(() => ({ ok: false }))
   ]);
   if (!user) {
     showToast({ type: 'error', title: 'Phiên đăng nhập đã hết hạn' });
@@ -54,6 +55,7 @@ PAGES['#/dashboard'] = async (root) => {
   const accountBalance = Number.isFinite(Number(user.balance)) ? Number(user.balance) : 0;
   const activeSubscription = billing?.activeSubscription || null;
   const recentOrders = billing?.orders || [];
+  const vpn = vpnResponse?.ok ? vpnResponse.data : null;
 
   root.innerHTML = `
     <div class="page-container page-enter">
@@ -103,9 +105,29 @@ PAGES['#/dashboard'] = async (root) => {
           </div>
           ${activeSubscription ? `<div class="plan-card__pro-subhead"><span>Hạn sử dụng <b>${activeSubscription.lifetime ? 'Vĩnh viễn' : formatDate(activeSubscription.expiresAt, STATE.lang)}</b></span><span><b>${activeSubscription.devices} thiết bị</b> tối đa</span></div><div class="plan-card__pro-metrics"><div class="plan-metric"><span>Dung lượng</span><strong>${escapeHTML(activeSubscription.capacity)}</strong><small>theo gói đã mua</small></div><div class="plan-metric"><span>Tốc độ</span><strong>${escapeHTML(activeSubscription.speed)}</strong><small>băng thông dịch vụ</small></div><div class="plan-metric"><span>Thiết bị</span><strong>${activeSubscription.devices}</strong><small>thiết bị được phép</small></div></div>` : `<div class="plan-empty-state"><strong>Bạn chưa có gói VPN hoạt động</strong><span>Chọn gói phù hợp và thanh toán qua QR Bank để bắt đầu sử dụng.</span><button class="btn btn-sm btn-primary" data-nav="#/plan">Xem các gói cước</button></div>`}
           <div class="plan-card__actions"><button class="btn btn-sm btn-outline" data-nav="#/changepro">⚙ ${t('change_sni')}</button><button class="btn btn-sm btn-outline" data-nav="#/knowledge">▣ ${t('guide')}</button><button class="btn btn-sm btn-outline" id="btnAppleId"> ${t('get_apple_id')}</button><button class="btn btn-sm btn-outline" id="btnResetLink">⟳ ${t('reset_link')}</button></div>
-          <div class="plan-card__sync"><div class="plan-card__sync-row"><button class="btn btn-sm btn-accent" id="btnSyncApp"><span class="sync-glyph" aria-hidden="true">⟳</span> Đồng bộ máy chủ về app</button></div><div class="plan-card__platforms" aria-label="Các hệ điều hành hỗ trợ"><span title="Windows">${platformIcon('windows')}</span><span title="Apple">${platformIcon('apple')}</span><span title="Android">${platformIcon('android')}</span><span title="Linux">${platformIcon('linux')}</span></div></div>
+          <div class="plan-card__sync"><div class="plan-card__sync-row"><button class="btn btn-sm btn-accent" id="btnSyncApp" ${activeSubscription ? '' : 'disabled'}><span class="sync-glyph" aria-hidden="true">⟳</span> Đồng bộ máy chủ về app</button></div><div class="plan-card__platforms" aria-label="Các hệ điều hành hỗ trợ"><span title="Windows">${platformIcon('windows')}</span><span title="Apple">${platformIcon('apple')}</span><span title="Android">${platformIcon('android')}</span><span title="Linux">${platformIcon('linux')}</span></div></div>
         </div>
       </div>
+
+      <section class="card vpn-subscription-card" style="margin-bottom:24px;">
+        <div class="dashboard-billing-card__head">
+          <div><span class="dashboard-billing-card__eyebrow">VPN SUBSCRIPTION</span><h2>Thông tin kết nối</h2><p>URL subscription và mã QR được tạo từ client đã đồng bộ trên máy chủ 3x-ui.</p></div>
+          <span class="dashboard-billing-card__icon">${icon('shield')}</span>
+        </div>
+        ${vpn ? `<div class="dashboard-billing-card__body" style="align-items:flex-start;">
+          <div style="display:flex;gap:18px;align-items:center;min-width:180px;">
+            <img src="${vpn.qrDataUrl}" alt="QR subscription VPN" width="160" height="160" style="border-radius:12px;background:#fff;padding:8px;">
+            <div><strong>Quét để thêm vào ứng dụng VPN</strong><small style="display:block;color:var(--text-secondary);margin-top:6px;">Có thể dùng V2RayN, V2Box, Hiddify, NekoBox và các app tương thích.</small></div>
+          </div>
+          <div style="display:grid;gap:10px;flex:1;min-width:280px;">
+            <label class="text-secondary text-sm">Subscription URL<input class="form-input mono" id="vpnSubUrl" readonly value="${escapeHTML(vpn.subscriptionUrl)}"></label>
+            <label class="text-secondary text-sm">JSON URL<input class="form-input mono" id="vpnJsonUrl" readonly value="${escapeHTML(vpn.jsonUrl)}"></label>
+            <label class="text-secondary text-sm">Clash URL<input class="form-input mono" id="vpnClashUrl" readonly value="${escapeHTML(vpn.clashUrl)}"></label>
+            <div class="flex gap-2" style="flex-wrap:wrap;"><button class="btn btn-sm btn-primary" id="btnCopySub">Sao chép sub URL</button><button class="btn btn-sm btn-secondary" id="btnCopyJson">Sao chép JSON URL</button><button class="btn btn-sm btn-secondary" id="btnCopyClash">Sao chép Clash URL</button></div>
+            ${vpn.warning ? `<small class="text-secondary">${escapeHTML(vpn.warning)}</small>` : ''}
+          </div>
+        </div>` : `<div class="plan-empty-state"><strong>Chưa có subscription VPN</strong><span>Sau khi đơn được admin xác nhận thanh toán, hãy bấm “Đồng bộ máy chủ về app” để tạo client trên 3x-ui.</span></div>`}
+      </section>
 
       <section class="card dashboard-billing-card">
         <div class="dashboard-billing-card__head"><div><span class="dashboard-billing-card__eyebrow">PerralVPN BILLING</span><h2>Quản lý gói cước & thanh toán</h2><p>Theo dõi gói đang dùng, tạo đơn hàng và thanh toán qua QR Bank.</p></div><span class="dashboard-billing-card__icon">${icon('wallet')}</span></div>
@@ -152,14 +174,28 @@ PAGES['#/dashboard'] = async (root) => {
   qs('#btnAppleId', root).addEventListener('click', () => window.open(APPLE_ID_TRIAL_URL, '_blank', 'noopener,noreferrer'));
   qs('#btnSyncApp', root).addEventListener('click', () => {
     openConfirm({
-      title: t('sync_app_confirm_title'), message: t('sync_app_confirm_desc'), confirmLabel: t('sync_app'), danger: false,
+      title: 'Đồng bộ gói VPN với máy chủ?', message: 'Backend sẽ tạo hoặc cập nhật client của gói đang hoạt động trên 3x-ui và tải lại subscription URL/QR.', confirmLabel: t('sync_app'), danger: false,
       onConfirm: async () => {
         showToast({ type: 'info', title: t('loading') });
-        await MockAPI.syncServerToApp();
-        showToast({ type: 'success', title: t('toast_sync_app_ok') });
+        const result = await RealAPI.syncVpnSubscription();
+        if (!result.ok) {
+          showToast({ type: 'error', title: result.error || result.message || 'Không thể đồng bộ gói VPN.' });
+          return;
+        }
+        showToast({ type: 'success', title: result.message || t('toast_sync_app_ok') });
+        await PAGES['#/dashboard'](root);
       }
     });
   });
+  const copyVpnValue = async (id) => {
+    const input = qs(id, root);
+    if (!input) return;
+    try { await navigator.clipboard.writeText(input.value); showToast({ type: 'success', title: 'Đã sao chép URL subscription.' }); }
+    catch { input.select(); document.execCommand('copy'); showToast({ type: 'success', title: 'Đã sao chép URL subscription.' }); }
+  };
+  qs('#btnCopySub', root)?.addEventListener('click', () => copyVpnValue('#vpnSubUrl'));
+  qs('#btnCopyJson', root)?.addEventListener('click', () => copyVpnValue('#vpnJsonUrl'));
+  qs('#btnCopyClash', root)?.addEventListener('click', () => copyVpnValue('#vpnClashUrl'));
   qs('#btnResetLink', root).addEventListener('click', () => {
     openConfirm({
       title: t('reset_link'), message: t('cancel_confirm_desc'), confirmLabel: t('confirm'), danger: false,

@@ -26,6 +26,8 @@ const RealAPI = {
   getSessions: async () => { const result = await apiRequest('/account/sessions'); return result.ok ? result.data : []; },
   getPlans: async () => { const result = await apiRequest('/plans'); return result.ok ? result.data : []; },
   getBilling: async () => { const result = await apiRequest('/account/billing'); return result.ok ? result.data : null; },
+  getVpnSubscription: () => apiRequest('/account/vpn'),
+  syncVpnSubscription: () => apiRequest('/account/vpn/sync', { method: 'POST' }),
   getOrders: async () => { const result = await apiRequest('/account/orders'); return result.ok ? result.data : []; },
   createOrder: (planId, cycleMonths, paymentMethod, promoCode = '') => apiRequest('/account/orders', { method: 'POST', body: JSON.stringify({ planId, cycleMonths, paymentMethod, promoCode }) }),
   submitPayment: (orderId, paymentRef = '') => apiRequest(`/account/orders/${encodeURIComponent(orderId)}/payment-submitted`, { method: 'POST', body: JSON.stringify({ paymentRef }) }),

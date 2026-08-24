@@ -44,7 +44,7 @@ PAGES['#/dashboard'] = async (root) => {
     MockAPI.getPromos().catch(() => []),
     MockAPI.getQuickMenu().catch(() => []),
     RealAPI.getBilling().catch(() => null),
-    RealAPI.getVpnSubscription().catch(() => ({ ok: false, data: null }))
+    (typeof RealAPI.getVpnSubscription === 'function' ? RealAPI.getVpnSubscription() : Promise.resolve({ ok: false, data: null })).catch(() => ({ ok: false, data: null }))
   ]);
   const promos = Array.isArray(promosResult) ? promosResult : [];
   const menu = Array.isArray(menuResult) ? menuResult : [];
@@ -196,6 +196,10 @@ PAGES['#/dashboard'] = async (root) => {
   const getSyncData = async () => {
     if (vpn?.subscriptionUrl) return vpn;
     showToast({ type: 'info', title: 'Đang đồng bộ subscription...' });
+    if (typeof RealAPI.syncVpnSubscription !== 'function') {
+      showToast({ type: 'error', title: 'API đồng bộ chưa được cập nhật. Vui lòng tải lại trang.' });
+      return null;
+    }
     const result = await RealAPI.syncVpnSubscription();
     if (!result.ok) {
       showToast({ type: 'error', title: result.error || result.message || 'Không thể đồng bộ gói VPN.' });

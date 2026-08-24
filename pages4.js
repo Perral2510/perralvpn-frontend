@@ -1,5 +1,5 @@
 /* =========================================================
-   DucAnhVPN — Page renderers (part 4)
+   PerralVPN — Page renderers (part 4)
    Checkout / payment page + Login / Register pages
    ========================================================= */
 
@@ -226,7 +226,7 @@ PAGES['#/login'] = async (root) => {
         <div class="auth-scene__glow auth-scene__glow--one"></div>
         <div class="auth-scene__glow auth-scene__glow--two"></div>
         <div class="auth-promo">
-          <div class="auth-promo__eyebrow">DUCANHVPN · KẾT NỐI TỰ DO</div>
+          <div class="auth-promo__eyebrow">PERRALVPN · KẾT NỐI TỰ DO</div>
           <h2>Internet mượt mà,<br><span>ở mọi nơi bạn đến.</span></h2>
           <p>Bảo vệ kết nối, tăng tốc trải nghiệm và quản lý dịch vụ VPN trong một không gian trực quan.</p>
           <div class="auth-promo__stats"><span><strong>24/7</strong> Hỗ trợ</span><span><strong>99.9%</strong> Ổn định</span></div>
@@ -302,7 +302,7 @@ PAGES['#/register'] = async (root) => {
         <div class="auth-scene__glow auth-scene__glow--one"></div>
         <div class="auth-scene__glow auth-scene__glow--two"></div>
         <div class="auth-promo">
-          <div class="auth-promo__eyebrow">DUCANHVPN · KHỞI ĐẦU AN TOÀN</div>
+          <div class="auth-promo__eyebrow">PERRALVPN · KHỞI ĐẦU AN TOÀN</div>
           <h2>Một tài khoản,<br><span>mọi kết nối.</span></h2>
           <p>Đăng ký để theo dõi dung lượng, node, ứng dụng và gói dịch vụ của bạn ngay trên một bảng điều khiển.</p>
           <div class="auth-promo__stats"><span><strong>5+</strong> Nền tảng</span><span><strong>24/7</strong> Hỗ trợ</span></div>

@@ -1,5 +1,5 @@
 /* =========================================================
-   DucAnhVPN — UI kit (icons, toasts, modals, theme)
+   PerralVPN — UI kit (icons, toasts, modals, theme)
    ========================================================= */
 
 /* ---- Minimal inline icon set (stroke-based, currentColor) ---- */

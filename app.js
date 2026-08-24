@@ -1,5 +1,5 @@
 /* =========================================================
-   DucAnhVPN — App bootstrap
+   PerralVPN — App bootstrap
    ========================================================= */
 
 function buildSidebarNav(){
@@ -19,7 +19,7 @@ function buildSidebarNav(){
 
 function updateHeaderIdentity(user){
   if (!user) return;
-  const name = user.name || 'DucAnhVPN';
+  const name = user.name || 'PerralVPN';
   const avatarUrl = user.avatar || `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(name)}`;
   const avatarName = qs('#avatarName');
   const avatar = document.querySelector('.avatar-btn .avatar');

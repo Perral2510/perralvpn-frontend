@@ -1,5 +1,5 @@
 /* =========================================================
-   DucAnhVPN — Utilities
+   PerralVPN — Utilities
    ========================================================= */
 
 /** Escape any user/mock-provided string before injecting into innerHTML — prevents XSS. */

@@ -1,5 +1,5 @@
 /* =========================================================
-   DucAnhVPN — Page renderers (part 2)
+   PerralVPN — Page renderers (part 2)
    ========================================================= */
 
 /* ---------------------------------------------------------
@@ -74,7 +74,7 @@ function openPurchaseModal(plan){
       <div class="field">
         <label>Phương thức thanh toán</label>
         <select class="input" id="payMethod">
-          <option>Ví DucAnhVPN</option>
+          <option>Ví PerralVPN</option>
           <option>Chuyển khoản ngân hàng</option>
           <option>Thẻ cào điện thoại</option>
         </select>

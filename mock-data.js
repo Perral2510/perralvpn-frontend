@@ -1,5 +1,5 @@
 /* =========================================================
-   DucAnhVPN — Mock data & fake API
+   PerralVPN — Mock data & fake API
    All functions return Promises to simulate real network calls.
    Swap the implementation of MockAPI.* with real fetch() calls later.
    ========================================================= */
@@ -7,7 +7,7 @@
 const MockDB = {
   user: {
     name: "Nguyễn Đức Anh",
-    email: "ducanh@example.com",
+    email: "Perral@example.com",
     verified: true,
     avatar: "",
     joinDate: "2023-11-02",
@@ -92,7 +92,7 @@ const MockDB = {
     rate: "20%",
     pendingCommission: 68000,
     totalCommission: 1240000,
-    subdomainNS: ["ns1.ducanhvpn.net", "ns2.ducanhvpn.net"],
+    subdomainNS: ["ns1.perralvpn.net", "ns2.perralvpn.net"],
     codes: [], // starts empty to demonstrate empty state
   },
   traffic: [

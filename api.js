@@ -1,5 +1,5 @@
-/* DucAnhVPN — real backend API client */
-const API_BASE = window.DUCANH_API_BASE || '/api';
+/* PerralVPN — real backend API client */
+const API_BASE = window.PERRAL_API_BASE || '/api';
 let sessionUser = null;
 
 async function apiRequest(path, options = {}) {

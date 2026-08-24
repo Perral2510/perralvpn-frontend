@@ -1,5 +1,5 @@
 /* =========================================================
-   DucAnhVPN — Page renderers (part 3)
+   PerralVPN — Page renderers (part 3)
    ========================================================= */
 
 /* ---------------------------------------------------------
@@ -325,7 +325,7 @@ PAGES['#/account'] = async (root) => {
       <div class="account-hero">
         <div class="account-hero__identity">
           <img class="account-hero__avatar" src="https://api.dicebear.com/7.x/initials/svg?seed=DA" alt="">
-          <div><span class="account-kicker">DUCANHVPN ACCOUNT</span><h1>Quản lý tài khoản</h1><p>Cập nhật hồ sơ, bảo mật và các thiết bị đang sử dụng.</p></div>
+          <div><span class="account-kicker">PERRALVPN ACCOUNT</span><h1>Quản lý tài khoản</h1><p>Cập nhật hồ sơ, bảo mật và các thiết bị đang sử dụng.</p></div>
         </div>
         <span class="account-verified" id="accountVerified">${icon('check')} Đang kiểm tra</span>
       </div>
@@ -348,7 +348,7 @@ PAGES['#/account'] = async (root) => {
         <aside class="account-side-column">
           <section class="card account-section account-session-card"><div class="account-section__head"><div><span class="account-section__eyebrow">HOẠT ĐỘNG GẦN ĐÂY</span><h2>Thiết bị đăng nhập</h2></div><span class="account-section__icon">${icon('monitor')}</span></div><div id="sessionList"><div class="account-session"><span class="account-session__device">${icon('monitor')}</span><div><strong>Đang tải phiên...</strong><span>Đang lấy dữ liệu từ máy chủ</span></div></div></div><button class="btn btn-outline btn-block" id="btnLogoutAll">Đăng xuất khỏi thiết bị khác</button></section>
           <section class="card account-section account-preference-card"><div class="account-section__head"><div><span class="account-section__eyebrow">TÙY CHỌN</span><h2>Thông báo</h2></div><span class="account-section__icon">${icon('bell')}</span></div><label class="account-toggle"><span><strong>Email dịch vụ</strong><small>Nhận thông báo về gói và tài khoản</small></span><input type="checkbox" checked><i></i></label><label class="account-toggle"><span><strong>Cảnh báo dung lượng</strong><small>Nhắc khi sắp hết lưu lượng</small></span><input type="checkbox" checked><i></i></label></section>
-          <section class="account-help-card"><span>${icon('shield')}</span><div><strong>Cần hỗ trợ?</strong><p>Liên hệ đội ngũ DucAnhVPN nếu bạn phát hiện hoạt động bất thường.</p></div></section>
+          <section class="account-help-card"><span>${icon('shield')}</span><div><strong>Cần hỗ trợ?</strong><p>Liên hệ đội ngũ PerralVPN nếu bạn phát hiện hoạt động bất thường.</p></div></section>
         </aside>
       </div>
     </div>

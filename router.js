@@ -1,5 +1,5 @@
 /* =========================================================
-   DucAnhVPN — Hash router
+   PerralVPN — Hash router
    ========================================================= */
 async function renderRoute(){
   let route = location.hash || '#/dashboard';

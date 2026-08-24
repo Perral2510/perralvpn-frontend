@@ -1,9 +1,9 @@
 /* =========================================================
-   DucAnhVPN — i18n (VI / EN)
+   PerralVPN — i18n (VI / EN)
    ========================================================= */
 const I18N = {
   vi: {
-    app_name: "DucAnhVPN",
+    app_name: "PerralVPN",
     nav_dashboard: "Trang chủ",
     nav_knowledge: "Tài liệu sử dụng",
     nav_application: "Ứng dụng",
@@ -177,7 +177,7 @@ const I18N = {
     // Sync server to app
     sync_app: "Đồng bộ máy chủ về app",
     sync_app_confirm_title: "Đồng bộ máy chủ về app?",
-    sync_app_confirm_desc: "Toàn bộ danh sách node hiện tại sẽ được đồng bộ sang ứng dụng DucAnhVPN trên thiết bị của bạn.",
+    sync_app_confirm_desc: "Toàn bộ danh sách node hiện tại sẽ được đồng bộ sang ứng dụng PerralVPN trên thiết bị của bạn.",
     toast_sync_app_ok: "Đã đồng bộ máy chủ về ứng dụng thành công",
 
     // Checkout / payment
@@ -192,7 +192,7 @@ const I18N = {
     cycle_3: "3 tháng (-5%)",
     cycle_12: "12 tháng (-15%)",
     payment_method: "Phương thức thanh toán",
-    pm_wallet: "Ví DucAnhVPN",
+    pm_wallet: "Ví PerralVPN",
     pm_wallet_desc: "Số dư khả dụng",
     pm_bank: "Chuyển khoản ngân hàng",
     pm_bank_desc: "Quét mã QR hoặc chuyển khoản thủ công",
@@ -213,9 +213,9 @@ const I18N = {
 
     // Auth
     login_title: "Đăng nhập",
-    login_desc: "Đăng nhập để quản lý tài khoản DucAnhVPN của bạn.",
+    login_desc: "Đăng nhập để quản lý tài khoản PerralVPN của bạn.",
     register_title: "Tạo tài khoản",
-    register_desc: "Đăng ký miễn phí để bắt đầu sử dụng DucAnhVPN.",
+    register_desc: "Đăng ký miễn phí để bắt đầu sử dụng PerralVPN.",
     full_name: "Họ và tên",
     full_name_placeholder: "Nhập họ và tên",
     email_placeholder: "you@example.com",
@@ -238,7 +238,7 @@ const I18N = {
     password_minimum: "Mật khẩu phải có ít nhất 8 ký tự.",
   },
   en: {
-    app_name: "DucAnhVPN",
+    app_name: "PerralVPN",
     nav_dashboard: "Home",
     nav_knowledge: "Documentation",
     nav_application: "Applications",
@@ -401,7 +401,7 @@ const I18N = {
     // Sync server to app
     sync_app: "Sync server to app",
     sync_app_confirm_title: "Sync server to app?",
-    sync_app_confirm_desc: "Your current node list will be synced to the DucAnhVPN app on your device.",
+    sync_app_confirm_desc: "Your current node list will be synced to the PerralVPN app on your device.",
     toast_sync_app_ok: "Server successfully synced to the app",
 
     // Checkout / payment
@@ -416,7 +416,7 @@ const I18N = {
     cycle_3: "3 months (-5%)",
     cycle_12: "12 months (-15%)",
     payment_method: "Payment method",
-    pm_wallet: "DucAnhVPN wallet",
+    pm_wallet: "PerralVPN wallet",
     pm_wallet_desc: "Available balance",
     pm_bank: "Bank transfer",
     pm_bank_desc: "Scan QR or transfer manually",
@@ -437,9 +437,9 @@ const I18N = {
 
     // Auth
     login_title: "Log in",
-    login_desc: "Sign in to manage your DucAnhVPN account.",
+    login_desc: "Sign in to manage your PerralVPN account.",
     register_title: "Create account",
-    register_desc: "Sign up for free to start using DucAnhVPN.",
+    register_desc: "Sign up for free to start using PerralVPN.",
     full_name: "Full name",
     full_name_placeholder: "Enter your full name",
     email_placeholder: "you@example.com",

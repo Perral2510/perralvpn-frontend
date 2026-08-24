@@ -1,10 +1,10 @@
-# DucAnhVPN Frontend
+# PerralVPN Frontend
 
-Frontend tĩnh của DucAnhVPN, dùng để deploy trên Render Static Site hoặc bất kỳ CDN nào. Backend không nằm trong repository này.
+Frontend tĩnh của PerralVPN, dùng để deploy trên Render Static Site hoặc bất kỳ CDN nào. Backend không nằm trong repository này.
 
 ## Render Static Site
 
-Tạo một Static Site từ repository `Perral2510/ducanhvpn-frontend` với các thiết lập:
+Tạo một Static Site từ repository `Perral2510/perralvpn-frontend` với các thiết lập:
 
 - Build command: để trống hoặc `echo "No build required"`
 - Publish directory: `.`

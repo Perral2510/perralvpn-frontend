@@ -1,6 +1,6 @@
 services:
   - type: web
-    name: ducanhvpn-frontend
+    name: perralvpn-frontend
     runtime: static
     buildCommand: echo "No build required"
     staticPublishPath: .

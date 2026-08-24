@@ -1,5 +1,5 @@
 /* =========================================================
-   DucAnhVPN — Global state & navigation config
+   PerralVPN — Global state & navigation config
    ========================================================= */
 const STATE = {
   lang: 'vi',

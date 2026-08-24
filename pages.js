@@ -1,5 +1,5 @@
 /* =========================================================
-   DucAnhVPN — Page renderers
+   PerralVPN — Page renderers
    Each render fn receives the <main id="pageContent"> container,
    shows a skeleton immediately, then fetches mock data and paints.
    ========================================================= */
@@ -108,7 +108,7 @@ PAGES['#/dashboard'] = async (root) => {
       </div>
 
       <section class="card dashboard-billing-card">
-        <div class="dashboard-billing-card__head"><div><span class="dashboard-billing-card__eyebrow">DucAnhVPN BILLING</span><h2>Quản lý gói cước & thanh toán</h2><p>Theo dõi gói đang dùng, tạo đơn hàng và thanh toán qua QR Bank.</p></div><span class="dashboard-billing-card__icon">${icon('wallet')}</span></div>
+        <div class="dashboard-billing-card__head"><div><span class="dashboard-billing-card__eyebrow">PerralVPN BILLING</span><h2>Quản lý gói cước & thanh toán</h2><p>Theo dõi gói đang dùng, tạo đơn hàng và thanh toán qua QR Bank.</p></div><span class="dashboard-billing-card__icon">${icon('wallet')}</span></div>
         <div class="dashboard-billing-card__body">
           <div class="dashboard-billing-card__active"><span class="text-secondary">Gói hiện tại</span><strong>${escapeHTML(activeSubscription?.planName || 'Chưa có gói đang hoạt động')}</strong><small>${activeSubscription ? `${activeSubscription.capacity} · ${activeSubscription.speed}` : 'Chọn một gói phù hợp để bắt đầu sử dụng.'}</small></div>
           <div class="dashboard-billing-card__status"><span class="text-secondary">Trạng thái thanh toán</span><strong>${recentOrders[0] ? (recentOrders[0].status === 'paid' ? 'Đã thanh toán' : recentOrders[0].status === 'pending' ? 'Chờ đối soát' : 'Chưa có thanh toán hoàn tất') : 'Chưa có đơn hàng'}</strong><small>${recentOrders[0] ? `Đơn gần nhất: ${escapeHTML(recentOrders[0].id)}` : 'Các đơn hàng mới sẽ xuất hiện tại đây.'}</small></div>
@@ -201,7 +201,7 @@ function openTopupModal(balance){
     title: 'Nạp tiền qua QR Bank',
     bodyHTML: `
       <div class="topup-modal">
-        <div class="topup-modal__intro"><span class="topup-modal__eyebrow">DUCANHVPN WALLET</span><h3>Nạp tiền nhanh chóng</h3><p>Quét mã QR bằng ứng dụng ngân hàng của bạn để cộng tiền vào tài khoản.</p></div>
+        <div class="topup-modal__intro"><span class="topup-modal__eyebrow">PERRALVPN WALLET</span><h3>Nạp tiền nhanh chóng</h3><p>Quét mã QR bằng ứng dụng ngân hàng của bạn để cộng tiền vào tài khoản.</p></div>
         <div class="topup-modal__layout">
           <div class="topup-modal__qr-panel"><div class="topup-modal__qr-wrap"><img id="topupQr" src="${qrUrl(initialAmount)}" alt="Mã QR chuyển khoản demo"><span class="topup-modal__qr-badge">QR BANK</span></div><small>Thông tin QR demo — sẽ thay bằng QR từ API</small></div>
           <div class="topup-modal__details">
@@ -230,7 +230,7 @@ function openAppleIdModal(){
     title: t('get_apple_id'),
     bodyHTML: `
       <p>Tài khoản Apple ID dùng thử để tải ứng dụng khu vực khác:</p>
-      <div class="field"><label>Email</label><div class="input mono">trial.apple.us@ducanhvpn.net</div></div>
+      <div class="field"><label>Email</label><div class="input mono">trial.apple.us@perralvpn.net</div></div>
       <div class="field mb-0"><label>Mật khẩu</label><div class="input mono">Trial@2026</div></div>
     `,
     footerHTML: `<button class="btn btn-primary" data-act="ok">${t('close')}</button>`,

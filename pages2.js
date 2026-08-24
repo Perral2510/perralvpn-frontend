@@ -9,12 +9,6 @@ PAGES['#/plan'] = async (root) => {
   root.innerHTML = `
     <div class="page-container page-enter">
       ${pageHeader('plan_title', 'plan_desc')}
-      <div class="tabs" id="planTabs" role="tablist">
-        <button class="tab-btn active" data-cat="all">${t('tab_all')}</button>
-        <button class="tab-btn" data-cat="vn">${t('tab_vn')}</button>
-        <button class="tab-btn" data-cat="forever">${t('tab_forever')}</button>
-        <button class="tab-btn" data-cat="global">${t('tab_global')}</button>
-      </div>
       <div id="planGrid" class="grid grid-3">${skeletonCards(3)}</div>
     </div>
   `;
@@ -55,13 +49,6 @@ PAGES['#/plan'] = async (root) => {
     }));
   };
 
-  qs('#planTabs', root).addEventListener('click', (e) => {
-    const b = e.target.closest('.tab-btn');
-    if (!b) return;
-    cat = b.dataset.cat;
-    qsa('.tab-btn', root).forEach(x => x.classList.toggle('active', x === b));
-    paint();
-  });
 
   paint();
 };

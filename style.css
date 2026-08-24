@@ -604,3 +604,13 @@ body.auth-mode .site-watermark-bg{display:none}
 @media (max-width:700px){.checkout-success .checkout-grid{grid-template-columns:1fr!important}}
 
 .plan-empty-state{display:flex;flex-direction:column;align-items:flex-start;gap:7px;padding:18px 0;color:var(--text-primary)}.plan-empty-state strong{font-size:15px}.plan-empty-state span{color:var(--text-secondary);font-size:11px;line-height:1.5}.plan-empty-state .btn{margin-top:4px}
+
+/* Keep desktop navigation fixed while the dashboard content scrolls independently. */
+@media (min-width:861px){
+  .app-shell:not(.auth-mode) .sidebar{position:fixed;left:0;top:0;bottom:0;width:var(--sidebar-w);height:100vh;overflow-y:auto;z-index:5}
+  .app-shell:not(.auth-mode) .main-content{margin-left:var(--sidebar-w)}
+  .app-shell:not(.auth-mode).sidebar-collapsed .main-content{margin-left:var(--sidebar-w-collapsed)}
+}
+@media (max-width:860px){
+  .app-shell .main-content{margin-left:0}
+}

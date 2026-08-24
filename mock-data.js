@@ -147,7 +147,12 @@ const MockAPI = {
     MockDB.invite.codes.push(entry);
     return delay({ ok: true, entry }, 600);
   },
-  getTraffic: () => delay(MockDB.traffic, 600),
+  getTraffic: (hasActivePlan = true) => {
+    const traffic = hasActivePlan
+      ? MockDB.traffic
+      : MockDB.traffic.map(item => ({ ...item, upload: 0, download: 0 }));
+    return delay(traffic, 600);
+  },
   syncServerToApp: () => delay({ ok: true }, 900),
   login: (email, password) => {
     const ok = email.trim().length > 3 && password.length >= 6;

@@ -233,8 +233,10 @@ PAGES['#/traffic'] = async (root) => {
     </div>
   `;
 
-  const traffic = await MockAPI.getTraffic();
-  const maxVal = Math.max(...traffic.map(d => d.upload + d.download));
+  const billing = await RealAPI.getBilling().catch(() => null);
+  const hasActivePlan = Boolean(billing?.activeSubscription);
+  const traffic = await MockAPI.getTraffic(hasActivePlan);
+  const maxVal = Math.max(1, ...traffic.map(d => d.upload + d.download));
   const chartW = 640, chartH = 220, padding = 32, barGap = 14;
   const barW = (chartW - padding * 2) / traffic.length - barGap;
 
@@ -264,6 +266,7 @@ PAGES['#/traffic'] = async (root) => {
           <span class="flex items-center gap-2"><span style="width:10px;height:10px;border-radius:3px;background:var(--accent-500);display:inline-block;"></span>${t('col_download')}</span>
         </span>
       </div>
+      ${hasActivePlan ? '' : '<p class="text-secondary text-sm" style="margin:8px 0 0;">Bạn chưa có gói VPN đang hoạt động. Dữ liệu sử dụng sẽ bắt đầu tính sau khi gói được mua và kích hoạt.</p>'}
       <svg viewBox="0 0 ${chartW} ${chartH}" style="width:100%;height:auto;" role="img" aria-label="${t('chart_title')}">${bars}</svg>
     </div>
     <div class="table-wrap">

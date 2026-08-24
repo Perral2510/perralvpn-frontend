@@ -211,7 +211,7 @@ PAGES['#/dashboard'] = async (root) => {
     }
     const result = await RealAPI.syncVpnSubscription();
     if (!result.ok) {
-      showToast({ type: 'error', title: result.error || result.message || 'Không thể đồng bộ gói VPN.' });
+      showToast({ type: 'error', title: 'Lỗi server' });
       return null;
     }
     const refreshed = await RealAPI.getVpnSubscription();

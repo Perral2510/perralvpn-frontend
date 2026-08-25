@@ -30,7 +30,7 @@ PAGES['#/plan'] = async (root) => {
         <div style="margin-bottom:14px;"><span style="font-size:24px;font-weight:700;color:var(--brand-500);font-family:var(--font-display);">${formatCurrency(p.price)}</span> <span class="text-secondary text-sm">${p.lifetime ? 'thanh toán một lần' : t('per_month')}</span></div>
         <ul class="plan-spec-list" aria-label="Thông tin gói dịch vụ">
           <li><span class="plan-spec-list__check">${icon('check')}</span><span>Nền: <strong>${escapeHTML(p.base || (/không nền/i.test(p.name || '') ? '0 nền' : '0 nền'))}</strong></span></li>
-          <li><span class="plan-spec-list__check">${icon('check')}</span><span>Dung lượng: <strong>${escapeHTML(p.capacity || 'Không giới hạn')}</strong></span></li>
+          <li><span class="plan-spec-list__check">${icon('check')}</span><span>Dung lượng: <strong>${escapeHTML(p.capacity === '100GB' && /vina/i.test(p.name || '') ? '1000GB' : (p.capacity || 'Không giới hạn'))}</strong></span></li>
           <li><span class="plan-spec-list__check">${icon('check')}</span><span>Thiết bị: <strong>${escapeHTML(String(p.devices ?? 0))}</strong></span></li>
           <li><span class="plan-spec-list__check">${icon('check')}</span><span>Hỗ trợ SIM: <strong>${escapeHTML(p.simSupport || (/vina/i.test(`${p.name || ''} ${p.category || ''}`) ? 'Vina' : 'Tất cả'))}</strong></span></li>
         </ul>

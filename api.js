@@ -4,10 +4,21 @@ let sessionUser = null;
 
 async function apiRequest(path, options = {}) {
   const headers = { Accept: 'application/json', ...(options.body ? { 'Content-Type': 'application/json' } : {}), ...(options.headers || {}) };
-  const response = await fetch(`${API_BASE}${path}`, { ...options, headers, credentials: 'include' });
-  const payload = await response.json().catch(() => ({}));
-  if (!response.ok) return { ok: false, status: response.status, error: payload.message || 'Yêu cầu API thất bại.' };
-  return payload;
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), 15000);
+  try {
+    const response = await fetch(`${API_BASE}${path}`, { ...options, headers, credentials: 'include', signal: controller.signal });
+    const payload = await response.json().catch(() => ({}));
+    if (!response.ok) return { ok: false, status: response.status, error: payload.message || 'Yêu cầu API thất bại.' };
+    return payload;
+  } catch (error) {
+    const message = error?.name === 'AbortError'
+      ? 'Kết nối quá thời gian. Vui lòng kiểm tra mạng và thử lại.'
+      : 'Không thể kết nối máy chủ. Vui lòng kiểm tra mạng và thử lại.';
+    return { ok: false, status: 0, error: message };
+  } finally {
+    clearTimeout(timeoutId);
+  }
 }
 
 const RealAPI = {

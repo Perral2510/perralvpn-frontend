@@ -54,6 +54,7 @@ PAGES['#/checkout'] = async (root) => {
   let method = 'bank';
   let promoApplied = null;
   let promoError = '';
+  let checkoutInProgress = false;
 
   const PAYMENT_METHODS = [
     { key: 'bank', icon: 'wallet', label: 'Cổng thanh toán SePay', desc: 'Thanh toán an toàn bằng QR Banking, NAPAS hoặc thẻ theo cấu hình merchant.' },
@@ -147,25 +148,33 @@ PAGES['#/checkout'] = async (root) => {
     });
 
     qs('#btnPayNow', container).addEventListener('click', async (e) => {
+      if (checkoutInProgress) return;
+      checkoutInProgress = true;
       const btn = e.currentTarget;
-      btn.disabled = true;
-      btn.innerHTML = `<span class="spinner"></span> ${t('loading')}`;
-      const res = await RealAPI.createOrder(plan.id, Number(cycle), method, promoApplied || '');
-      if (!res.ok) {
+      const restoreButton = () => {
+        checkoutInProgress = false;
         btn.disabled = false;
+        btn.removeAttribute('aria-busy');
         btn.innerHTML = t('pay_now');
-        showToast({ type: 'error', title: res.error || t('error_title') });
+      };
+      btn.disabled = true;
+      btn.setAttribute('aria-busy', 'true');
+      btn.innerHTML = `<span class="spinner"></span> Đang chuyển tới cổng thanh toán...`;
+      const result = await RealAPI.createCheckout(plan.id, Number(cycle), method, promoApplied || '');
+      if (!result.ok) {
+        restoreButton();
+        showToast({ type: 'error', title: result.error || t('error_title') });
         return;
       }
-      const checkout = await RealAPI.initCheckout(res.data.order.id);
-      btn.disabled = false;
-      btn.innerHTML = t('pay_now');
-      if (!checkout.ok) {
-        showToast({ type: 'error', title: checkout.error || 'Không thể mở cổng thanh toán SePay.' });
+      const order = result.data?.order;
+      const checkout = result.data?.checkout;
+      if (!order || !checkout) {
+        restoreButton();
+        showToast({ type: 'error', title: 'Dữ liệu cổng thanh toán không hợp lệ.' });
         return;
       }
-      CHECKOUT_STATE.lastOrder = { ...res.data.order, plan };
-      submitSepayCheckout(checkout.data);
+      CHECKOUT_STATE.lastOrder = { ...order, plan };
+      if (!submitSepayCheckout(checkout)) restoreButton();
     });
   };
 
@@ -175,7 +184,7 @@ PAGES['#/checkout'] = async (root) => {
 function submitSepayCheckout(checkout){
   if (!checkout?.checkoutUrl || !checkout?.fields) {
     showToast({ type: 'error', title: 'Dữ liệu cổng thanh toán không hợp lệ.' });
-    return;
+    return false;
   }
   const form = document.createElement('form');
   form.method = 'POST';
@@ -189,7 +198,8 @@ function submitSepayCheckout(checkout){
     form.appendChild(input);
   });
   document.body.appendChild(form);
-  form.submit();
+  HTMLFormElement.prototype.submit.call(form);
+  return true;
 }
 
 PAGES['#/payment-result'] = async (root) => {

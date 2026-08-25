@@ -27,6 +27,8 @@ const RealAPI = {
   getPlans: async () => { const result = await apiRequest('/plans'); return result.ok ? result.data : []; },
   getBilling: async () => { const result = await apiRequest('/account/billing'); return result.ok ? result.data : null; },
   getVpnSubscription: () => apiRequest('/account/vpn'),
+  getVpnManagement: () => apiRequest('/account/vpn/management'),
+  resetVpnLink: () => apiRequest('/account/vpn/reset-link', { method: 'POST' }),
   syncVpnSubscription: () => apiRequest('/account/vpn/sync', { method: 'POST' }),
   getOrders: async () => { const result = await apiRequest('/account/orders'); return result.ok ? result.data : []; },
   createOrder: (planId, cycleMonths, paymentMethod, promoCode = '') => apiRequest('/account/orders', { method: 'POST', body: JSON.stringify({ planId, cycleMonths, paymentMethod, promoCode }) }),

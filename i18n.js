@@ -9,6 +9,7 @@ const I18N = {
     nav_application: "Ứng dụng",
     nav_group_plan: "Gói dịch vụ",
     nav_plan: "Mua gói dịch vụ",
+    manage_plan: "Quản lý gói cước",
     nav_node: "Trạng thái node",
     nav_changepro: "Tiện ích",
     nav_group_finance: "Tài chính",
@@ -77,6 +78,8 @@ const I18N = {
 
     // Plan
     plan_title: "Mua gói dịch vụ",
+    manage_plan_title: "Quản lý gói cước",
+    manage_plan_desc: "Theo dõi dữ liệu sử dụng và quản lý liên kết VPN.",
     plan_desc: "Chọn gói phù hợp với nhu cầu sử dụng của bạn.",
     tab_all: "Tất cả",
     tab_vn: "Việt Nam",
@@ -256,6 +259,7 @@ const I18N = {
     nav_application: "Applications",
     nav_group_plan: "Subscription",
     nav_plan: "Buy a plan",
+    manage_plan: "Manage plan",
     nav_node: "Node status",
     nav_changepro: "Utilities",
     nav_group_finance: "Billing",
@@ -319,6 +323,8 @@ const I18N = {
     downloading: "Downloading...",
 
     plan_title: "Buy a plan",
+    manage_plan_title: "Manage plan",
+    manage_plan_desc: "Track usage and manage your VPN links.",
     plan_desc: "Pick the plan that fits how you use the service.",
     tab_all: "All",
     tab_vn: "Vietnam",

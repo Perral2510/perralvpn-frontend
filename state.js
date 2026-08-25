@@ -42,3 +42,4 @@ NAV_CONFIG.forEach(entry => {
   if (entry.type === 'group') entry.items.forEach(i => ROUTE_LABELS[i.route] = i.labelKey);
 });
 ROUTE_LABELS['#/account'] = 'account_info';
+ROUTE_LABELS['#/manage-plan'] = 'manage_plan';

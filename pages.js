@@ -116,7 +116,7 @@ PAGES['#/dashboard'] = async (root) => {
         <div class="dashboard-billing-card__body">
           <div class="dashboard-billing-card__active"><span class="text-secondary">Gói hiện tại</span><strong>${escapeHTML(activeSubscription?.planName || 'Chưa có gói đang hoạt động')}</strong><small>${activeSubscription ? `${activeSubscription.capacity} · ${activeSubscription.speed}` : 'Chọn một gói phù hợp để bắt đầu sử dụng.'}</small></div>
           <div class="dashboard-billing-card__status"><span class="text-secondary">Trạng thái thanh toán</span><strong>${recentOrders[0] ? (recentOrders[0].status === 'paid' ? 'Đã thanh toán' : recentOrders[0].status === 'pending' ? 'Chờ đối soát' : 'Chưa có thanh toán hoàn tất') : 'Chưa có đơn hàng'}</strong><small>${recentOrders[0] ? `Đơn gần nhất: ${escapeHTML(recentOrders[0].id)}` : 'Các đơn hàng mới sẽ xuất hiện tại đây.'}</small></div>
-          <div class="dashboard-billing-card__actions"><button class="btn btn-primary" data-nav="#/plan">${icon('shield')} Quản lý gói cước</button><button class="btn btn-secondary" data-nav="#/order">${icon('receipt')} Xem đơn hàng</button></div>
+          <div class="dashboard-billing-card__actions"><button class="btn btn-primary" data-nav="#/manage-plan">${icon('shield')} Quản lý gói cước</button><button class="btn btn-secondary" data-nav="#/order">${icon('receipt')} Xem đơn hàng</button></div>
         </div>
       </section>
 

@@ -29,7 +29,9 @@ PAGES['#/manage-plan'] = async (root) => {
   const machinesUsed = Number(data.machinesUsed || 0);
   const machinesMax = Number(data.machinesMax || 0);
   const formatData = (bytes) => {
-    if (!Number.isFinite(bytes) || bytes <= 0) return '0 GB';
+    if (!Number.isFinite(bytes) || bytes <= 0) return '0 KB';
+    if (bytes < 1024 ** 2) return `${(bytes / 1024).toFixed(2).replace(/\\.00$/, '')} KB`;
+    if (bytes < 1024 ** 3) return `${(bytes / (1024 ** 2)).toFixed(2).replace(/\\.00$/, '')} MB`;
     const gb = bytes / (1024 ** 3);
     return `${gb >= 100 ? gb.toFixed(0) : gb.toFixed(2).replace(/\\.00$/, '')} GB`;
   };

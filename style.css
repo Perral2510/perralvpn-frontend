@@ -100,6 +100,9 @@ table{ border-collapse:collapse; width:100%; }
   padding:9px; border-radius:var(--radius-sm); cursor:pointer; font-size:13px;
 }
 .sidebar__collapse-btn:hover{ background:rgba(255,255,255,.1); }
+.app-shell.sidebar-collapsed .sidebar__collapse-btn{ gap:0; }
+.app-shell.sidebar-collapsed .sidebar__collapse-btn > span{ display:none; }
+.app-shell.sidebar-collapsed .sidebar__collapse-btn .icon{ margin:0; }
 
 .sidebar-scrim{ display:none; }
 

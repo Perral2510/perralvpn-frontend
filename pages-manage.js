@@ -36,8 +36,6 @@ PAGES['#/manage-plan'] = async (root) => {
   const dataLabel = maxBytes > 0 ? `${formatData(usedBytes)} / ${formatData(maxBytes)}` : `${formatData(usedBytes)} / Không giới hạn`;
   const dataPercent = maxBytes > 0 ? Math.min(100, Math.max(0, Math.round((usedBytes / maxBytes) * 100))) : 0;
   const machineLabel = machinesMax > 0 ? `${machinesUsed} / ${machinesMax}` : `${machinesUsed} / Không giới hạn`;
-  const clients = Array.isArray(data.clients) ? data.clients : [];
-
   root.innerHTML = `
     <div class="page-container page-enter">
       <div class="page-header"><h1>${t('manage_plan_title')}</h1><p>${t('manage_plan_desc')}</p></div>
@@ -57,10 +55,6 @@ PAGES['#/manage-plan'] = async (root) => {
             </tr></tbody>
           </table>
         </div>
-      </div>
-      <div class="card">
-        <div class="card-title">Client trong subscription</div>
-        ${clients.length ? `<div class="table-wrap"><table class="data-table"><thead><tr><th>Email client</th><th>Trạng thái</th><th>Data đã dùng</th><th>Máy đang dùng</th></tr></thead><tbody>${clients.map(client => `<tr><td class="mono">${escapeHTML(client.email || '—')}</td><td>${client.enabled ? '<span class="badge badge-success">Hoạt động</span>' : '<span class="badge badge-danger">Tắt</span>'}</td><td class="mono">${escapeHTML(formatData(Number(client.trafficUsedBytes || 0)))}</td><td class="mono">${Number(client.machinesUsed || 0)}</td></tr>`).join('')}</tbody></table></div>` : '<p class="text-secondary">Chưa có client trong subscription.</p>'}
       </div>
       <p class="text-secondary text-sm" style="margin-top:12px;">Cập nhật lần cuối: ${escapeHTML(formatDate(data.updatedAt, STATE.lang))}</p>
     </div>

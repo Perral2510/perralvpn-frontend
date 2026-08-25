@@ -218,9 +218,14 @@ PAGES['#/dashboard'] = async (root) => {
     openConfirm({
       title: t('reset_link'), message: t('cancel_confirm_desc'), confirmLabel: t('confirm'), danger: false,
       onConfirm: async () => {
-        showToast({ type: 'info', title: t('loading') });
-        await MockAPI.resetServerLink();
-        showToast({ type: 'success', title: t('toast_link_reset') });
+        showToast({ type: 'info', title: 'Đang reset link và khóa kết nối cũ...' });
+        const result = await RealAPI.resetVpnLink();
+        if (!result.ok) {
+          showToast({ type: 'error', title: result.error || 'Không thể reset link lúc này.' });
+          return;
+        }
+        showToast({ type: 'success', title: result.message || t('toast_link_reset') });
+        await PAGES['#/dashboard'](root);
       }
     });
   });

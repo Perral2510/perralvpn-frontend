@@ -15,14 +15,14 @@ function pageHeader(titleKey, descKey){
 }
 
 function platformIcon(platform){
-  const common = 'viewBox="0 0 48 48" aria-hidden="true" focusable="false"';
-  const icons = {
-    windows: `<svg class="platform-icon platform-icon--windows" ${common}><path d="M5 9.5 22 7v16H5V9.5Zm20-3L43 4.2V23H25V6.5ZM5 25h17v16L5 38.5V25Zm20 0h18v18.8L25 41V25Z"/></svg>`,
-    apple: `<svg class="platform-icon platform-icon--apple" ${common}><path d="M31.8 8.7c1.6-2 1.5-4.1 1.4-4.7-1.9.1-4.1 1.2-5.4 2.7-1.2 1.4-2.3 3.5-1.9 5.4 2.1.2 4.3-1 5.9-3.4ZM38.1 25.6c0-5.2 4.2-7.7 4.4-7.8-2.4-3.6-6.1-4.1-7.4-4.2-3.1-.3-6.1 1.8-7.7 1.8-1.6 0-4.1-1.8-6.8-1.7-3.5.1-6.7 2-8.5 5.1-3.7 6.4-.9 15.8 2.6 21 1.7 2.5 3.8 5.3 6.6 5.2 2.7-.1 3.7-1.7 6.9-1.7 3.2 0 4.1 1.7 6.9 1.6 2.9-.1 4.7-2.5 6.4-5 2-2.9 2.8-5.7 2.9-5.8-.1 0-6.3-2.4-6.3-8.5Z"/></svg>`,
-    android: `<svg class="platform-icon platform-icon--android" ${common}><path d="M14.5 18.5h19v16c0 3.3-2.7 6-6 6H20.5c-3.3 0-6-2.7-6-6v-16ZM11 20.5h2v12h-2c-1.1 0-2-.9-2-2v-8c0-1.1.9-2 2-2Zm26 0h2c1.1 0 2 .9 2 2v8c0 1.1-.9 2-2 2h-2v-12ZM17 17c.4-3.6 2.6-6.2 5.3-7.3L20.1 6l1.2-.7 2.3 3.9c.8-.2 1.6-.3 2.4-.3s1.7.1 2.4.3l2.3-3.9 1.2.7-2.2 3.7c2.7 1.1 4.9 3.7 5.3 7.3H17Zm5-3.8a1.2 1.2 0 1 0 0 .1v-.1Zm10 0a1.2 1.2 0 1 0 0 .1v-.1Z"/></svg>`,
-    linux: `<svg class="platform-icon platform-icon--linux" ${common}><path d="M24 4c-5.8 0-8.7 5.2-8.7 11.2 0 3.4-2.6 7.1-4.6 10.3-2 3.2-3.8 7.1-2.1 10.8 1.2 2.7 4.4 3.2 7.1 2.4 2.7-.8 4.8-2.3 8.3-2.3s5.6 1.5 8.3 2.3c2.7.8 5.9.3 7.1-2.4 1.7-3.7-.1-7.6-2.1-10.8-2-3.2-4.6-6.9-4.6-10.3C32.7 9.2 29.8 4 24 4Z"/><path fill="#fff" stroke="none" d="M18 25c1.8-1.7 3.7-2.5 6-2.5s4.2.8 6 2.5v8.8c-1.8 1.3-3.8 2-6 2s-4.2-.7-6-2V25Z"/><circle cx="20" cy="16" r="1.5" fill="#263746" stroke="none"/><circle cx="28" cy="16" r="1.5" fill="#263746" stroke="none"/><path d="m21.5 19.5 2.5 2 2.5-2-2.5-1.2-2.5 1.2Z" fill="#f0a323" stroke="none"/><path d="M14.2 35.5 10 39m19.8-3.5L34 39" fill="none" stroke="#f0a323" stroke-width="2.5" stroke-linecap="round"/></svg>`
+  const logos = {
+    windows: ['assets/platform/windows.png', 'Windows'],
+    apple: ['assets/platform/apple.png', 'Apple'],
+    android: ['assets/platform/android.png', 'Android'],
+    linux: ['assets/platform/linux.png', 'Linux'],
   };
-  return icons[platform] || '';
+  const [src, label] = logos[platform] || [];
+  return src ? `<img class="platform-icon platform-icon--${platform}" src="${src}" alt="${label}" loading="lazy" decoding="async">` : '';
 }
 
 /* ---------------------------------------------------------

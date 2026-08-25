@@ -53,7 +53,7 @@ PAGES['#/checkout'] = async (root) => {
   let promoError = '';
 
   const PAYMENT_METHODS = [
-    { key: 'bank', icon: 'barchart', label: t('pm_bank'), desc: `${t('pm_bank_desc')} · Đang hỗ trợ` },
+    { key: 'bank', icon: 'wallet', label: 'Cổng thanh toán SePay', desc: 'Thanh toán an toàn bằng QR Banking, NAPAS hoặc thẻ theo cấu hình merchant.' },
   ];
 
   const container = qs('.page-container', root);
@@ -147,73 +147,83 @@ PAGES['#/checkout'] = async (root) => {
       btn.disabled = true;
       btn.innerHTML = `<span class="spinner"></span> ${t('loading')}`;
       const res = await RealAPI.createOrder(plan.id, Number(cycle), method, promoApplied || '');
-      btn.disabled = false;
-      btn.innerHTML = t('pay_now');
       if (!res.ok) {
+        btn.disabled = false;
+        btn.innerHTML = t('pay_now');
         showToast({ type: 'error', title: res.error || t('error_title') });
         return;
       }
-      CHECKOUT_STATE.lastOrder = { ...res.data.order, plan, payment: res.data.payment };
-      renderCheckoutPayment(root, CHECKOUT_STATE.lastOrder);
+      const checkout = await RealAPI.initCheckout(res.data.order.id);
+      btn.disabled = false;
+      btn.innerHTML = t('pay_now');
+      if (!checkout.ok) {
+        showToast({ type: 'error', title: checkout.error || 'Không thể mở cổng thanh toán SePay.' });
+        return;
+      }
+      CHECKOUT_STATE.lastOrder = { ...res.data.order, plan };
+      submitSepayCheckout(checkout.data);
     });
   };
 
   paint();
 };
 
-function renderCheckoutPayment(root, order, submitted = false){
-  const payment = order.payment || {};
-  const qrPayload = `Bank:${payment.bank}|STK:${payment.account}|ChuTK:${payment.owner}|SoTien:${payment.amount || order.total}|NoiDung:${payment.content || order.id}`;
-  const qrUrl = buildDemoQrDataUrl(qrPayload);
-  root.innerHTML = `
-    <div class="page-container page-enter">
-      <div class="checkout-success" style="max-width:760px;margin:0 auto;">
-        <div class="checkout-success__icon">${icon(submitted ? 'checkCircle' : 'wallet')}</div>
-        <h2>${submitted ? 'Đã ghi nhận thanh toán' : 'Thanh toán qua QR Bank'}</h2>
-        <p>${submitted ? 'Đơn hàng đang chờ hệ thống đối soát. Gói sẽ được kích hoạt sau khi giao dịch được xác nhận.' : 'Quét mã QR bằng ứng dụng ngân hàng, sau đó bấm xác nhận để gửi yêu cầu đối soát.'}</p>
-        <div class="checkout-grid" style="margin-top:20px;text-align:left;">
-          <div class="card" style="text-align:center;">
-            <div class="card-title">Mã QR chuyển khoản</div>
-            <div class="topup-modal__qr-wrap" style="display:inline-flex;"><img src="${qrUrl}" alt="Mã QR thanh toán đơn hàng ${escapeHTML(order.id)}" style="width:190px;height:190px;background:#fff;padding:10px;border-radius:12px;"></div>
-            <p class="text-secondary text-sm" style="margin:12px 0 0;">${payment.demo ? 'QR demo — hãy cấu hình thông tin ngân hàng trong .env trước khi dùng chính thức.' : 'Kiểm tra đúng số tiền và nội dung chuyển khoản trước khi xác nhận.'}</p>
-          </div>
-          <div class="card text-sm">
-            <div class="card-title">Thông tin đơn hàng</div>
-            <div class="summary-row"><span>${t('order_code')}</span><span class="mono">${escapeHTML(order.id)}</span></div>
-            <div class="summary-row"><span>Gói cước</span><span>${escapeHTML(order.plan?.name || order.planName || '—')}</span></div>
-            <div class="summary-row"><span>Ngân hàng</span><span>${escapeHTML(payment.bank || '—')}</span></div>
-            <div class="summary-row"><span>Số tài khoản</span><span class="mono">${escapeHTML(payment.account || '—')}</span></div>
-            <div class="summary-row"><span>Chủ tài khoản</span><span>${escapeHTML(payment.owner || '—')}</span></div>
-            <div class="summary-row"><span>Nội dung</span><span class="mono">${escapeHTML(payment.content || order.id)}</span></div>
-            <div class="summary-row total"><span>${t('total')}</span><span class="amount mono">${formatCurrency(order.total)}</span></div>
-          </div>
-        </div>
-        <div class="flex gap-2" style="justify-content:center;flex-wrap:wrap;margin-top:20px;">
-          ${submitted ? '<span class="badge badge-warning" style="padding:10px 14px;">Đang chờ đối soát</span>' : '<button class="btn btn-primary" id="btnSubmitPayment">Tôi đã chuyển khoản</button>'}
-          <button class="btn btn-secondary" id="btnViewOrders">${t('view_orders')}</button>
-          <button class="btn btn-secondary" id="btnBackHome">${t('back_to_dashboard')}</button>
-        </div>
-      </div>
-    </div>
-  `;
-  qs('#btnViewOrders', root).addEventListener('click', () => { location.hash = '#/order'; });
-  qs('#btnBackHome', root).addEventListener('click', () => { location.hash = '#/dashboard'; });
-  const submitBtn = qs('#btnSubmitPayment', root);
-  if (submitBtn) submitBtn.addEventListener('click', async (e) => {
-    e.currentTarget.disabled = true;
-    e.currentTarget.innerHTML = `<span class="spinner"></span> Đang ghi nhận...`;
-    const res = await RealAPI.submitPayment(order.id);
-    if (!res.ok) {
-      e.currentTarget.disabled = false;
-      e.currentTarget.textContent = 'Tôi đã chuyển khoản';
-      showToast({ type: 'error', title: res.error || t('error_title') });
-      return;
-    }
-    CHECKOUT_STATE.lastOrder = { ...order, ...res.data };
-    renderCheckoutPayment(root, CHECKOUT_STATE.lastOrder, true);
-    showToast({ type: 'success', title: 'Đã ghi nhận yêu cầu đối soát' });
+function submitSepayCheckout(checkout){
+  if (!checkout?.checkoutUrl || !checkout?.fields) {
+    showToast({ type: 'error', title: 'Dữ liệu cổng thanh toán không hợp lệ.' });
+    return;
+  }
+  const form = document.createElement('form');
+  form.method = 'POST';
+  form.action = checkout.checkoutUrl;
+  form.style.display = 'none';
+  Object.entries(checkout.fields).forEach(([name, value]) => {
+    const input = document.createElement('input');
+    input.type = 'hidden';
+    input.name = name;
+    input.value = value == null ? '' : String(value);
+    form.appendChild(input);
   });
-  if (submitted) CHECKOUT_STATE.plan = null;
+  document.body.appendChild(form);
+  form.submit();
+}
+
+PAGES['#/payment-result'] = async (root) => {
+  const params = new URLSearchParams(location.hash.split('?')[1] || '');
+  const status = params.get('status') || 'error';
+  const orderId = params.get('order') || '';
+  const title = status === 'success' ? 'Đã nhận kết quả thanh toán' : status === 'cancel' ? 'Bạn đã hủy thanh toán' : 'Thanh toán chưa hoàn tất';
+  const description = status === 'success'
+    ? 'Hệ thống đang xác nhận giao dịch với SePay và kích hoạt gói VPN. Trạng thái sẽ tự cập nhật trong vài giây.'
+    : status === 'cancel'
+      ? 'Đơn hàng vẫn được giữ ở trạng thái chờ thanh toán. Bạn có thể mở lại đơn để thanh toán.'
+      : 'SePay chưa xác nhận giao dịch thành công. Bạn có thể kiểm tra lại đơn hàng hoặc thử thanh toán lại.';
+  root.innerHTML = `<div class="page-container page-enter"><div class="checkout-success" style="max-width:700px;margin:0 auto;text-align:center;"><div class="checkout-success__icon">${icon(status === 'success' ? 'wallet' : 'receipt')}</div><h2>${title}</h2><p>${description}</p><div id="paymentStatus" class="card" style="margin-top:20px;text-align:left;"><div class="text-sm text-secondary">Mã đơn hàng</div><div class="mono" style="margin-top:6px;">${escapeHTML(orderId || '—')}</div><div class="text-sm text-secondary" style="margin-top:14px;">Trạng thái</div><div id="paymentStatusText" style="margin-top:6px;">Đang tải...</div></div><div class="flex gap-2" style="justify-content:center;flex-wrap:wrap;margin-top:20px;"><button class="btn btn-secondary" id="btnResultOrders">Xem đơn hàng</button><button class="btn btn-primary" id="btnResultHome">Về trang chủ</button></div></div></div>`;
+  qs('#btnResultOrders', root).addEventListener('click', () => { location.hash = '#/order'; });
+  qs('#btnResultHome', root).addEventListener('click', () => { location.hash = '#/dashboard'; });
+  const statusText = qs('#paymentStatusText', root);
+  if (!orderId) { statusText.textContent = 'Không có mã đơn hàng để kiểm tra.'; return; }
+  let attempts = 0;
+  const refresh = async () => {
+    const orders = await RealAPI.getOrders();
+    const order = orders.find(item => item.id === orderId);
+    if (!order) { statusText.textContent = 'Không tìm thấy đơn hàng.'; return true; }
+    if (order.status === 'paid') {
+      statusText.innerHTML = '<span class="badge badge-success">Đã thanh toán và đã duyệt</span>';
+      return true;
+    }
+    if (order.status === 'cancelled' || order.status === 'expired') {
+      statusText.textContent = order.status === 'cancelled' ? 'Đơn hàng đã hủy.' : 'Đơn hàng đã hết hạn.';
+      return true;
+    }
+    statusText.innerHTML = '<span class="badge badge-warning">Đang chờ SePay xác nhận...</span>';
+    return false;
+  };
+  if (await refresh()) return;
+  const timer = setInterval(async () => {
+    attempts += 1;
+    if (await refresh() || attempts >= 15) clearInterval(timer);
+  }, 2000);
 }
 
 /* ---------------------------------------------------------

@@ -32,6 +32,7 @@ const RealAPI = {
   syncVpnSubscription: () => apiRequest('/account/vpn/sync', { method: 'POST' }),
   getOrders: async () => { const result = await apiRequest('/account/orders'); return result.ok ? result.data : []; },
   createOrder: (planId, cycleMonths, paymentMethod, promoCode = '') => apiRequest('/account/orders', { method: 'POST', body: JSON.stringify({ planId, cycleMonths, paymentMethod, promoCode }) }),
+  initCheckout: (orderId) => apiRequest(`/account/orders/${encodeURIComponent(orderId)}/checkout`, { method: 'POST' }),
   submitPayment: (orderId, paymentRef = '') => apiRequest(`/account/orders/${encodeURIComponent(orderId)}/payment-submitted`, { method: 'POST', body: JSON.stringify({ paymentRef }) }),
   cancelOrder: (orderId) => apiRequest(`/account/orders/${encodeURIComponent(orderId)}`, { method: 'DELETE' }),
   revokeOtherSessions: () => apiRequest('/account/sessions/revoke-others', { method: 'POST' }),

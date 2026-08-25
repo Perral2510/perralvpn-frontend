@@ -2,7 +2,8 @@
    PerralVPN — Hash router
    ========================================================= */
 async function renderRoute(){
-  let route = location.hash || '#/dashboard';
+  const rawRoute = location.hash || '#/dashboard';
+  let route = rawRoute.split('?')[0] || '#/dashboard';
   if (!PAGES[route]) route = '#/dashboard';
   STATE.currentRoute = route;
 

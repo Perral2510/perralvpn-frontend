@@ -222,59 +222,72 @@ function openWithdrawModal(kind){
 }
 
 /* ---------------------------------------------------------
-   9) TRAFFIC DETAILS (with lightweight SVG bar chart)
+   9) TRAFFIC DETAILS — live usage from 3x-ui
    --------------------------------------------------------- */
 PAGES['#/traffic'] = async (root) => {
   root.innerHTML = `
     <div class="page-container page-enter">
       ${pageHeader('traffic_title', 'traffic_desc')}
-      <div class="card" style="margin-bottom:24px;"><div class="skeleton" style="height:220px;"></div></div>
-      <div class="table-wrap"><div style="padding:16px;">${skeletonLines(5)}</div></div>
+      <div class="card" style="margin-bottom:24px;"><div class="skeleton" style="height:260px;"></div></div>
     </div>
   `;
 
-  const billing = await RealAPI.getBilling().catch(() => null);
-  const hasActivePlan = Boolean(billing?.activeSubscription);
-  const traffic = await MockAPI.getTraffic(hasActivePlan);
-  const maxVal = Math.max(1, ...traffic.map(d => d.upload + d.download));
-  const chartW = 640, chartH = 220, padding = 32, barGap = 14;
-  const barW = (chartW - padding * 2) / traffic.length - barGap;
+  const result = await RealAPI.getVpnManagement().catch(() => ({ ok: false }));
+  if (!result.ok || !result.data) {
+    const container = qs('.page-container', root);
+    container.innerHTML = `${pageHeader('traffic_title', 'traffic_desc')}${result.data === null ? emptyState({ title: 'Chưa có gói VPN đang hoạt động', desc: 'Dữ liệu sử dụng sẽ xuất hiện sau khi gói được kích hoạt.', iconName: 'barchart' }) : errorState({ onRetryAttr: 'data-retry-traffic' })}`;
+    qs('[data-retry-traffic]', root)?.addEventListener('click', () => PAGES['#/traffic'](root));
+    return;
+  }
 
-  const bars = traffic.map((d, i) => {
-    const total = d.upload + d.download;
-    const x = padding + i * (barW + barGap);
-    const upH = (d.upload / maxVal) * (chartH - padding * 2);
-    const downH = (d.download / maxVal) * (chartH - padding * 2);
-    const yUp = chartH - padding - upH - downH;
-    const yDown = chartH - padding - downH;
-    return `
-      <g>
-        <rect x="${x}" y="${yUp}" width="${barW}" height="${upH}" fill="var(--brand-500)" rx="3"/>
-        <rect x="${x}" y="${yDown}" width="${barW}" height="${downH}" fill="var(--accent-500)" rx="3"/>
-        <text x="${x + barW/2}" y="${chartH - padding + 16}" text-anchor="middle" font-size="10" fill="var(--text-secondary)">${formatDate(d.date, STATE.lang).slice(0,5)}</text>
-      </g>
-    `;
-  }).join('');
-
+  const data = result.data;
+  const used = Number(data.dataUsedBytes || 0);
+  const max = Number(data.dataMaxBytes || 0);
+  const upload = Number(data.uploadBytes || 0);
+  const download = Number(data.downloadBytes || 0);
+  const total = upload + download;
+  const usedPercent = max > 0 ? Math.min(100, Math.max(0, (used / max) * 100)) : 0;
+  const uploadPercent = total > 0 ? Math.round((upload / total) * 100) : 0;
+  const downloadPercent = total > 0 ? 100 - uploadPercent : 0;
+  const compactNumber = (value) => String(Number(value.toFixed(2)));
+  const formatTraffic = (bytes) => {
+    if (!Number.isFinite(bytes) || bytes <= 0) return '0 KB';
+    if (bytes < 1024 ** 2) return `${compactNumber(bytes / 1024)} KB`;
+    if (bytes < 1024 ** 3) return `${compactNumber(bytes / (1024 ** 2))} MB`;
+    return `${compactNumber(bytes / (1024 ** 3))} GB`;
+  };
+  const maxLabel = max > 0 ? formatTraffic(max) : 'Không giới hạn';
+  const remainingLabel = max > 0 ? formatTraffic(Math.max(0, max - used)) : 'Không giới hạn';
+  const ringStyle = `background:conic-gradient(var(--brand-500) ${usedPercent}%, var(--border-color) 0);`;
   const container = qs('.page-container', root);
   container.innerHTML = `
     ${pageHeader('traffic_title', 'traffic_desc')}
+    <div class="grid grid-3" style="margin-bottom:24px;">
+      <div class="card"><div class="text-secondary text-sm">${t('data_used')}</div><div style="font-size:26px;font-weight:700;font-family:var(--font-display);margin-top:8px;">${formatTraffic(used)}</div><div class="text-secondary text-sm" style="margin-top:4px;">trên ${maxLabel}</div></div>
+      <div class="card"><div class="text-secondary text-sm">Dung lượng còn lại</div><div style="font-size:26px;font-weight:700;font-family:var(--font-display);margin-top:8px;color:var(--success-500);">${remainingLabel}</div><div class="text-secondary text-sm" style="margin-top:4px;">${max > 0 ? `${Math.max(0, 100 - Math.round(usedPercent))}% khả dụng` : 'Theo gói không giới hạn'}</div></div>
+      <div class="card"><div class="text-secondary text-sm">Tổng lưu lượng</div><div style="font-size:26px;font-weight:700;font-family:var(--font-display);margin-top:8px;">${formatTraffic(total)}</div><div class="text-secondary text-sm" style="margin-top:4px;">Upload + Download</div></div>
+    </div>
     <div class="card" style="margin-bottom:24px;">
-      <div class="card-title">${t('chart_title')}
-        <span class="flex items-center gap-3 text-sm text-secondary">
-          <span class="flex items-center gap-2"><span style="width:10px;height:10px;border-radius:3px;background:var(--brand-500);display:inline-block;"></span>${t('col_upload')}</span>
-          <span class="flex items-center gap-2"><span style="width:10px;height:10px;border-radius:3px;background:var(--accent-500);display:inline-block;"></span>${t('col_download')}</span>
-        </span>
+      <div class="card-title">Tổng quan sử dụng thực tế <span class="badge badge-success">Live từ 3x-ui</span></div>
+      <div class="grid grid-2" style="align-items:center;gap:28px;">
+        <div style="display:flex;justify-content:center;">
+          <div style="width:190px;height:190px;border-radius:50%;${ringStyle}display:grid;place-items:center;">
+            <div style="width:140px;height:140px;border-radius:50%;background:var(--surface-1);display:grid;place-items:center;text-align:center;"><strong style="font-size:28px;font-family:var(--font-display);">${max > 0 ? `${Math.round(usedPercent)}%` : '∞'}</strong><span class="text-secondary text-sm">đã dùng</span></div>
+          </div>
+        </div>
+        <div>
+          <div class="flex justify-between text-sm" style="margin-bottom:8px;"><span><span style="display:inline-block;width:10px;height:10px;border-radius:3px;background:var(--brand-500);margin-right:7px;"></span>Tải lên</span><strong>${formatTraffic(upload)} · ${uploadPercent}%</strong></div>
+          <div style="height:10px;background:var(--border-color);border-radius:99px;overflow:hidden;margin-bottom:18px;"><span style="display:block;width:${uploadPercent}%;height:100%;background:var(--brand-500);"></span></div>
+          <div class="flex justify-between text-sm" style="margin-bottom:8px;"><span><span style="display:inline-block;width:10px;height:10px;border-radius:3px;background:var(--accent-500);margin-right:7px;"></span>Tải xuống</span><strong>${formatTraffic(download)} · ${downloadPercent}%</strong></div>
+          <div style="height:10px;background:var(--border-color);border-radius:99px;overflow:hidden;"><span style="display:block;width:${downloadPercent}%;height:100%;background:var(--accent-500);"></span></div>
+          <p class="text-secondary text-sm" style="margin-top:18px;">Số liệu được lấy trực tiếp từ upload/download của client trên 3x-ui. Không sử dụng dữ liệu mẫu hoặc lịch sử giả.</p>
+        </div>
       </div>
-      ${hasActivePlan ? '' : '<p class="text-secondary text-sm" style="margin:8px 0 0;">Bạn chưa có gói VPN đang hoạt động. Dữ liệu sử dụng sẽ bắt đầu tính sau khi gói được mua và kích hoạt.</p>'}
-      <svg viewBox="0 0 ${chartW} ${chartH}" style="width:100%;height:auto;" role="img" aria-label="${t('chart_title')}">${bars}</svg>
     </div>
     <div class="table-wrap">
       <table class="data-table">
-        <thead><tr><th class="no-sort">${t('col_date')}</th><th class="no-sort">${t('col_upload')}</th><th class="no-sort">${t('col_download')}</th><th class="no-sort">${t('col_total')}</th></tr></thead>
-        <tbody>
-          ${traffic.map(d => `<tr><td class="mono">${formatDate(d.date, STATE.lang)}</td><td class="mono">${formatGB(d.upload)}</td><td class="mono">${formatGB(d.download)}</td><td class="mono">${formatGB(+(d.upload + d.download).toFixed(1))}</td></tr>`).join('')}
-        </tbody>
+        <thead><tr><th>Thời điểm cập nhật</th><th>Tải lên</th><th>Tải xuống</th><th>Tổng đã dùng</th></tr></thead>
+        <tbody><tr><td class="mono">${formatDate(data.updatedAt, STATE.lang)}</td><td class="mono">${formatTraffic(upload)}</td><td class="mono">${formatTraffic(download)}</td><td class="mono">${formatTraffic(total)}</td></tr></tbody>
       </table>
     </div>
   `;

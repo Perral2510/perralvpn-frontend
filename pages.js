@@ -125,10 +125,9 @@ PAGES['#/dashboard'] = async (root) => {
             <div><strong>Quét để thêm vào ứng dụng VPN</strong><small style="display:block;color:var(--text-secondary);margin-top:6px;">Có thể dùng V2RayN, V2Box, Hiddify, NekoBox và các app tương thích.</small></div>
           </div>
           <div style="display:grid;gap:10px;flex:1;min-width:280px;">
+            <label class="text-secondary text-sm">VLESS URL<input class="form-input mono" id="vpnVlessUrl" readonly value="${escapeHTML(vpn.vlessUrl || vpn.links?.[0] || '')}"></label>
             <label class="text-secondary text-sm">Subscription URL<input class="form-input mono" id="vpnSubUrl" readonly value="${escapeHTML(vpn.subscriptionUrl)}"></label>
-            <label class="text-secondary text-sm">JSON URL<input class="form-input mono" id="vpnJsonUrl" readonly value="${escapeHTML(vpn.jsonUrl)}"></label>
-            <label class="text-secondary text-sm">Clash URL<input class="form-input mono" id="vpnClashUrl" readonly value="${escapeHTML(vpn.clashUrl)}"></label>
-            <div class="flex gap-2" style="flex-wrap:wrap;"><button class="btn btn-sm btn-primary" id="btnCopySub">Sao chép sub URL</button><button class="btn btn-sm btn-secondary" id="btnCopyJson">Sao chép JSON URL</button><button class="btn btn-sm btn-secondary" id="btnCopyClash">Sao chép Clash URL</button></div>
+            <div class="flex gap-2" style="flex-wrap:wrap;"><button class="btn btn-sm btn-primary" id="btnCopyVless">Sao chép VLESS URL</button><button class="btn btn-sm btn-secondary" id="btnCopySub">Sao chép subscription URL</button></div>
             ${vpn.warning ? `<small class="text-secondary">${escapeHTML(vpn.warning)}</small>` : ''}
           </div>
         </div>` : `<div class="plan-empty-state"><strong>Chưa có subscription VPN</strong><span>Sau khi đơn được admin xác nhận thanh toán, hãy bấm “Đồng bộ máy chủ về app” để tạo client trên 3x-ui.</span></div>`}
@@ -195,12 +194,11 @@ PAGES['#/dashboard'] = async (root) => {
   const copyVpnValue = async (id) => {
     const input = qs(id, root);
     if (!input) return;
-    try { await navigator.clipboard.writeText(input.value); showToast({ type: 'success', title: 'Đã sao chép URL subscription.' }); }
-    catch { input.select(); document.execCommand('copy'); showToast({ type: 'success', title: 'Đã sao chép URL subscription.' }); }
+    try { await navigator.clipboard.writeText(input.value); showToast({ type: 'success', title: 'Đã sao chép liên kết VLESS.' }); }
+    catch { input.select(); document.execCommand('copy'); showToast({ type: 'success', title: 'Đã sao chép liên kết VLESS.' }); }
   };
+  qs('#btnCopyVless', root)?.addEventListener('click', () => copyVpnValue('#vpnVlessUrl'));
   qs('#btnCopySub', root)?.addEventListener('click', () => copyVpnValue('#vpnSubUrl'));
-  qs('#btnCopyJson', root)?.addEventListener('click', () => copyVpnValue('#vpnJsonUrl'));
-  qs('#btnCopyClash', root)?.addEventListener('click', () => copyVpnValue('#vpnClashUrl'));
   const syncTrigger = qs('#btnSyncApp', root);
   const getSyncData = async () => {
     if (vpn?.subscriptionUrl) return vpn;
@@ -223,10 +221,8 @@ PAGES['#/dashboard'] = async (root) => {
     const backdrop = openModal({
       title: 'Đồng bộ máy chủ về app',
       bodyHTML: `<div class="sync-picker" role="menu" aria-label="Tùy chọn đồng bộ ứng dụng">
-        <button class="sync-picker__option" type="button" role="menuitem" data-sync-action="copy"><span class="sync-picker__icon">${icon('copy')}</span><span>Sao chép liên kết</span></button>
-        <button class="sync-picker__option" type="button" role="menuitem" data-sync-action="qr"><span class="sync-picker__icon">${icon('grid')}</span><span>Quét mã QR để đăng ký</span></button>
-        <button class="sync-picker__option" type="button" role="menuitem" data-sync-action="singbox"><span class="sync-picker__app-icon sync-picker__app-icon--box">◈</span><span>Nhập vào Sing-box</span></button>
-        <button class="sync-picker__option" type="button" role="menuitem" data-sync-action="clash"><span class="sync-picker__app-icon sync-picker__app-icon--clash">M</span><span>Nhập vào ClashMeta</span></button>
+        <button class="sync-picker__option" type="button" role="menuitem" data-sync-action="copy"><span class="sync-picker__icon">${icon('copy')}</span><span>Sao chép subscription URL</span></button>
+        <button class="sync-picker__option" type="button" role="menuitem" data-sync-action="qr"><span class="sync-picker__icon">${icon('grid')}</span><span>Quét mã QR subscription</span></button>
       </div>`,
       size: '340px',
       onMount: (modalBackdrop) => {
@@ -248,7 +244,7 @@ PAGES['#/dashboard'] = async (root) => {
             return;
           }
           if (action === 'qr') {
-            const qrUrl = buildDemoQrDataUrl(syncLink);
+            const qrUrl = syncData.qrDataUrl || buildDemoQrDataUrl(syncLink);
             openModal({
               title: 'Quét mã QR để đăng ký',
               bodyHTML: `<div class="sync-qr"><div class="topup-modal__qr-wrap"><img src="${qrUrl}" alt="Mã QR liên kết máy chủ" style="width:220px;height:220px;background:#fff;padding:10px;border-radius:12px;"></div><p class="text-secondary text-sm">Dùng camera hoặc ứng dụng VPN để quét liên kết máy chủ.</p></div>`,
@@ -256,11 +252,8 @@ PAGES['#/dashboard'] = async (root) => {
             });
             return;
           }
-          const importSource = action === 'singbox' ? (syncData.jsonUrl || syncLink) : (syncData.clashUrl || syncLink);
-          const importUrl = action === 'singbox'
-            ? `sing-box://import-remote-profile?url=${encodeURIComponent(importSource)}`
-            : `clash://install-config?url=${encodeURIComponent(importSource)}`;
-          window.location.assign(importUrl);
+          if (action === 'copy') return;
+
         }));
       },
     });

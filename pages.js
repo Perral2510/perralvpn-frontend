@@ -163,12 +163,13 @@ PAGES['#/dashboard'] = async (root) => {
     }
     const result = await RealAPI.syncVpnSubscription();
     if (!result.ok) {
-      showToast({ type: 'error', title: 'Lỗi server' });
+      showToast({ type: 'error', title: result.error || 'Không thể đồng bộ subscription.' });
       return null;
     }
+    if (result.data?.subscriptionUrl) return result.data;
     const refreshed = await RealAPI.getVpnSubscription();
     if (refreshed?.ok && refreshed.data?.subscriptionUrl) return refreshed.data;
-    showToast({ type: 'error', title: 'Máy chủ chưa trả về liên kết subscription.' });
+    showToast({ type: 'error', title: refreshed?.error || 'Máy chủ chưa trả về liên kết subscription.' });
     return null;
   };
   const openSyncPicker = () => {

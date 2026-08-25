@@ -28,12 +28,13 @@ PAGES['#/manage-plan'] = async (root) => {
   const maxBytes = Number(data.dataMaxBytes || 0);
   const machinesUsed = Number(data.machinesUsed || 0);
   const machinesMax = Number(data.machinesMax || 0);
+  const compactNumber = (value) => String(Number(value.toFixed(2)));
   const formatData = (bytes) => {
     if (!Number.isFinite(bytes) || bytes <= 0) return '0 KB';
-    if (bytes < 1024 ** 2) return `${(bytes / 1024).toFixed(2).replace(/\\.00$/, '')} KB`;
-    if (bytes < 1024 ** 3) return `${(bytes / (1024 ** 2)).toFixed(2).replace(/\\.00$/, '')} MB`;
+    if (bytes < 1024 ** 2) return `${compactNumber(bytes / 1024)} KB`;
+    if (bytes < 1024 ** 3) return `${compactNumber(bytes / (1024 ** 2))} MB`;
     const gb = bytes / (1024 ** 3);
-    return `${gb >= 100 ? gb.toFixed(0) : gb.toFixed(2).replace(/\\.00$/, '')} GB`;
+    return `${compactNumber(gb)} GB`;
   };
   const dataLabel = maxBytes > 0 ? `${formatData(usedBytes)} / ${formatData(maxBytes)}` : `${formatData(usedBytes)} / Không giới hạn`;
   const dataPercent = maxBytes > 0 ? Math.min(100, Math.max(0, Math.round((usedBytes / maxBytes) * 100))) : 0;

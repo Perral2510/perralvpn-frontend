@@ -656,3 +656,13 @@ body.auth-mode .site-watermark-bg{display:none}
 :root[data-theme="dark"] .sync-picker-modal{border-color:var(--border-color);box-shadow:0 24px 64px rgba(0,0,0,.56)}
 :root[data-theme="dark"] .sync-picker__option:hover,:root[data-theme="dark"] .sync-picker__option:focus-visible{background:color-mix(in srgb,var(--brand-500) 16%,var(--bg-surface))}
 @media (max-width:520px){.sync-picker-modal{width:min(340px,calc(100vw - 32px));max-width:none!important}.sync-picker__option{min-height:52px}}
+
+
+/* ---------- Package specification rows ---------- */
+.plan-spec-list{display:grid;gap:7px;margin:0 0 18px;padding:0;list-style:none;flex:1}
+.plan-spec-list li{display:flex;align-items:center;gap:11px;min-height:34px;padding:5px 9px;border:1px solid color-mix(in srgb,#273247 82%,var(--border-color));border-radius:2px;background:linear-gradient(90deg,#111827,#182132);color:#aeb8c8;font-size:12px;font-weight:700;line-height:1.25}
+.plan-spec-list li strong{color:#f7f9fc;font-weight:800}
+.plan-spec-list__check{display:grid;place-items:center;flex:0 0 24px;width:24px;height:24px;border-radius:50%;background:#123c36;color:#53e69e;box-shadow:inset 0 0 0 1px rgba(83,230,158,.18);font-size:13px}
+.plan-spec-list__check .icon{width:14px;height:14px;stroke-width:3}
+:root[data-theme="dark"] .plan-spec-list li{background:linear-gradient(90deg,#101722,#182132);border-color:#253044;color:#aeb8c8}
+@media (max-width:520px){.plan-spec-list li{font-size:11px;gap:8px}.plan-spec-list__check{flex-basis:22px;width:22px;height:22px}}

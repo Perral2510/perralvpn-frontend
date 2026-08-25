@@ -28,13 +28,11 @@ PAGES['#/plan'] = async (root) => {
         ${p.popular ? `<span class="badge badge-info" style="align-self:flex-start;margin-bottom:10px;">${t('popular')}</span>` : ''}
         <div style="font-family:var(--font-display);font-weight:600;font-size:16px;margin-bottom:4px;">${escapeHTML(p.name)}</div>
         <div style="margin-bottom:14px;"><span style="font-size:24px;font-weight:700;color:var(--brand-500);font-family:var(--font-display);">${formatCurrency(p.price)}</span> <span class="text-secondary text-sm">${p.lifetime ? 'thanh toán một lần' : t('per_month')}</span></div>
-        <div class="grid grid-2 text-sm" style="margin-bottom:14px;row-gap:8px;">
-          <div><div class="text-secondary">${t('capacity')}</div><div class="mono">${escapeHTML(p.capacity)}</div></div>
-          <div><div class="text-secondary">${t('speed')}</div><div class="mono">${escapeHTML(p.speed)}</div></div>
-          <div><div class="text-secondary">${t('device_limit')}</div><div class="mono">${p.devices}</div></div>
-        </div>
-        <ul style="margin-bottom:18px;flex:1;">
-          ${p.features.map(f => `<li class="flex items-center gap-2 text-sm" style="margin-bottom:8px;color:var(--text-secondary);"><span style="color:var(--success-500);">${icon('check')}</span>${escapeHTML(f)}</li>`).join('')}
+        <ul class="plan-spec-list" aria-label="Thông tin gói dịch vụ">
+          <li><span class="plan-spec-list__check">${icon('check')}</span><span>Nền: <strong>${escapeHTML(p.base || (/không nền/i.test(p.name || '') ? '0 nền' : '0 nền'))}</strong></span></li>
+          <li><span class="plan-spec-list__check">${icon('check')}</span><span>Dung lượng: <strong>${escapeHTML(p.capacity || 'Không giới hạn')}</strong></span></li>
+          <li><span class="plan-spec-list__check">${icon('check')}</span><span>Thiết bị: <strong>${escapeHTML(String(p.devices ?? 0))}</strong></span></li>
+          <li><span class="plan-spec-list__check">${icon('check')}</span><span>Hỗ trợ SIM: <strong>${escapeHTML(p.simSupport || (/vina/i.test(`${p.name || ''} ${p.category || ''}`) ? 'Vina' : 'Tất cả'))}</strong></span></li>
         </ul>
         <button class="btn btn-primary btn-block" data-buy="${p.id}">${t('buy_now')}</button>
       </div>

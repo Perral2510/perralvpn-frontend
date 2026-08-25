@@ -9,8 +9,8 @@
 const CYCLE_OPTIONS = [
   { key: '1', months: 1, discount: 0 },
   { key: '3', months: 3, discount: 0.05 },
-  { key: '6', months: 6, discount: 0.06 },
-  { key: '12', months: 12, discount: 0.07 },
+  { key: '6', months: 6, discount: 0.07 },
+  { key: '12', months: 12, discount: 0.10 },
 ];
 
 function cyclePrice(plan, cycleKey){
@@ -117,7 +117,7 @@ PAGES['#/checkout'] = async (root) => {
             </div>
 
             <div class="summary-row"><span>${t('subtotal')}</span><span class="mono">${formatCurrency(price.raw)}</span></div>
-            ${price.discount ? `<div class="summary-row"><span>${t('term_discount')} (${Math.round(price.discountRate * 100)}%)</span><span class="mono">-${formatCurrency(price.discount)}</span></div>` : ''}
+            ${price.discount ? `<div class="summary-row"><span>${t('term_discount')}</span><span class="mono">-${formatCurrency(price.discount)}</span></div>` : ''}
             ${promoApplied ? `<div class="summary-row"><span>${t('discount')}</span><span class="mono">-${formatCurrency(promoDiscount)}</span></div>` : ''}
             <div class="summary-row total"><span>${t('total')}</span><span class="amount mono">${formatCurrency(grandTotal)}</span></div>
 

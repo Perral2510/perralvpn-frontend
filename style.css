@@ -684,3 +684,20 @@ body.auth-mode .site-watermark-bg{display:none}
   .dropdown.open .dropdown__menu{animation:dropdown-in .18s var(--ease) both}
 }
 @keyframes dropdown-in{from{opacity:0;transform:translateY(-4px) scale(.98)}to{opacity:1;transform:translateY(0) scale(1)}}
+
+
+/* ---------- Smooth light/dark theme transition ---------- */
+@media (prefers-reduced-motion: no-preference){
+  html.theme-transitioning body,
+  html.theme-transitioning .main-content,
+  html.theme-transitioning .topbar,
+  html.theme-transitioning .card,
+  html.theme-transitioning .plan-spec-list li,
+  html.theme-transitioning .input,
+  html.theme-transitioning .dropdown__menu,
+  html.theme-transitioning .modal,
+  html.theme-transitioning .modal-backdrop{
+    transition:background-color .22s var(--ease),color .22s var(--ease),border-color .22s var(--ease),box-shadow .22s var(--ease),opacity .22s var(--ease)
+  }
+  html.theme-transitioning .site-watermark-bg{transition:opacity .22s var(--ease),filter .22s var(--ease)}
+}

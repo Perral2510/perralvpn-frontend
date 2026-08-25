@@ -128,14 +128,23 @@ function errorState({ onRetryAttr }){
 }
 
 /* ---- Theme ---- */
-function applyTheme(theme){
-  document.documentElement.setAttribute('data-theme', theme);
+let themeTransitionTimer = null;
+function applyTheme(theme, animate = false){
+  const root = document.documentElement;
+  const canAnimate = animate && !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (canAnimate){
+    root.classList.remove('theme-transitioning');
+    root.classList.add('theme-transitioning');
+    window.clearTimeout(themeTransitionTimer);
+    themeTransitionTimer = window.setTimeout(() => root.classList.remove('theme-transitioning'), 240);
+  }
+  root.setAttribute('data-theme', theme);
   STATE.theme = theme;
   const btn = qs('#themeToggle');
   if (btn) btn.innerHTML = theme === 'dark' ? icon('sun') : icon('moon');
 }
 function toggleTheme(){
-  applyTheme(STATE.theme === 'dark' ? 'light' : 'dark');
+  applyTheme(STATE.theme === 'dark' ? 'light' : 'dark', true);
 }
 
 /* ---- Generic dropdown toggling (settings/lang/avatar menus) ---- */

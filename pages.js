@@ -5,7 +5,6 @@
    ========================================================= */
 
 const PAGES = {};
-const APPLE_ID_TRIAL_URL = 'https://idshadow.hoantienviet.com/home?fbclid=IwY2xjawT1QA1wZG9mBWV4dG4DYWVtAjEwAGJyaWQRMTlwWjF0NG9DNU9JODFoWWRzcnRjBmFwcF9pZBAyMjIwMzkxNzg4MjAwODkyAAEe8AobL3EnBU7V0Sy-_jHIZtGyvYEfChEY75Jo-r3TI8geebrKPDYtY6hdWtQ_aem_KVGjXVqzzpbV5brV32EV_g#listing';
 const PROMO_BANNER_IMAGES = ['assets/promo-anime-01.jpg', 'assets/promo-anime-02.jpg', 'assets/promo-anime-03.jpg'];
 const ZALO_GROUP_URL = 'https://zalo.me/g/8kps1zwougt3wzqi57jq';
 const TELEGRAM_GROUP_URL = 'https://t.me/+Nn5cWIk05sNiYTM1';
@@ -153,7 +152,7 @@ PAGES['#/dashboard'] = async (root) => {
   qs('#btnTopup', root).addEventListener('click', () => openTopupModal(accountBalance));
   qs('#btnZalo', root).addEventListener('click', () => window.open(ZALO_GROUP_URL, '_blank', 'noopener,noreferrer'));
   qs('#btnTelegram', root).addEventListener('click', () => window.open(TELEGRAM_GROUP_URL, '_blank', 'noopener,noreferrer'));
-  qs('#btnAppleId', root).addEventListener('click', () => window.open(APPLE_ID_TRIAL_URL, '_blank', 'noopener,noreferrer'));
+  qs('#btnAppleId', root).addEventListener('click', () => openAppleIdModal());
   const syncTrigger = qs('#btnSyncApp', root);
   const getSyncData = async () => {
     showToast({ type: 'info', title: 'Đang đồng bộ subscription...' });
@@ -247,48 +246,21 @@ function buildDemoQrDataUrl(payload){
   return `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(svg)}`;
 }
 
-function openTopupModal(balance){
-  const demoBank = { bank: 'MB Bank', account: '0123456789', owner: 'NGUYEN DUC ANH', content: 'DAV-928471' };
-  const initialAmount = 100000;
-  const qrUrl = (amount) => buildDemoQrDataUrl(`Bank:${demoBank.bank}|STK:${demoBank.account}|ChuTK:${demoBank.owner}|SoTien:${amount}|NoiDung:${demoBank.content}`);
+function openTopupModal(){
   openModal({
-    title: 'Nạp tiền qua QR Bank',
-    bodyHTML: `
-      <div class="topup-modal">
-        <div class="topup-modal__intro"><span class="topup-modal__eyebrow">PERRALVPN WALLET</span><h3>Nạp tiền nhanh chóng</h3><p>Quét mã QR bằng ứng dụng ngân hàng của bạn để cộng tiền vào tài khoản.</p></div>
-        <div class="topup-modal__layout">
-          <div class="topup-modal__qr-panel"><div class="topup-modal__qr-wrap"><img id="topupQr" src="${qrUrl(initialAmount)}" alt="Mã QR chuyển khoản demo"><span class="topup-modal__qr-badge">QR BANK</span></div><small>Thông tin QR demo — sẽ thay bằng QR từ API</small></div>
-          <div class="topup-modal__details">
-            <div class="field"><label>Số tiền muốn nạp</label><div class="topup-amount-input"><input class="input" type="number" min="10000" step="10000" value="${initialAmount}" id="topupAmount"><span>₫</span></div></div>
-            <div class="topup-bank-card"><div><span>Ngân hàng</span><b>${demoBank.bank}</b></div><div><span>Số tài khoản</span><b class="mono">${demoBank.account}</b></div><div><span>Chủ tài khoản</span><b>${demoBank.owner}</b></div><div><span>Nội dung chuyển khoản</span><b class="mono topup-content-code">${demoBank.content}</b></div></div>
-            <div class="topup-note"><span>i</span><p>Vui lòng chuyển <b id="topupAmountPreview">${formatCurrency(initialAmount)}</b> đúng nội dung để hệ thống đối soát.</p></div>
-          </div>
-        </div>
-      </div>
-    `,
-    footerHTML: `<button class="btn btn-secondary" data-act="cancel">${t('cancel')}</button><button class="btn btn-primary" data-act="confirm">Tôi đã chuyển khoản</button>`,
-    onMount: (backdrop) => {
-      const amountInput = backdrop.querySelector('#topupAmount');
-      const qr = backdrop.querySelector('#topupQr');
-      const preview = backdrop.querySelector('#topupAmountPreview');
-      const refresh = () => { const amount = Math.max(10000, Number(amountInput.value || initialAmount)); amountInput.value = amount; preview.textContent = formatCurrency(amount); qr.src = qrUrl(amount); };
-      amountInput.addEventListener('input', refresh);
-      backdrop.querySelector('[data-act="cancel"]').addEventListener('click', closeModal);
-      backdrop.querySelector('[data-act="confirm"]').addEventListener('click', () => { closeModal(); showToast({ type: 'success', title: 'Đã ghi nhận yêu cầu', message: 'Giao diện demo đã sẵn sàng để kết nối API đối soát.' }); });
-    }
+    title: 'Thanh toán qua SePay',
+    bodyHTML: '<p class="mb-0">Vui lòng tạo đơn và thanh toán qua cổng SePay. Website không hiển thị số tài khoản hoặc QR chuyển khoản tĩnh để tránh chuyển nhầm tiền.</p>',
+    footerHTML: `<button class="btn btn-primary" data-act="ok">${t('close')}</button>`,
+    onMount: (backdrop) => backdrop.querySelector('[data-act="ok"]').addEventListener('click', closeModal),
   });
 }
 
 function openAppleIdModal(){
   openModal({
     title: t('get_apple_id'),
-    bodyHTML: `
-      <p>Tài khoản Apple ID dùng thử để tải ứng dụng khu vực khác:</p>
-      <div class="field"><label>Email</label><div class="input mono">trial.apple.us@perralvpn.net</div></div>
-      <div class="field mb-0"><label>Mật khẩu</label><div class="input mono">Trial@2026</div></div>
-    `,
+    bodyHTML: '<p class="mb-0">Tài khoản Apple ID dùng thử không được công khai trên website. Vui lòng liên hệ kênh hỗ trợ chính thức nếu cần trợ giúp cài đặt ứng dụng.</p>',
     footerHTML: `<button class="btn btn-primary" data-act="ok">${t('close')}</button>`,
-    onMount: (backdrop) => backdrop.querySelector('[data-act="ok"]').addEventListener('click', closeModal)
+    onMount: (backdrop) => backdrop.querySelector('[data-act="ok"]').addEventListener('click', closeModal),
   });
 }
 
@@ -368,7 +340,7 @@ PAGES['#/application'] = async (root) => {
         <div class="app-card__top"><div class="app-card__icon">${escapeHTML(app.icon || '◈')}</div><span class="badge ${app.free ? 'badge-success' : 'badge-warning'}">${app.free ? t('free') : t('paid')}</span></div>
         <div class="app-card__name">${escapeHTML(app.name)}</div>
         <div class="text-sm text-secondary" style="margin-bottom:16px;">${t('version')}: <span class="mono">${escapeHTML(app.version)}</span></div>
-        <a class="btn btn-primary btn-block app-download" href="${escapeHTML(app.url || '#')}" target="_blank" rel="noopener noreferrer" data-dl="${active}-${i}">${icon('download')} ${t('download')}</a>
+        <a class="btn btn-primary btn-block app-download" href="${escapeHTML(safeExternalUrl(app.url))}" target="_blank" rel="noopener noreferrer" data-dl="${active}-${i}">${icon('download')} ${t('download')}</a>
       </div>
     `).join('');
     qsa('[data-dl]', listEl).forEach(link => link.addEventListener('click', () => {

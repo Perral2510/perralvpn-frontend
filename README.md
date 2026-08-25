@@ -36,8 +36,11 @@ Mở `http://127.0.0.1:8080` trong trình duyệt. API production vẫn được
 
 ## Bảo mật
 
-Repository này không chứa backend, `.env`, SQLite database, private key hoặc Tunnel token. CORS và session cookie được backend kiểm soát thông qua origin:
+Repository này không chứa backend, `.env`, SQLite database, private key hoặc Tunnel token. CORS và session cookie được backend kiểm soát thông qua các origin frontend thực tế:
 
 ```text
+https://perral.dpdns.org
 https://app.perral.dpdns.org
 ```
+
+File `render.yaml` chứa security headers cho Render Blueprint, gồm CSP, HSTS-equivalent protections at the edge, clickjacking protection, MIME sniffing protection, Referrer Policy và Permissions Policy. Nếu service đã được tạo trực tiếp trong Render Dashboard thay vì đồng bộ bằng Blueprint, hãy thêm các header tương tự tại **Settings → Headers** của Static Site. Đặc biệt không cho phép `unsafe-eval`, không đưa Secret Key SePay, API token, password hoặc session token vào frontend.

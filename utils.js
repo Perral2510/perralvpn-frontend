@@ -21,6 +21,10 @@ function isValidHttpUrl(value){
   }catch{ return false; }
 }
 
+function safeExternalUrl(value, fallback = '#'){
+  return isValidHttpUrl(value) ? String(value) : fallback;
+}
+
 function debounce(fn, wait = 300){
   let timer;
   return (...args) => {

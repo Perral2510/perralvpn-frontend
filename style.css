@@ -785,3 +785,73 @@ body.auth-mode .site-watermark-bg{display:none}
   .page-container > .grid.grid-2 > .card:first-child > .flex.gap-2{grid-template-columns:1fr}
   .page-container > .grid.grid-2 > .card:first-child > .flex.gap-2 .btn{font-size:11px}
 }
+
+
+/* ---------- Mobile dashboard redesign v2 ---------- */
+@media (max-width:600px){
+  :root{--mobile-gutter:14px;--mobile-gap:14px}
+  html,body{width:100%;max-width:100%;overflow-x:hidden}
+  body{font-size:14px}
+  .app-shell{min-width:0}
+  .main-content{min-width:0;width:100%}
+  .topbar{height:58px;padding:0 var(--mobile-gutter);box-shadow:0 1px 0 rgba(25,45,80,.08),0 5px 18px rgba(24,67,120,.06)}
+  .topbar__left{min-width:0;gap:9px}.hamburger{padding:5px}.breadcrumb__current{max-width:calc(100vw - 168px);font-size:15px}
+  .topbar__right{gap:1px}.topbar__right .icon-btn{width:34px;height:34px}.topbar__right .dropdown:nth-child(2){display:none}.avatar-btn{padding:3px}.avatar-btn .avatar{width:32px;height:32px}.avatar-name{display:none}
+  .page-container{width:100%;max-width:none;padding:14px var(--mobile-gutter) 28px}
+  .page-header{margin:0 0 14px}.page-header h1{font-size:22px;line-height:1.15;letter-spacing:-.035em}.page-header p{font-size:13px;margin-top:5px}
+  .page-container>.grid.grid-2{display:grid;grid-template-columns:1fr;gap:var(--mobile-gap)!important;margin-bottom:var(--mobile-gap)!important}
+  .page-container>.grid.grid-2>.card,.dashboard-billing-card,.page-container>.card:last-child{border-radius:17px;padding:16px}
+  .card-title{font-size:15px;line-height:1.25;margin-bottom:14px}
+
+  .carousel{margin-bottom:var(--mobile-gap);border-radius:17px}.carousel__slide{min-height:134px;padding:24px 18px}.carousel__slide h2{max-width:80%;font-size:20px;line-height:1.16}.carousel__slide p{max-width:82%;font-size:12px;line-height:1.45}.carousel__nav{width:30px;height:30px}.carousel__nav.prev{left:9px}.carousel__nav.next{right:9px}
+
+  .page-container>.grid.grid-2>.card:first-child .flex.items-center.gap-3{align-items:center;gap:12px!important;margin-bottom:18px!important}.page-container>.grid.grid-2>.card:first-child .flex.items-center.gap-3>div{min-width:0}.page-container>.grid.grid-2>.card:first-child .flex.items-center.gap-3 strong{display:block;font-size:16px;line-height:1.22;overflow-wrap:anywhere}.page-container>.grid.grid-2>.card:first-child .flex.items-center.gap-3 .text-secondary{font-size:12px;overflow-wrap:anywhere}.page-container>.grid.grid-2>.card:first-child .grid.grid-2{display:grid;grid-template-columns:1fr;gap:11px!important;margin-bottom:18px!important}.page-container>.grid.grid-2>.card:first-child .grid.grid-2>div{display:flex;align-items:baseline;justify-content:space-between;gap:12px}.page-container>.grid.grid-2>.card:first-child .grid.grid-2 .text-secondary{font-size:12px}.page-container>.grid.grid-2>.card:first-child .grid.grid-2 .mono{font-size:12px}
+  .page-container>.grid.grid-2>.card:first-child>.flex.gap-2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.page-container>.grid.grid-2>.card:first-child>.flex.gap-2 .btn{width:100%;min-width:0;min-height:40px;padding:9px 8px;font-size:12px;white-space:nowrap}.page-container>.grid.grid-2>.card:first-child>.flex.gap-2 .btn:last-child{grid-column:auto}
+
+  .plan-card--pro{padding:16px!important}.plan-card--pro .plan-card__pro-head{display:grid;grid-template-columns:42px minmax(0,1fr) auto;align-items:start;gap:10px;flex-wrap:nowrap}.plan-card--pro .plan-card__pro-mark{width:42px;height:42px}.plan-card--pro .plan-card__pro-title{min-width:0;padding-top:1px}.plan-card--pro .plan-card__pro-title>span{font-size:9px;letter-spacing:.12em}.plan-card--pro .plan-card__pro-title h3{font-size:17px;line-height:1.12;letter-spacing:-.02em;overflow-wrap:anywhere}.plan-card--pro .plan-card__pro-status{align-self:start;margin:0;max-width:108px;padding:5px 7px;font-size:9px;white-space:nowrap}
+  .plan-card--pro .plan-card__pro-subhead{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;margin-top:17px;padding:12px 0 13px;font-size:11px}.plan-card--pro .plan-card__pro-subhead span:last-child{text-align:right}.plan-card--pro .plan-card__pro-metrics{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.plan-card--pro .plan-metric{padding:12px 10px;border-radius:11px}.plan-card--pro .plan-metric>span{font-size:10px}.plan-card--pro .plan-metric>strong{font-size:17px;line-height:1.15}.plan-card--pro .plan-metric>small{font-size:9px}.plan-card--pro .plan-metric:last-child{grid-column:1/-1}
+  .plan-card--pro .plan-card__actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-top:14px}.plan-card--pro .plan-card__actions .btn{width:100%;min-width:0;min-height:38px;padding:8px 6px;font-size:11px;overflow:hidden;text-overflow:ellipsis}.plan-card--pro .plan-card__actions .btn:last-child{grid-column:1/-1}
+  .plan-card--pro .plan-card__sync{display:grid;grid-template-columns:minmax(0,1.28fr) minmax(112px,.92fr);align-items:center;gap:8px;margin-top:14px;padding:10px 9px;min-height:92px}.plan-card--pro .plan-card__sync-row{width:auto;min-width:0}.plan-card--pro .plan-card__sync-row .btn{width:100%;min-width:0!important;min-height:42px;padding:8px 7px;font-size:11px;line-height:1.2;white-space:normal}.plan-card--pro .plan-card__platforms{display:grid;grid-template-columns:repeat(3,30px);grid-template-rows:30px 30px;justify-content:center;align-items:center;gap:5px 7px;width:auto}.plan-card--pro .plan-card__platforms span,.plan-card--pro .plan-card__platforms .platform-icon{width:30px;height:30px}.plan-card--pro .plan-card__platforms span:nth-child(4){grid-column:2}
+
+  .dashboard-billing-card{margin-top:var(--mobile-gap)}.dashboard-billing-card__head{gap:10px;margin-bottom:14px}.dashboard-billing-card__head>div{min-width:0}.dashboard-billing-card__eyebrow{font-size:9px}.dashboard-billing-card h2{font-size:19px;line-height:1.15}.dashboard-billing-card p{font-size:11px;line-height:1.45}.dashboard-billing-card__icon{width:38px;height:38px;flex:0 0 38px}.dashboard-billing-card__body{display:grid;grid-template-columns:1fr;gap:9px}.dashboard-billing-card__active,.dashboard-billing-card__status{min-width:0;padding:13px 12px;border-radius:12px}.dashboard-billing-card__active strong,.dashboard-billing-card__status strong{font-size:14px;overflow-wrap:anywhere}.dashboard-billing-card__active small,.dashboard-billing-card__status small{font-size:10px}.dashboard-billing-card__actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-top:1px}.dashboard-billing-card__actions .btn{width:100%;min-width:0;min-height:40px;padding:8px 6px;font-size:11px;white-space:normal;line-height:1.25}
+  .page-container>.card:last-child{margin-top:var(--mobile-gap)}.page-container>.card:last-child .card-title{font-size:17px}.page-container>.card:last-child .grid-3{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.page-container>.card:last-child .nav-item{justify-content:center;min-height:48px;padding:10px 7px;font-size:12px;line-height:1.2;text-align:center;white-space:normal}.page-container>.card:last-child .nav-item .icon{width:18px;height:18px}
+  .support-fab{right:14px;bottom:14px;width:46px;height:46px;padding:0;justify-content:center}.site-watermark-bg,.site-watermark{display:none!important}
+}
+@media (max-width:380px){
+  .page-container{padding-left:11px;padding-right:11px}.page-container>.grid.grid-2>.card,.dashboard-billing-card,.page-container>.card:last-child{padding:14px}.plan-card--pro{padding:14px!important}.plan-card--pro .plan-card__pro-head{grid-template-columns:38px minmax(0,1fr)}.plan-card--pro .plan-card__pro-mark{width:38px;height:38px}.plan-card--pro .plan-card__pro-status{grid-column:2;justify-self:start;margin-top:-4px}.plan-card--pro .plan-card__pro-title h3{font-size:16px}.plan-card--pro .plan-card__sync{grid-template-columns:minmax(0,1.18fr) minmax(100px,.82fr);padding-left:7px;padding-right:7px}.plan-card--pro .plan-card__sync-row .btn{font-size:10px}.plan-card--pro .plan-card__platforms{grid-template-columns:repeat(3,27px);grid-template-rows:27px 27px;gap:4px 5px}.plan-card--pro .plan-card__platforms span,.plan-card--pro .plan-card__platforms .platform-icon{width:27px;height:27px}.dashboard-billing-card h2{font-size:17px}
+}
+
+
+/* ---------- Mobile dashboard polish v3 ---------- */
+@media (max-width:600px){
+  .page-container{padding-top:16px}
+  .page-header h1{font-size:21px}.page-header p{font-size:13px;margin-top:6px}
+  .carousel__slide{min-height:176px;padding:26px 18px}.carousel__slide h2{font-size:21px;max-width:78%}.carousel__slide p{font-size:13px;max-width:80%}
+  .page-container>.grid.grid-2>.card:first-child{padding:18px}
+  .page-container>.grid.grid-2>.card:first-child .card-title{font-size:17px;margin-bottom:16px}
+  .page-container>.grid.grid-2>.card:first-child .flex.items-center.gap-3{gap:13px!important;margin-bottom:20px!important}
+  .page-container>.grid.grid-2>.card:first-child .flex.items-center.gap-3 strong{font-size:17px}
+  .page-container>.grid.grid-2>.card:first-child .flex.items-center.gap-3 .text-secondary{font-size:12px;margin-top:3px}
+  .page-container>.grid.grid-2>.card:first-child .grid.grid-2{gap:14px!important;margin-bottom:20px!important}
+  .page-container>.grid.grid-2>.card:first-child .grid.grid-2>div{display:block}
+  .page-container>.grid.grid-2>.card:first-child .grid.grid-2 .text-secondary{font-size:13px;margin-bottom:2px}
+  .page-container>.grid.grid-2>.card:first-child .grid.grid-2 .mono{font-size:13px}
+  .page-container>.grid.grid-2>.card:first-child>.flex.gap-2{gap:8px}
+  .page-container>.grid.grid-2>.card:first-child>.flex.gap-2 .btn{min-height:42px;font-size:12px}
+  .plan-card--pro .plan-card__pro-subhead{margin-top:18px;padding-top:13px;padding-bottom:14px}
+  .plan-card--pro .plan-metric{min-height:72px;padding:12px 10px}
+  .plan-card--pro .plan-card__actions .btn{min-height:40px}
+  .plan-card--pro .plan-card__sync{min-height:98px}
+  .dashboard-billing-card{padding:18px!important}
+  .dashboard-billing-card h2{font-size:20px}
+  .dashboard-billing-card__active,.dashboard-billing-card__status{padding:14px 13px;min-height:74px}
+  .dashboard-billing-card__actions .btn{min-height:42px}
+  .page-container>.card:last-child{padding:18px}
+  .page-container>.card:last-child .card-title{font-size:18px}
+}
+@media (max-width:380px){
+  .carousel__slide{min-height:164px}.carousel__slide h2{font-size:19px}
+  .page-container>.grid.grid-2>.card:first-child{padding:16px}
+  .page-container>.grid.grid-2>.card:first-child .card-title{font-size:16px}
+  .dashboard-billing-card h2{font-size:18px}
+}

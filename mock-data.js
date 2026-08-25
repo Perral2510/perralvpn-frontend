@@ -103,7 +103,6 @@ const MockDB = {
     { date: "2026-08-20", upload: 1.9, download: 11.2 },
     { date: "2026-08-21", upload: 1.1, download: 6.6 },
   ],
-  sniOptions: ["www.microsoft.com", "www.apple.com", "www.cloudflare.com", "www.amazon.com", "www.icloud.com"],
 };
 
 /* Simulated latency so loading/skeleton states are visible */
@@ -131,7 +130,6 @@ const MockAPI = {
   downloadApp: (name) => delay({ ok: true, name }, 1000),
 
   getNodes: () => delay(MockDB.nodes, 600),
-  saveSNI: (value) => delay({ ok: true, value }, 700),
   redeemGiftcode: (code) => {
     const ok = code.trim().toUpperCase().startsWith("DAV");
     return delay({ ok }, 800);

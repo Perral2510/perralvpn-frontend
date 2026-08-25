@@ -166,17 +166,6 @@ PAGES['#/changepro'] = async (root) => {
       ${pageHeader('util_title', 'util_desc')}
       <div class="grid grid-2">
         <div class="card">
-          <div class="card-title">${t('util_sni_title')}</div>
-          <p class="text-sm">${t('util_sni_desc')}</p>
-          <div class="field" id="sniField">
-            <label for="sniSelect">SNI</label>
-            <select class="input" id="sniSelect">${MockDB.sniOptions.map(s => `<option>${escapeHTML(s)}</option>`).join('')}</select>
-            <div class="error-msg">${t('required_field')}</div>
-          </div>
-          <button class="btn btn-primary" id="btnSaveSni">${t('save')}</button>
-        </div>
-
-        <div class="card">
           <div class="card-title">${t('util_giftcode_title')}</div>
           <p class="text-sm">${t('util_giftcode_desc')}</p>
           <div class="field" id="giftField">
@@ -200,32 +189,9 @@ PAGES['#/changepro'] = async (root) => {
           <button class="btn btn-primary" id="btnSaveAvatar">${t('save')}</button>
         </div>
 
-        <div class="card">
-          <div class="card-title">${t('util_subweb_title')}</div>
-          <p class="text-sm">${t('util_subweb_desc')}</p>
-          ${MockDB.invite.subdomainNS.map((ns, i) => `
-            <div class="input-group" style="margin-bottom:10px;">
-              <div class="input mono" style="flex:1;">${escapeHTML(ns)}</div>
-              <button class="btn btn-secondary" data-copy="${escapeHTML(ns)}">${icon('copy')} ${t('copy')}</button>
-            </div>
-          `).join('')}
-        </div>
       </div>
     </div>
   `;
-
-  // SNI save with validation
-  qs('#btnSaveSni', root).addEventListener('click', async (e) => {
-    const field = qs('#sniField', root);
-    const value = qs('#sniSelect', root).value;
-    if (!value){ field.classList.add('has-error'); return; }
-    field.classList.remove('has-error');
-    const btn = e.currentTarget;
-    btn.disabled = true; btn.innerHTML = `<span class="spinner"></span> ${t('loading')}`;
-    await MockAPI.saveSNI(value);
-    btn.disabled = false; btn.innerHTML = t('save');
-    showToast({ type: 'success', title: t('toast_sni_saved'), message: value });
-  });
 
   // Giftcode redeem with validation
   qs('#btnRedeem', root).addEventListener('click', async (e) => {

@@ -82,7 +82,7 @@ PAGES['#/dashboard'] = async (root) => {
         <div class="card">
           <div class="card-title">${t('account_info')}</div>
           <div class="flex items-center gap-3 mb-0" style="margin-bottom:16px;">
-            <img class="avatar" style="width:52px;height:52px;" src="${user.avatar || 'https://api.dicebear.com/7.x/initials/svg?seed=' + encodeURIComponent(user.name)}" alt="${escapeHTML(user.name)}" loading="lazy">
+            <img class="avatar" style="width:52px;height:52px;" src="${user.avatar || EMPTY_AVATAR_DATA_URL}" alt="${escapeHTML(user.name)}" loading="lazy">
             <div>
               <div class="flex items-center gap-2"><strong>${escapeHTML(user.name)}</strong> ${user.verified ? `<span class="badge badge-info">${icon('check')} ${t('verified')}</span>` : ''}</div>
               <div class="text-secondary text-sm">${escapeHTML(user.email)}</div>

@@ -17,10 +17,11 @@ function buildSidebarNav(){
   }).join('');
 }
 
+const EMPTY_AVATAR_DATA_URL = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='32' r='31' fill='%23ffffff'/%3E%3C/svg%3E";
+
 function updateHeaderIdentity(user){
-  if (!user) return;
-  const name = user.name || 'PerralVPN';
-  const avatarUrl = user.avatar || `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(name)}`;
+  const name = user?.name || 'Chưa đăng nhập';
+  const avatarUrl = user?.avatar || EMPTY_AVATAR_DATA_URL;
   const avatarName = qs('#avatarName');
   const avatar = document.querySelector('.avatar-btn .avatar');
   if (avatarName) avatarName.textContent = name;
@@ -35,7 +36,7 @@ function refreshStaticText(){
   qs('#menuChangePassword').innerHTML = `${icon('settings')} ${t('change_password')}`;
   qs('#menuLogout').innerHTML = `${icon('x')} ${t('logout')}`;
   qs('#supportLabel').textContent = t('support_chat');
-  updateHeaderIdentity(MockDB.user);
+  updateHeaderIdentity(typeof sessionUser !== 'undefined' ? sessionUser : null);
   buildSidebarNav();
 }
 
@@ -69,6 +70,7 @@ function setupAccountMenu(){
       confirmLabel: t('logout'),
       onConfirm: async () => {
         await RealAPI.logout();
+        updateHeaderIdentity(null);
         showToast({ type: 'info', title: t('logout') });
         location.hash = '#/login';
       }

@@ -303,7 +303,8 @@ PAGES['#/control'] = async (root) => {
       ${skeletonCards(3)}
     </div>
   `;
-  const [user, plan] = await Promise.all([MockAPI.getUser(), MockAPI.getCurrentPlan()]);
+  const [user, plan] = await Promise.all([RealAPI.getUser().catch(() => null), MockAPI.getCurrentPlan()]);
+  if (!user) { location.hash = '#/login'; return; }
 
   const container = qs('.page-container', root);
   container.innerHTML = `
@@ -340,7 +341,7 @@ PAGES['#/account'] = async (root) => {
     <div class="page-container page-enter account-page">
       <div class="account-hero">
         <div class="account-hero__identity">
-          <img class="account-hero__avatar" src="https://api.dicebear.com/7.x/initials/svg?seed=DA" alt="">
+          <img class="account-hero__avatar" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='32' r='31' fill='%23ffffff'/%3E%3C/svg%3E" alt="Chưa đăng nhập">
           <div><span class="account-kicker">PERRALVPN ACCOUNT</span><h1>Quản lý tài khoản</h1><p>Cập nhật hồ sơ, bảo mật và các thiết bị đang sử dụng.</p></div>
         </div>
         <span class="account-verified" id="accountVerified">${icon('check')} Đang kiểm tra</span>
@@ -349,7 +350,7 @@ PAGES['#/account'] = async (root) => {
         <div class="account-main-column">
           <section class="card account-section">
             <div class="account-section__head"><div><span class="account-section__eyebrow">HỒ SƠ CÁ NHÂN</span><h2>Thông tin tài khoản</h2></div><span class="account-section__icon">${icon('user')}</span></div>
-            <div class="account-profile-summary"><div class="account-mini-avatar" id="accountMiniAvatar">DA</div><div><strong id="accountSummaryName">Đang tải...</strong><span id="accountSummaryEmail">Đang tải...</span></div><span class="account-id-pill mono" id="accountUserId">—</span></div>
+            <div class="account-profile-summary"><div class="account-mini-avatar" id="accountMiniAvatar">—</div><div><strong id="accountSummaryName">Đang tải...</strong><span id="accountSummaryEmail">Đang tải...</span></div><span class="account-id-pill mono" id="accountUserId">—</span></div>
             <form id="profileForm" class="account-form">
               <div class="grid grid-2"><div class="field"><label>Họ và tên</label><input class="input" id="profileName" value="" autocomplete="name"></div><div class="field"><label>Email</label><input class="input" id="profileEmail" value="" type="email" disabled></div></div>
               <div class="grid grid-2"><div class="field"><label>Số điện thoại</label><input class="input" id="profilePhone" value="" autocomplete="tel" placeholder="Chưa cập nhật"></div><div class="field"><label>Ngày tham gia</label><input class="input" id="profileJoinDate" value="" disabled></div></div>
@@ -377,8 +378,8 @@ PAGES['#/account'] = async (root) => {
   }
   const sessions = await RealAPI.getSessions();
   const initials = String(user.name || 'DA').split(/\s+/).filter(Boolean).map(part => part[0]).slice(-2).join('').toUpperCase() || 'DA';
-  const avatar = qs('.account-hero__avatar', root); if (avatar) { avatar.src = user.avatar || `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(user.name)}`; avatar.alt = user.name; }
-  const topAvatar = document.querySelector('.avatar-btn .avatar'); if (topAvatar) { topAvatar.src = user.avatar || `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(user.name)}`; topAvatar.alt = user.name; }
+  const avatar = qs('.account-hero__avatar', root); if (avatar) { avatar.src = user.avatar || EMPTY_AVATAR_DATA_URL; avatar.alt = user.name; }
+  const topAvatar = document.querySelector('.avatar-btn .avatar'); if (topAvatar) { topAvatar.src = user.avatar || EMPTY_AVATAR_DATA_URL; topAvatar.alt = user.name; }
   const topAvatarName = qs('#avatarName'); if (topAvatarName) topAvatarName.textContent = user.name;
   qs('#accountMiniAvatar', root).textContent = initials;
   qs('#profileName', root).value = user.name || '';

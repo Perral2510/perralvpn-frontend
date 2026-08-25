@@ -6,13 +6,13 @@
 
 const MockDB = {
   user: {
-    name: "Nguyễn Đức Anh",
-    email: "Perral@example.com",
-    verified: true,
+    name: "Chưa đăng nhập",
+    email: "",
+    verified: false,
     avatar: "",
-    joinDate: "2023-11-02",
-    userId: "DAV-928471",
-    balance: 128000,
+    joinDate: "",
+    userId: "",
+    balance: 0,
   },
   currentPlan: {
     name: "VINA NỀN NEW 1",

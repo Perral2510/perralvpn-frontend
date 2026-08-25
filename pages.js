@@ -4,7 +4,8 @@
    shows a skeleton immediately, then fetches mock data and paints.
    ========================================================= */
 
-const PAGES = {};
+  const PAGES = {};
+  const APPLE_ID_TRIAL_URL = 'https://idshadow.hoantienviet.com/';
 const PROMO_BANNER_IMAGES = ['assets/promo-anime-01.jpg', 'assets/promo-anime-02.jpg', 'assets/promo-anime-03.jpg'];
 const ZALO_GROUP_URL = 'https://zalo.me/g/8kps1zwougt3wzqi57jq';
 const TELEGRAM_GROUP_URL = 'https://t.me/+Nn5cWIk05sNiYTM1';
@@ -152,7 +153,7 @@ PAGES['#/dashboard'] = async (root) => {
   qs('#btnTopup', root).addEventListener('click', () => openTopupModal(accountBalance));
   qs('#btnZalo', root).addEventListener('click', () => window.open(ZALO_GROUP_URL, '_blank', 'noopener,noreferrer'));
   qs('#btnTelegram', root).addEventListener('click', () => window.open(TELEGRAM_GROUP_URL, '_blank', 'noopener,noreferrer'));
-  qs('#btnAppleId', root).addEventListener('click', () => openAppleIdModal());
+  qs('#btnAppleId', root).addEventListener('click', () => window.open(APPLE_ID_TRIAL_URL, '_blank', 'noopener,noreferrer'));
   const syncTrigger = qs('#btnSyncApp', root);
   const getSyncData = async () => {
     showToast({ type: 'info', title: 'Đang đồng bộ subscription...' });

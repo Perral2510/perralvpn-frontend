@@ -36,7 +36,6 @@ const MockDB = {
   ],
   knowledgeArticles: [
     { id: 4, title: "Hướng dẫn lấy ID Apple dùng thử", titleEn: "Getting a trial Apple ID", date: "2026-07-20", content: "Vào Trang chủ, bấm 'Lấy ID Apple' để nhận tài khoản dùng thử cho App Store khu vực khác." },
-    { id: 6, title: "Thiết lập web con cho cộng tác viên", titleEn: "Sub-domain setup for affiliates", date: "2026-06-30", content: "Trỏ bản ghi NS về hệ thống của chúng tôi để vận hành trang giới thiệu riêng." },
   ],
   apps: {
     Android: [

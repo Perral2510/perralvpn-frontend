@@ -17,11 +17,24 @@ function buildSidebarNav(){
   }).join('');
 }
 
-const EMPTY_AVATAR_DATA_URL = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='32' r='31' fill='%23ffffff'/%3E%3C/svg%3E";
+function getUserInitials(name, fallback = 'PR'){
+  const parts = String(name || '').trim().split(/\s+/).filter(Boolean);
+  if (!parts.length) return fallback;
+  if (parts.length === 1) return parts[0].slice(0, 2).toUpperCase();
+  return parts.slice(-2).map(part => part[0]).join('').toUpperCase();
+}
+
+function initialsAvatarUrl(name, fallback = 'PR'){
+  const initials = getUserInitials(name, fallback).replace(/[^\p{L}\p{N}]/gu, '').slice(0, 2) || fallback;
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><circle cx="32" cy="32" r="31" fill="#2F6FED"/><text x="32" y="37" text-anchor="middle" font-family="Arial,sans-serif" font-size="22" font-weight="700" fill="#ffffff">${initials}</text></svg>`;
+  return `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(svg)}`;
+}
+
+const EMPTY_AVATAR_DATA_URL = initialsAvatarUrl('PR');
 
 function updateHeaderIdentity(user){
   const name = user?.name || 'Chưa đăng nhập';
-  const avatarUrl = user?.avatar || EMPTY_AVATAR_DATA_URL;
+  const avatarUrl = user?.avatar || initialsAvatarUrl(user?.name, 'PR');
   const avatarName = qs('#avatarName');
   const avatar = document.querySelector('.avatar-btn .avatar');
   if (avatarName) avatarName.textContent = name;

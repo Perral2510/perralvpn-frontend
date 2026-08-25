@@ -341,7 +341,7 @@ PAGES['#/account'] = async (root) => {
     <div class="page-container page-enter account-page">
       <div class="account-hero">
         <div class="account-hero__identity">
-          <img class="account-hero__avatar" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='32' r='31' fill='%23ffffff'/%3E%3C/svg%3E" alt="Chưa đăng nhập">
+          <img class="account-hero__avatar" src="data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='32' r='31' fill='%232F6FED'/%3E%3Ctext x='32' y='37' text-anchor='middle' font-family='Arial,sans-serif' font-size='22' font-weight='700' fill='%23ffffff'%3EPR%3C/text%3E%3C/svg%3E" alt="Chưa đăng nhập">
           <div><span class="account-kicker">PERRALVPN ACCOUNT</span><h1>Quản lý tài khoản</h1><p>Cập nhật hồ sơ, bảo mật và các thiết bị đang sử dụng.</p></div>
         </div>
         <span class="account-verified" id="accountVerified">${icon('check')} Đang kiểm tra</span>
@@ -350,7 +350,7 @@ PAGES['#/account'] = async (root) => {
         <div class="account-main-column">
           <section class="card account-section">
             <div class="account-section__head"><div><span class="account-section__eyebrow">HỒ SƠ CÁ NHÂN</span><h2>Thông tin tài khoản</h2></div><span class="account-section__icon">${icon('user')}</span></div>
-            <div class="account-profile-summary"><div class="account-mini-avatar" id="accountMiniAvatar">—</div><div><strong id="accountSummaryName">Đang tải...</strong><span id="accountSummaryEmail">Đang tải...</span></div><span class="account-id-pill mono" id="accountUserId">—</span></div>
+            <div class="account-profile-summary"><div class="account-mini-avatar" id="accountMiniAvatar">PR</div><div><strong id="accountSummaryName">Đang tải...</strong><span id="accountSummaryEmail">Đang tải...</span></div><span class="account-id-pill mono" id="accountUserId">—</span></div>
             <form id="profileForm" class="account-form">
               <div class="grid grid-2"><div class="field"><label>Họ và tên</label><input class="input" id="profileName" value="" autocomplete="name"></div><div class="field"><label>Email</label><input class="input" id="profileEmail" value="" type="email" disabled></div></div>
               <div class="grid grid-2"><div class="field"><label>Số điện thoại</label><input class="input" id="profilePhone" value="" autocomplete="tel" placeholder="Chưa cập nhật"></div><div class="field"><label>Ngày tham gia</label><input class="input" id="profileJoinDate" value="" disabled></div></div>

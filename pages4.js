@@ -47,8 +47,10 @@ PAGES['#/checkout'] = async (root) => {
 
   const user = await RealAPI.getUser();
   if (!user) { location.hash = '#/login'; return; }
-  let cycle = plan.lifetime ? '1' : (CHECKOUT_STATE.cycle || '1');
-  const availableCycles = plan.lifetime ? [CYCLE_OPTIONS[0]] : CYCLE_OPTIONS;
+  // Kỳ hạn thanh toán áp dụng cho toàn bộ gói bán theo giá tháng.
+  // Không khóa về 1 tháng chỉ vì backend còn gắn cờ lifetime cho một gói cũ.
+  let cycle = CHECKOUT_STATE.cycle || '1';
+  const availableCycles = CYCLE_OPTIONS;
   let method = 'bank';
   let promoApplied = null;
   let promoError = '';

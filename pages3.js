@@ -268,7 +268,7 @@ PAGES['#/traffic'] = async (root) => {
       <div class="card"><div class="text-secondary text-sm">Tổng lưu lượng</div><div style="font-size:26px;font-weight:700;font-family:var(--font-display);margin-top:8px;">${formatTraffic(total)}</div><div class="text-secondary text-sm" style="margin-top:4px;">Upload + Download</div></div>
     </div>
     <div class="card" style="margin-bottom:24px;">
-      <div class="card-title">Tổng quan sử dụng thực tế <span class="badge badge-success">Live từ 3x-ui</span></div>
+      <div class="card-title">Tổng quan sử dụng thực tế</div>
       <div class="grid grid-2" style="align-items:center;gap:28px;">
         <div style="display:flex;justify-content:center;">
           <div style="width:190px;height:190px;border-radius:50%;${ringStyle}display:grid;place-items:center;">

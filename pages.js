@@ -10,6 +10,22 @@ const PROMO_BANNER_IMAGES = ['assets/promo-anime-01.jpg', 'assets/promo-anime-02
 const ZALO_GROUP_URL = 'https://zalo.me/g/8kps1zwougt3wzqi57jq';
 const TELEGRAM_GROUP_URL = 'https://t.me/+Nn5cWIk05sNiYTM1';
 
+function setVpnResetButtonBusy(button, busy) {
+  if (!button) return;
+  if (busy) {
+    if (!button.dataset.resetOriginalHtml) button.dataset.resetOriginalHtml = button.innerHTML;
+    button.disabled = true;
+    button.setAttribute('aria-busy', 'true');
+    button.classList.add('is-loading');
+    button.innerHTML = `${icon('refresh')} Đang reset...`;
+  } else {
+    button.disabled = false;
+    button.removeAttribute('aria-busy');
+    button.classList.remove('is-loading');
+    if (button.dataset.resetOriginalHtml) button.innerHTML = button.dataset.resetOriginalHtml;
+  }
+}
+
 function pageHeader(titleKey, descKey){
   return `<div class="page-header"><h1>${t(titleKey)}</h1><p>${t(descKey)}</p></div>`;
 }
@@ -216,17 +232,32 @@ PAGES['#/dashboard'] = async (root) => {
   };
   syncTrigger?.addEventListener('click', openSyncPicker);
   qs('#btnResetLink', root).addEventListener('click', () => {
+    if (window.__vpnResetInFlight) return;
     openConfirm({
-      title: t('reset_link'), message: t('cancel_confirm_desc'), confirmLabel: t('confirm'), danger: false,
+      title: t('reset_link'),
+      message: 'Link subscription và QR hiện tại sẽ bị thay thế bằng link/QR mới. Bạn cần nhập lại link mới vào ứng dụng VPN.',
+      confirmLabel: 'Reset URL và QR',
+      danger: false,
       onConfirm: async () => {
-        showToast({ type: 'info', title: 'Đang reset link và khóa kết nối cũ...' });
-        const result = await RealAPI.resetVpnLink();
-        if (!result.ok) {
-          showToast({ type: 'error', title: result.error || 'Không thể reset link lúc này.' });
-          return;
+        if (window.__vpnResetInFlight) return;
+        window.__vpnResetInFlight = true;
+        const resetButton = qs('#btnResetLink', root);
+        setVpnResetButtonBusy(resetButton, true);
+        showToast({ type: 'info', title: 'Đang reset URL và QR...', message: 'Vui lòng chờ, không bấm lại nút.' });
+        try {
+          const result = await RealAPI.resetVpnLink();
+          if (!result.ok) {
+            showToast({ type: 'error', title: result.error || 'Không thể reset URL và QR lúc này.' });
+            return;
+          }
+          showToast({ type: 'success', title: result.message || 'Đã tạo URL và QR mới.' });
+          await PAGES['#/dashboard'](root);
+        } catch (error) {
+          showToast({ type: 'error', title: 'Không thể reset URL và QR lúc này.', message: error?.message || 'Vui lòng thử lại.' });
+        } finally {
+          window.__vpnResetInFlight = false;
+          setVpnResetButtonBusy(resetButton, false);
         }
-        showToast({ type: 'success', title: result.message || t('toast_link_reset') });
-        await PAGES['#/dashboard'](root);
       }
     });
   });

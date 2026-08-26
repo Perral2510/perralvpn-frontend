@@ -75,19 +75,32 @@ PAGES['#/manage-plan'] = async (root) => {
     });
   });
   qs('#btnManagedReset', root)?.addEventListener('click', () => {
+    if (window.__vpnResetInFlight) return;
     openConfirm({
-      title: 'Reset link và QR?',
-      message: 'Link subscription cũ sẽ bị vô hiệu hóa và hệ thống sẽ tạo link/QR mới.',
-      confirmLabel: 'Reset link',
+      title: 'Reset URL và QR?',
+      message: 'Link subscription và QR hiện tại sẽ bị thay thế bằng link/QR mới. Bạn cần nhập lại link mới vào ứng dụng VPN.',
+      confirmLabel: 'Reset URL và QR',
       danger: true,
       onConfirm: async () => {
-        const result = await RealAPI.resetVpnLink();
-        if (!result.ok) {
-          showToast({ type: 'error', title: 'Lỗi server' });
-          return;
+        if (window.__vpnResetInFlight) return;
+        window.__vpnResetInFlight = true;
+        const resetButton = qs('#btnManagedReset', root);
+        setVpnResetButtonBusy(resetButton, true);
+        showToast({ type: 'info', title: 'Đang reset URL và QR...', message: 'Vui lòng chờ, không bấm lại nút.' });
+        try {
+          const result = await RealAPI.resetVpnLink();
+          if (!result.ok) {
+            showToast({ type: 'error', title: result.error || 'Không thể reset URL và QR lúc này.' });
+            return;
+          }
+          showToast({ type: 'success', title: result.message || 'Đã tạo URL và QR mới.' });
+          await PAGES['#/manage-plan'](root);
+        } catch (error) {
+          showToast({ type: 'error', title: 'Không thể reset URL và QR lúc này.', message: error?.message || 'Vui lòng thử lại.' });
+        } finally {
+          window.__vpnResetInFlight = false;
+          setVpnResetButtonBusy(resetButton, false);
         }
-        showToast({ type: 'success', title: result.message || 'Đã reset link subscription' });
-        await PAGES['#/manage-plan'](root);
       },
     });
   });

@@ -250,25 +250,25 @@ PAGES['#/dashboard'] = async (root) => {
     if (window.__vpnResetInFlight) return;
     openConfirm({
       title: t('reset_link'),
-      message: 'UUID VLESS cũ sẽ bị vô hiệu hóa và thay bằng UUID mới. URL/QR subscription vẫn được giữ nguyên.',
-      confirmLabel: 'Reset VLESS',
+      message: 'Liên kết và mã QR sẽ được reset. Vui lòng chờ, không bấm lại nút.',
+      confirmLabel: 'Reset URL & QR',
       danger: false,
       onConfirm: async () => {
         if (window.__vpnResetInFlight) return;
         window.__vpnResetInFlight = true;
         const resetButton = qs('#btnResetLink', root);
         setVpnResetButtonBusy(resetButton, true);
-        showToast({ type: 'info', title: 'Đang reset VLESS...', message: 'Vui lòng chờ, không bấm lại nút.' });
+        showToast({ type: 'info', title: 'Đang reset URL & QR...', message: 'Vui lòng chờ, không bấm lại nút.' });
         try {
           const result = await RealAPI.resetVpnLink();
           if (!result.ok) {
-            showToast({ type: 'error', title: result.error || 'Không thể reset VLESS lúc này.' });
+            showToast({ type: 'error', title: result.error || 'Không thể reset URL & QR lúc này.' });
             return;
           }
           showToast({ type: 'success', title: result.message || 'Đã reset.' });
           await PAGES['#/dashboard'](root);
         } catch (error) {
-          showToast({ type: 'error', title: 'Không thể reset VLESS lúc này.', message: error?.message || 'Vui lòng thử lại.' });
+          showToast({ type: 'error', title: 'Không thể reset URL & QR lúc này.', message: error?.message || 'Vui lòng thử lại.' });
         } finally {
           window.__vpnResetInFlight = false;
           setVpnResetButtonBusy(resetButton, false);

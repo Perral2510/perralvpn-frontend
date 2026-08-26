@@ -40,7 +40,7 @@ const I18N = {
     change_sni: "Thay đổi SNI",
     guide: "Hướng dẫn",
     get_apple_id: "Lấy ID Apple",
-    reset_link: "Reset VLESS",
+    reset_link: "Reset URL & QR",
     download_app: "Tải ứng dụng",
     quick_menu: "Menu chức năng",
 
@@ -173,7 +173,7 @@ const I18N = {
     toast_order_cancelled: "Đã hủy đơn hàng thành công",
     toast_code_created: "Đã tạo mã giới thiệu mới",
     toast_lang_changed: "Đã chuyển ngôn ngữ",
-    toast_link_reset: "Đã reset liên kết server thành công",
+    toast_link_reset: "Đã reset URL & QR thành công",
 
     // Sync server to app
     sync_app: "Đồng bộ máy chủ về app",

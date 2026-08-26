@@ -13,10 +13,15 @@ const FRONTEND_VINA_TIERS = [
 ];
 
 function buildFrontendPlanCatalog(apiPlans = []){
-  const source = apiPlans.find(plan => /vina/i.test(plan?.name || '')) || apiPlans[0] || {};
-  const basic = { ...source, ...FRONTEND_VINA_TIERS[0], id: source.id ?? 'vina-basic' };
-  const newTiers = FRONTEND_VINA_TIERS.slice(1).map(tier => ({ ...tier, id: `vina-${tier.key}` }));
-  const otherPlans = apiPlans.filter(plan => String(plan.id) !== String(source.id));
+  const source = apiPlans.find(plan => /vina-khong-nen(?: basic)?/i.test(`${plan?.slug || ''} ${plan?.name || ''}`)) || apiPlans[0] || {};
+  const backendVina = new Map(apiPlans.filter(plan => /vina-khong-nen/i.test(`${plan?.slug || ''} ${plan?.name || ''}`)).map(plan => [String(plan.slug || '').toLowerCase(), plan]));
+  const basic = { ...FRONTEND_VINA_TIERS[0], ...source, id: source.id ?? 'vina-basic' };
+  const newTiers = FRONTEND_VINA_TIERS.slice(1).map(tier => {
+    const slug = `vina-khong-nen-${tier.key}`;
+    return { ...tier, ...(backendVina.get(slug) || {}), id: backendVina.get(slug)?.id ?? `vina-${tier.key}` };
+  });
+  const vinaIds = new Set([source.id, ...newTiers.map(plan => plan.id)].map(String));
+  const otherPlans = apiPlans.filter(plan => !vinaIds.has(String(plan.id)) && !/vina-khong-nen/i.test(`${plan?.slug || ''} ${plan?.name || ''}`));
   return [basic, ...newTiers, ...otherPlans];
 }
 

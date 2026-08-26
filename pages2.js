@@ -6,10 +6,10 @@
    4) PLANS
    --------------------------------------------------------- */
 const FRONTEND_VINA_TIERS = [
-  { key: 'basic', name: 'VINA KHÔNG NỀN BASIC', nameEn: 'VINA KHÔNG NỀN BASIC', price: 15000, capacity: '1000GB', speed: '100Mbps', devices: 2, base: '0 nền', simSupport: 'Vina', category: 'vn', popular: false, frontendOnly: false },
-  { key: 'pro', name: 'VINA KHÔNG NỀN PRO', nameEn: 'VINA KHÔNG NỀN PRO', price: 35000, capacity: '3000GB', speed: '300Mbps', devices: 5, base: '0 nền', simSupport: 'Vina', category: 'vn', popular: false, frontendOnly: true },
-  { key: 'max', name: 'VINA KHÔNG NỀN MAX', nameEn: 'VINA KHÔNG NỀN MAX', price: 65000, capacity: '6000GB', speed: '700Mbps', devices: 8, base: '0 nền', simSupport: 'Vina', category: 'vn', popular: true, frontendOnly: true },
-  { key: 'vv', name: 'VINA KHÔNG NỀN VV', nameEn: 'VINA KHÔNG NỀN VV', price: 79000, capacity: '2000GB', speed: '1Gbps', devices: 2, base: '0 nền', simSupport: 'Vina', category: 'vn', popular: false, lifetime: true, frontendOnly: true },
+  { key: 'basic', name: 'VINA KHÔNG NỀN BASIC', nameEn: 'VINA KHÔNG NỀN BASIC', price: 15000, capacity: '1000GB', speed: '100Mbps', devices: 2, base: '0 nền', simSupport: 'Vina', gameSupport: 'Có', category: 'vn', popular: false, frontendOnly: false },
+  { key: 'pro', name: 'VINA KHÔNG NỀN PRO', nameEn: 'VINA KHÔNG NỀN PRO', price: 35000, capacity: '3000GB', speed: '300Mbps', devices: 5, base: '0 nền', simSupport: 'Vina', gameSupport: 'Có', category: 'vn', popular: false, frontendOnly: true },
+  { key: 'max', name: 'VINA KHÔNG NỀN MAX', nameEn: 'VINA KHÔNG NỀN MAX', price: 65000, capacity: '6000GB', speed: '700Mbps', devices: 8, base: '0 nền', simSupport: 'Vina', gameSupport: 'Có', category: 'vn', popular: true, frontendOnly: true },
+  { key: 'vv', name: 'VINA KHÔNG NỀN VV', nameEn: 'VINA KHÔNG NỀN VV', price: 79000, capacity: '2000GB', speed: '1Gbps', devices: 2, base: '0 nền', simSupport: 'Vina', gameSupport: 'Có', category: 'vn', popular: false, lifetime: true, frontendOnly: true },
 ];
 
 function buildFrontendPlanCatalog(apiPlans = []){
@@ -50,10 +50,11 @@ PAGES['#/plan'] = async (root) => {
         <div style="font-family:var(--font-display);font-weight:600;font-size:16px;margin-bottom:4px;">${escapeHTML(STATE.lang === 'en' ? (p.nameEn || p.name) : p.name)}</div>
         <div style="margin-bottom:14px;"><span style="font-size:24px;font-weight:700;color:var(--brand-500);font-family:var(--font-display);">${formatCurrency(p.price)}</span> <span class="text-secondary text-sm">${p.lifetime ? t('lifetime_term') : t('per_month')}</span></div>
         <ul class="plan-spec-list" aria-label="Thông tin gói dịch vụ">
-          <li><span class="plan-spec-list__check">${icon('check')}</span><span>Nền: <strong>${escapeHTML(p.base || (/không nền/i.test(p.name || '') ? '0 nền' : '0 nền'))}</strong></span></li>
-          <li><span class="plan-spec-list__check">${icon('check')}</span><span>Dung lượng: <strong>${escapeHTML(frontendPlanCapacity(p))}</strong></span></li>
-          <li><span class="plan-spec-list__check">${icon('check')}</span><span>Thiết bị: <strong>${escapeHTML(String(p.devices ?? 0))}</strong></span></li>
-          <li><span class="plan-spec-list__check">${icon('check')}</span><span>Hỗ trợ SIM: <strong>${escapeHTML(p.simSupport || (/vina/i.test(`${p.name || ''} ${p.category || ''}`) ? 'Vina' : 'Tất cả'))}</strong></span></li>
+          <li><span class="plan-spec-list__icon">${icon('globe')}</span><span>Nền: <strong>${escapeHTML(p.base || (/không nền/i.test(p.name || '') ? '0 nền' : '0 nền'))}</strong></span></li>
+          <li><span class="plan-spec-list__icon">${icon('database')}</span><span>Dung lượng: <strong>${escapeHTML(frontendPlanCapacity(p))}</strong></span></li>
+          <li><span class="plan-spec-list__icon">${icon('smartphone')}</span><span>Thiết bị: <strong>${escapeHTML(String(p.devices ?? 0))}</strong></span></li>
+          <li><span class="plan-spec-list__icon">${icon('sim')}</span><span>Hỗ trợ SIM: <strong>${escapeHTML(p.simSupport || (/vina/i.test(`${p.name || ''} ${p.category || ''}`) ? 'Vina' : 'Tất cả'))}</strong></span></li>
+          <li><span class="plan-spec-list__icon">${icon('gamepad')}</span><span>Hỗ trợ game: <strong>${escapeHTML(p.gameSupport || 'Có')}</strong></span></li>
         </ul>
         <button class="btn btn-primary btn-block" data-buy="${p.id}">${t('buy_now')}</button>
       </div>

@@ -250,7 +250,7 @@ PAGES['#/dashboard'] = async (root) => {
             showToast({ type: 'error', title: result.error || 'Không thể reset VLESS lúc này.' });
             return;
           }
-          showToast({ type: 'success', title: result.message || 'Đã vô hiệu hóa VLESS cũ.' });
+          showToast({ type: 'success', title: result.message || 'Đã reset.' });
           await PAGES['#/dashboard'](root);
         } catch (error) {
           showToast({ type: 'error', title: 'Không thể reset VLESS lúc này.', message: error?.message || 'Vui lòng thử lại.' });

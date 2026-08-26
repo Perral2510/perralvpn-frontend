@@ -41,7 +41,7 @@ const I18N = {
     change_sni: "Thay đổi SNI",
     guide: "Hướng dẫn",
     get_apple_id: "Lấy ID Apple",
-    reset_link: "Reset liên kết server",
+    reset_link: "Reset VLESS",
     download_app: "Tải ứng dụng",
     quick_menu: "Menu chức năng",
 

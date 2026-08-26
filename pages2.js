@@ -5,15 +5,36 @@
 /* ---------------------------------------------------------
    4) PLANS
    --------------------------------------------------------- */
+const FRONTEND_VINA_TIERS = [
+  { key: 'basic', name: 'VINA KHÔNG NỀN BASIC', nameEn: 'VINA KHÔNG NỀN BASIC', price: 15000, capacity: '1000GB', speed: '100Mbps', devices: 2, base: '0 nền', simSupport: 'Vina', category: 'vn', popular: false, frontendOnly: false },
+  { key: 'pro', name: 'VINA KHÔNG NỀN PRO', nameEn: 'VINA KHÔNG NỀN PRO', price: 35000, capacity: '3000GB', speed: '300Mbps', devices: 5, base: '0 nền', simSupport: 'Vina', category: 'vn', popular: false, frontendOnly: true },
+  { key: 'max', name: 'VINA KHÔNG NỀN MAX', nameEn: 'VINA KHÔNG NỀN MAX', price: 65000, capacity: '6000GB', speed: '700Mbps', devices: 8, base: '0 nền', simSupport: 'Vina', category: 'vn', popular: true, frontendOnly: true },
+  { key: 'vv', name: 'VINA KHÔNG NỀN VV', nameEn: 'VINA KHÔNG NỀN VV', price: 99000, capacity: 'Không giới hạn', speed: '1Gbps', devices: 10, base: '0 nền', simSupport: 'Vina', category: 'vn', popular: false, frontendOnly: true },
+];
+
+function buildFrontendPlanCatalog(apiPlans = []){
+  const source = apiPlans.find(plan => /vina/i.test(plan?.name || '')) || apiPlans[0] || {};
+  const basic = { ...source, ...FRONTEND_VINA_TIERS[0], id: source.id ?? 'vina-basic' };
+  const newTiers = FRONTEND_VINA_TIERS.slice(1).map(tier => ({ ...tier, id: `vina-${tier.key}` }));
+  const otherPlans = apiPlans.filter(plan => String(plan.id) !== String(source.id));
+  return [basic, ...newTiers, ...otherPlans];
+}
+
+function frontendPlanCapacity(plan){
+  if (plan?.capacity === '100GB' && /vina/i.test(plan?.name || '')) return '1000GB';
+  return plan?.capacity || 'Không giới hạn';
+}
+
 PAGES['#/plan'] = async (root) => {
   root.innerHTML = `
     <div class="page-container page-enter">
       ${pageHeader('plan_title', 'plan_desc')}
-      <div id="planGrid" class="grid grid-3">${skeletonCards(3)}</div>
+      <div id="planGrid" class="grid grid-4">${skeletonCards(4)}</div>
     </div>
   `;
 
-  const plans = await RealAPI.getPlans();
+  const apiPlans = await RealAPI.getPlans();
+  const plans = buildFrontendPlanCatalog(apiPlans);
   if (!plans.length) {
     qs('#planGrid', root).innerHTML = emptyState({ title: t('no_data_title'), desc: 'Chưa có gói cước đang mở bán.', iconName: 'shield' });
     return;
@@ -26,21 +47,24 @@ PAGES['#/plan'] = async (root) => {
     grid.innerHTML = list.map(p => `
       <div class="card" style="display:flex;flex-direction:column;${p.popular ? 'border-color:var(--brand-400);box-shadow:0 0 0 3px rgba(47,111,237,.12);' : ''}">
         ${p.popular ? `<span class="badge badge-info" style="align-self:flex-start;margin-bottom:10px;">${t('popular')}</span>` : ''}
-        <div style="font-family:var(--font-display);font-weight:600;font-size:16px;margin-bottom:4px;">${escapeHTML(p.name)}</div>
+        ${p.frontendOnly ? `<span class="badge badge-warning" style="align-self:flex-start;margin-bottom:10px;">${escapeHTML(t('frontend_preview'))}</span>` : ''}
+        <div style="font-family:var(--font-display);font-weight:600;font-size:16px;margin-bottom:4px;">${escapeHTML(STATE.lang === 'en' ? (p.nameEn || p.name) : p.name)}</div>
         <div style="margin-bottom:14px;"><span style="font-size:24px;font-weight:700;color:var(--brand-500);font-family:var(--font-display);">${formatCurrency(p.price)}</span> <span class="text-secondary text-sm">${p.lifetime ? 'thanh toán một lần' : t('per_month')}</span></div>
         <ul class="plan-spec-list" aria-label="Thông tin gói dịch vụ">
           <li><span class="plan-spec-list__check">${icon('check')}</span><span>Nền: <strong>${escapeHTML(p.base || (/không nền/i.test(p.name || '') ? '0 nền' : '0 nền'))}</strong></span></li>
-          <li><span class="plan-spec-list__check">${icon('check')}</span><span>Dung lượng: <strong>${escapeHTML(p.capacity === '100GB' && /vina/i.test(p.name || '') ? '1000GB' : (p.capacity || 'Không giới hạn'))}</strong></span></li>
+          <li><span class="plan-spec-list__check">${icon('check')}</span><span>Dung lượng: <strong>${escapeHTML(frontendPlanCapacity(p))}</strong></span></li>
           <li><span class="plan-spec-list__check">${icon('check')}</span><span>Thiết bị: <strong>${escapeHTML(String(p.devices ?? 0))}</strong></span></li>
           <li><span class="plan-spec-list__check">${icon('check')}</span><span>Hỗ trợ SIM: <strong>${escapeHTML(p.simSupport || (/vina/i.test(`${p.name || ''} ${p.category || ''}`) ? 'Vina' : 'Tất cả'))}</strong></span></li>
         </ul>
-        <button class="btn btn-primary btn-block" data-buy="${p.id}">${t('buy_now')}</button>
+        <button class="btn btn-primary btn-block" data-buy="${p.id}">${p.frontendOnly ? t('view_plan') : t('buy_now')}</button>
+        ${p.frontendOnly ? `<p class="plan-preview-note">${icon('info')} ${escapeHTML(t('frontend_plan_notice'))}</p>` : ''}
       </div>
     `).join('');
     if (!list.length) grid.innerHTML = emptyState({ title: t('no_data_title'), desc: t('no_data_desc') });
 
     qsa('[data-buy]', grid).forEach(btn => btn.addEventListener('click', () => {
       const plan = plans.find(p => String(p.id) === btn.dataset.buy);
+      if (!plan) return;
       CHECKOUT_STATE.plan = plan;
       CHECKOUT_STATE.cycle = '1';
       location.hash = '#/checkout';

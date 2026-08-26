@@ -89,6 +89,10 @@ const I18N = {
     capacity: "Dung lượng",
     device_limit: "Thiết bị",
     unlimited: "Không giới hạn",
+    frontend_preview: "Bản xem trước",
+    view_plan: "Xem gói",
+    frontend_plan_notice: "Gói này đã được dựng trên frontend; backend sẽ được kết nối sau.",
+    backend_unavailable: "Chờ backend mở bán",
 
     // Node
     node_title: "Trạng thái node",
@@ -333,6 +337,10 @@ const I18N = {
     capacity: "Data",
     device_limit: "Devices",
     unlimited: "Unlimited",
+    frontend_preview: "Frontend preview",
+    view_plan: "View plan",
+    frontend_plan_notice: "This plan is ready on the frontend; the backend will be connected later.",
+    backend_unavailable: "Waiting for backend",
 
     node_title: "Node status",
     node_desc: "Live list of servers and their current status.",

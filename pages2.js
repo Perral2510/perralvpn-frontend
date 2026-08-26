@@ -47,7 +47,6 @@ PAGES['#/plan'] = async (root) => {
     grid.innerHTML = list.map(p => `
       <div class="card" style="display:flex;flex-direction:column;${p.popular ? 'border-color:var(--brand-400);box-shadow:0 0 0 3px rgba(47,111,237,.12);' : ''}">
         ${p.popular ? `<span class="badge badge-info" style="align-self:flex-start;margin-bottom:10px;">${t('popular')}</span>` : ''}
-        ${p.frontendOnly ? `<span class="badge badge-warning" style="align-self:flex-start;margin-bottom:10px;">${escapeHTML(t('frontend_preview'))}</span>` : ''}
         <div style="font-family:var(--font-display);font-weight:600;font-size:16px;margin-bottom:4px;">${escapeHTML(STATE.lang === 'en' ? (p.nameEn || p.name) : p.name)}</div>
         <div style="margin-bottom:14px;"><span style="font-size:24px;font-weight:700;color:var(--brand-500);font-family:var(--font-display);">${formatCurrency(p.price)}</span> <span class="text-secondary text-sm">${p.lifetime ? 'thanh toán một lần' : t('per_month')}</span></div>
         <ul class="plan-spec-list" aria-label="Thông tin gói dịch vụ">
@@ -56,8 +55,7 @@ PAGES['#/plan'] = async (root) => {
           <li><span class="plan-spec-list__check">${icon('check')}</span><span>Thiết bị: <strong>${escapeHTML(String(p.devices ?? 0))}</strong></span></li>
           <li><span class="plan-spec-list__check">${icon('check')}</span><span>Hỗ trợ SIM: <strong>${escapeHTML(p.simSupport || (/vina/i.test(`${p.name || ''} ${p.category || ''}`) ? 'Vina' : 'Tất cả'))}</strong></span></li>
         </ul>
-        <button class="btn btn-primary btn-block" data-buy="${p.id}">${p.frontendOnly ? t('view_plan') : t('buy_now')}</button>
-        ${p.frontendOnly ? `<p class="plan-preview-note">${icon('info')} ${escapeHTML(t('frontend_plan_notice'))}</p>` : ''}
+        <button class="btn btn-primary btn-block" data-buy="${p.id}">${t('buy_now')}</button>
       </div>
     `).join('');
     if (!list.length) grid.innerHTML = emptyState({ title: t('no_data_title'), desc: t('no_data_desc') });

@@ -866,6 +866,3 @@ body.auth-mode .site-watermark-bg{display:none}
 .dashboard-billing-card{display:none!important}
 
 .plan-card__usage-grid--single{grid-template-columns:minmax(0,1fr)}
-/* ---------- Frontend plan preview note ---------- */
-.plan-preview-note{display:flex;align-items:flex-start;gap:6px;margin:10px 0 0;color:var(--text-secondary);font-size:10px;line-height:1.45}
-.plan-preview-note .icon{width:13px;height:13px;flex:0 0 13px;color:var(--warning-500);margin-top:1px}

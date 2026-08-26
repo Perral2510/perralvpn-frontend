@@ -73,7 +73,6 @@ PAGES['#/checkout'] = async (root) => {
         <div>
           <div class="card" style="margin-bottom:20px;">
             <div class="card-title">${t('order_summary')}</div>
-            ${plan.frontendOnly ? `<div class="plan-preview-note" style="margin:0 0 14px;">${icon('info')} ${escapeHTML(t('frontend_plan_notice'))}</div>` : ''}
             <div class="flex justify-between items-center" style="margin-bottom:18px;">
               <div>
                 <div style="font-family:var(--font-display);font-weight:600;font-size:16px;">${escapeHTML(plan.name)}</div>
@@ -123,7 +122,7 @@ PAGES['#/checkout'] = async (root) => {
             ${promoApplied ? `<div class="summary-row"><span>${t('discount')}</span><span class="mono">-${formatCurrency(promoDiscount)}</span></div>` : ''}
             <div class="summary-row total"><span>${t('total')}</span><span class="amount mono">${formatCurrency(grandTotal)}</span></div>
 
-            <button class="btn btn-primary btn-block" id="btnPayNow" style="margin-top:14px;" ${plan.frontendOnly ? 'disabled title="Backend chưa mở bán gói này"' : ''}>${plan.frontendOnly ? t('backend_unavailable') : t('pay_now')}</button>
+            <button class="btn btn-primary btn-block" id="btnPayNow" style="margin-top:14px;">${t('pay_now')}</button>
           </div>
         </div>
       </div>
@@ -149,7 +148,7 @@ PAGES['#/checkout'] = async (root) => {
     });
 
     qs('#btnPayNow', container).addEventListener('click', async (e) => {
-      if (plan.frontendOnly || checkoutInProgress) return;
+      if (checkoutInProgress) return;
       checkoutInProgress = true;
       const btn = e.currentTarget;
       const restoreButton = () => {

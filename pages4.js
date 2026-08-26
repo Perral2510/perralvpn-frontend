@@ -211,13 +211,20 @@ PAGES['#/payment-result'] = async (root) => {
   const description = status === 'success'
     ? 'Hệ thống đang xác nhận giao dịch với SePay và kích hoạt gói VPN. Trạng thái sẽ tự cập nhật trong vài giây.'
     : status === 'cancel'
-      ? 'Đơn hàng vẫn được giữ ở trạng thái chờ thanh toán. Bạn có thể mở lại đơn để thanh toán.'
+      ? 'Thanh toán đã được hủy và đơn hàng đã chuyển sang trạng thái Đã hủy.'
       : 'SePay chưa xác nhận giao dịch thành công. Bạn có thể kiểm tra lại đơn hàng hoặc thử thanh toán lại.';
   root.innerHTML = `<div class="page-container page-enter"><div class="checkout-success" style="max-width:700px;margin:0 auto;text-align:center;"><div class="checkout-success__icon">${icon(status === 'success' ? 'wallet' : 'receipt')}</div><h2>${title}</h2><p>${description}</p><div id="paymentStatus" class="card" style="margin-top:20px;text-align:left;"><div class="text-sm text-secondary">Mã đơn hàng</div><div class="mono" style="margin-top:6px;">${escapeHTML(orderId || '—')}</div><div class="text-sm text-secondary" style="margin-top:14px;">Trạng thái</div><div id="paymentStatusText" style="margin-top:6px;">Đang tải...</div></div><div class="flex gap-2" style="justify-content:center;flex-wrap:wrap;margin-top:20px;"><button class="btn btn-secondary" id="btnResultOrders">Xem đơn hàng</button><button class="btn btn-primary" id="btnResultHome">Về trang chủ</button></div></div></div>`;
   qs('#btnResultOrders', root).addEventListener('click', () => { location.hash = '#/order'; });
   qs('#btnResultHome', root).addEventListener('click', () => { location.hash = '#/dashboard'; });
   const statusText = qs('#paymentStatusText', root);
   if (!orderId) { statusText.textContent = 'Không có mã đơn hàng để kiểm tra.'; return; }
+  if (status === 'cancel') {
+    const cancelled = await RealAPI.cancelOrder(orderId);
+    if (!cancelled.ok && cancelled.status !== 400) {
+      statusText.textContent = cancelled.error || 'Không thể cập nhật trạng thái hủy đơn.';
+      return;
+    }
+  }
   let attempts = 0;
   const refresh = async () => {
     const orders = await RealAPI.getOrders();

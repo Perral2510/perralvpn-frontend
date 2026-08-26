@@ -293,6 +293,35 @@ PAGES['#/traffic'] = async (root) => {
   `;
 };
 
+async function handlePasswordChangeSubmit(event, root) {
+  event.preventDefault();
+  const form = event.currentTarget;
+  const current = qs('#currentPassword', root)?.value || qs('#controlCurrentPassword', root)?.value || '';
+  const next = qs('#newPassword', root)?.value || qs('#controlNewPassword', root)?.value || '';
+  const confirm = qs('#confirmPassword', root)?.value || qs('#controlConfirmPassword', root)?.value || '';
+  if (!current || next.length < 8 || next !== confirm) {
+    showToast({ type: 'error', title: 'Mật khẩu mới phải có ít nhất 8 ký tự và trùng khớp' });
+    return;
+  }
+  const button = form.querySelector('button[type="submit"]');
+  if (button?.disabled) return;
+  if (button) { button.disabled = true; button.dataset.originalText = button.textContent; button.textContent = 'Đang lưu...'; }
+  let result;
+  try {
+    result = await RealAPI.changePassword(current, next);
+  } finally {
+    if (button) { button.disabled = false; button.textContent = button.dataset.originalText || 'Lưu'; }
+  }
+  if (!result?.ok) {
+    showToast({ type: 'error', title: result?.error || 'Cập nhật mật khẩu thất bại' });
+    return;
+  }
+  form.reset();
+  await RealAPI.logout().catch(() => null);
+  showToast({ type: 'success', title: 'Đổi mật khẩu thành công. Vui lòng đăng nhập lại.' });
+  window.setTimeout(() => { location.hash = '#/login'; }, 650);
+}
+
 /* ---------------------------------------------------------
    10) CONTROL CENTER
    --------------------------------------------------------- */
@@ -321,15 +350,16 @@ PAGES['#/control'] = async (root) => {
       </div>
       <div class="card">
         <div class="card-title">${t('change_password')}</div>
-        <div class="field"><label>Mật khẩu hiện tại</label><input class="input" type="password"></div>
-        <div class="field"><label>Mật khẩu mới</label><input class="input" type="password"></div>
-        <button class="btn btn-primary" id="btnChangePw">${t('save')}</button>
+        <form id="controlPasswordForm" class="account-form">
+          <div class="field"><label for="controlCurrentPassword">Mật khẩu hiện tại</label><input class="input" id="controlCurrentPassword" type="password" autocomplete="current-password" required></div>
+          <div class="field"><label for="controlNewPassword">Mật khẩu mới</label><input class="input" id="controlNewPassword" type="password" autocomplete="new-password" minlength="8" required></div>
+          <div class="field"><label for="controlConfirmPassword">Nhập lại mật khẩu mới</label><input class="input" id="controlConfirmPassword" type="password" autocomplete="new-password" minlength="8" required></div>
+          <button class="btn btn-primary" type="submit">${t('save')}</button>
+        </form>
       </div>
     </div>
   `;
-  qs('#btnChangePw', container).addEventListener('click', () => {
-    showToast({ type: 'success', title: t('toast_saved') });
-  });
+  qs('#controlPasswordForm', container).addEventListener('submit', (event) => handlePasswordChangeSubmit(event, container));
 };
 
 
@@ -402,6 +432,6 @@ PAGES['#/account'] = async (root) => {
     }).join('') : '<div class="account-session"><div><strong>Chưa có phiên hoạt động</strong><span>Hãy đăng nhập lại để tạo phiên mới.</span></div></div>';
   }
   qs('#profileForm', root).addEventListener('submit', async (e) => { e.preventDefault(); const name = qs('#profileName', root).value.trim(); const phone = qs('#profilePhone', root).value.trim(); if (!name) { showToast({ type: 'error', title: 'Vui lòng nhập họ và tên' }); return; } const btn = e.currentTarget.querySelector('button[type="submit"]'); btn.disabled = true; const result = await RealAPI.updateProfile(name, phone); btn.disabled = false; if (!result.ok) { showToast({ type: 'error', title: result.error || 'Cập nhật thất bại' }); return; } qs('#accountSummaryName', root).textContent = name; qs('#avatarName').textContent = name; showToast({ type: 'success', title: 'Đã lưu thông tin tài khoản' }); });
-  qs('#passwordForm', root).addEventListener('submit', async (e) => { e.preventDefault(); const current = qs('#currentPassword', root).value; const next = qs('#newPassword', root).value; const confirm = qs('#confirmPassword', root).value; if (!current || next.length < 8 || next !== confirm) { showToast({ type: 'error', title: 'Mật khẩu mới phải có ít nhất 8 ký tự và trùng khớp' }); return; } const btn = e.currentTarget.querySelector('button[type="submit"]'); btn.disabled = true; const result = await RealAPI.changePassword(current, next); btn.disabled = false; if (!result.ok) { showToast({ type: 'error', title: result.error || 'Cập nhật mật khẩu thất bại' }); return; } e.currentTarget.reset(); showToast({ type: 'success', title: 'Đã cập nhật mật khẩu' }); });
+  qs('#passwordForm', root).addEventListener('submit', (event) => handlePasswordChangeSubmit(event, root));
   qs('#btnLogoutAll', root).addEventListener('click', () => openConfirm({ title: 'Đăng xuất thiết bị khác', message: 'Bạn có chắc muốn kết thúc tất cả phiên đăng nhập khác?', confirmLabel: 'Đăng xuất', onConfirm: async () => { const result = await RealAPI.revokeOtherSessions(); showToast({ type: result.ok ? 'success' : 'error', title: result.ok ? 'Đã đăng xuất thiết bị khác' : (result.error || 'Không thể đăng xuất') }); } }));
 };

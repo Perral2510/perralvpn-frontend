@@ -14,6 +14,7 @@ const CYCLE_OPTIONS = [
 ];
 
 function cyclePrice(plan, cycleKey){
+  if (plan?.lifetime) return { raw: plan.price, discount: 0, total: plan.price, months: 0, discountRate: 0 };
   const c = CYCLE_OPTIONS.find(x => x.key === cycleKey) || CYCLE_OPTIONS[0];
   const raw = plan.price * c.months;
   const discount = Math.round(raw * c.discount);
@@ -49,8 +50,8 @@ PAGES['#/checkout'] = async (root) => {
   if (!user) { location.hash = '#/login'; return; }
   // Kỳ hạn thanh toán áp dụng cho toàn bộ gói bán theo giá tháng.
   // Không khóa về 1 tháng chỉ vì backend còn gắn cờ lifetime cho một gói cũ.
-  let cycle = CHECKOUT_STATE.cycle || '1';
-  const availableCycles = CYCLE_OPTIONS;
+  let cycle = plan.lifetime ? 'lifetime' : (CHECKOUT_STATE.cycle || '1');
+  const availableCycles = plan.lifetime ? [{ key: 'lifetime', label: t('lifetime_term') }] : CYCLE_OPTIONS;
   let method = 'bank';
   let promoApplied = null;
   let promoError = '';
@@ -85,7 +86,7 @@ PAGES['#/checkout'] = async (root) => {
               <label>${t('billing_cycle')}</label>
               <div class="flex gap-2" style="flex-wrap:wrap;">
                 ${availableCycles.map(c => `
-                  <button type="button" class="btn btn-sm ${cycle === c.key ? 'btn-primary' : 'btn-secondary'}" data-cycle="${c.key}">${t('cycle_' + c.key)}</button>
+                  <button type="button" class="btn btn-sm ${cycle === c.key ? 'btn-primary' : 'btn-secondary'}" data-cycle="${c.key}">${c.label || t('cycle_' + c.key)}</button>
                 `).join('')}
               </div>
             </div>
@@ -160,7 +161,7 @@ PAGES['#/checkout'] = async (root) => {
       btn.disabled = true;
       btn.setAttribute('aria-busy', 'true');
       btn.innerHTML = `<span class="spinner"></span> Đang chuyển tới cổng thanh toán...`;
-      const result = await RealAPI.createCheckout(plan.id, Number(cycle), method, promoApplied || '');
+      const result = await RealAPI.createCheckout(plan.id, plan.lifetime ? 0 : Number(cycle), method, promoApplied || '');
       if (!result.ok) {
         restoreButton();
         showToast({ type: 'error', title: result.error || t('error_title') });

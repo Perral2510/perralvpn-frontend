@@ -55,11 +55,12 @@ PAGES['#/dashboard'] = async (root) => {
       ${skeletonCards(3)}
     </div>`;
 
-  const [user, promosResult, menuResult, billing] = await Promise.all([
+  const [user, promosResult, menuResult, billing, vpnManagementResult] = await Promise.all([
     RealAPI.getUser().catch(() => null),
     MockAPI.getPromos().catch(() => []),
     MockAPI.getQuickMenu().catch(() => []),
-    RealAPI.getBilling().catch(() => null)
+    RealAPI.getBilling().catch(() => null),
+    RealAPI.getVpnManagement().catch(() => ({ ok: false }))
   ]);
   const promos = Array.isArray(promosResult) ? promosResult : [];
   const menu = Array.isArray(menuResult) ? menuResult : [];
@@ -73,8 +74,32 @@ PAGES['#/dashboard'] = async (root) => {
   let slideIdx = 0;
 
   const accountBalance = Number.isFinite(Number(user.balance)) ? Number(user.balance) : 0;
-  const activeSubscription = billing?.activeSubscription || null;
-  const recentOrders = billing?.orders || [];
+  const vpnManagement = vpnManagementResult?.ok ? vpnManagementResult.data : null;
+  const activeSubscription = billing?.activeSubscription || (vpnManagement?.plan ? {
+    planName: vpnManagement.plan.name,
+    capacity: vpnManagement.plan.capacity,
+    devices: vpnManagement.plan.deviceLimit,
+    lifetime: vpnManagement.plan.lifetime,
+    speed: vpnManagement.plan.speed || '—',
+    expiresAt: vpnManagement.expiresAt,
+    features: vpnManagement.plan.features || [],
+  } : null);
+  const dataUsedBytes = Number(vpnManagement?.dataUsedBytes || 0);
+  const dataMaxBytes = Number(vpnManagement?.dataMaxBytes || 0);
+  const machinesUsed = Number(vpnManagement?.machinesUsed || 0);
+  const machinesMax = Number(vpnManagement?.machinesMax ?? activeSubscription?.devices ?? 0);
+  const compactNumber = (value) => String(Number(value.toFixed(2)));
+  const formatData = (bytes) => {
+    if (!Number.isFinite(bytes) || bytes <= 0) return '0 KB';
+    if (bytes < 1024 ** 2) return `${compactNumber(bytes / 1024)} KB`;
+    if (bytes < 1024 ** 3) return `${compactNumber(bytes / (1024 ** 2))} MB`;
+    return `${compactNumber(bytes / (1024 ** 3))} GB`;
+  };
+  const dataLabel = dataMaxBytes > 0 ? `${formatData(dataUsedBytes)} / ${formatData(dataMaxBytes)}` : `${formatData(dataUsedBytes)} / Không giới hạn`;
+  const dataPercent = dataMaxBytes > 0 ? Math.min(100, Math.max(0, Math.round((dataUsedBytes / dataMaxBytes) * 100))) : 0;
+  const machineLabel = machinesMax > 0 ? `${machinesUsed} / ${machinesMax}` : `${machinesUsed} / Không giới hạn`;
+  const machinePercent = machinesMax > 0 ? Math.min(100, Math.max(0, Math.round((machinesUsed / machinesMax) * 100))) : 0;
+  const planFeatures = Array.isArray(activeSubscription?.features) ? activeSubscription.features : [];
   root.innerHTML = `
     <div class="page-container page-enter">
       <div class="page-header"><h1>${t('welcome_back')}</h1><p>${escapeHTML(user.name)}</p></div>
@@ -121,20 +146,12 @@ PAGES['#/dashboard'] = async (root) => {
             <div class="plan-card__pro-title"><span>${activeSubscription ? 'GÓI ĐANG KÍCH HOẠT' : 'GÓI DỊCH VỤ'}</span><h3>${escapeHTML(activeSubscription?.planName || 'Chưa có gói đang hoạt động')}</h3></div>
             <span class="plan-card__pro-status"><i></i> ${activeSubscription ? 'Đang hoạt động' : 'Chưa kích hoạt'}</span>
           </div>
-          ${activeSubscription ? `<div class="plan-card__pro-subhead"><span>Hạn sử dụng <b>${activeSubscription.lifetime ? 'Vĩnh viễn' : formatDate(activeSubscription.expiresAt, STATE.lang)}</b></span><span><b>${activeSubscription.devices} thiết bị</b> tối đa</span></div><div class="plan-card__pro-metrics"><div class="plan-metric"><span>Dung lượng</span><strong>${escapeHTML(activeSubscription.capacity)}</strong><small>theo gói đã mua</small></div><div class="plan-metric"><span>Tốc độ</span><strong>${escapeHTML(activeSubscription.speed)}</strong><small>băng thông dịch vụ</small></div><div class="plan-metric"><span>Thiết bị</span><strong>${activeSubscription.devices}</strong><small>thiết bị được phép</small></div></div>` : `<div class="plan-empty-state"><strong>Bạn chưa có gói VPN hoạt động</strong><span>Chọn gói phù hợp và thanh toán qua QR Bank để bắt đầu sử dụng.</span><button class="btn btn-sm btn-primary" data-nav="#/plan">Xem các gói cước</button></div>`}
+          ${activeSubscription ? `<div class="plan-card__pro-subhead"><span>Hạn sử dụng <b>${activeSubscription.lifetime ? 'Vĩnh viễn' : formatDate(activeSubscription.expiresAt, STATE.lang)}</b></span><span><b>${escapeHTML(machineLabel)}</b> thiết bị</span></div><div class="plan-card__pro-metrics"><div class="plan-metric"><span>Data đã dùng</span><strong>${escapeHTML(dataLabel)}</strong><small>${dataPercent}% dung lượng gói</small></div><div class="plan-metric"><span>Thiết bị</span><strong>${escapeHTML(machineLabel)}</strong><small>đang dùng / tối đa</small></div><div class="plan-metric"><span>Tốc độ</span><strong>${escapeHTML(activeSubscription.speed)}</strong><small>băng thông dịch vụ</small></div></div><div class="plan-card__usage-grid"><div class="plan-usage"><div class="plan-usage__head"><span>Dữ liệu sử dụng</span><b>${dataPercent}%</b></div><div class="progress"><div class="progress__bar" style="width:${dataPercent}%"></div></div><small>${escapeHTML(dataLabel)}</small></div><div class="plan-usage"><div class="plan-usage__head"><span>Thiết bị đang dùng</span><b>${machinePercent}%</b></div><div class="progress"><div class="progress__bar" style="width:${machinePercent}%"></div></div><small>${escapeHTML(machineLabel)}</small></div></div>${planFeatures.length ? `<div class="plan-card__features"><strong>Chức năng gói</strong><ul>${planFeatures.map(feature => `<li>${escapeHTML(feature)}</li>`).join('')}</ul></div>` : ''}` : `<div class="plan-empty-state"><strong>Bạn chưa có gói VPN hoạt động</strong><span>Chọn gói phù hợp và thanh toán qua QR Bank để bắt đầu sử dụng.</span><button class="btn btn-sm btn-primary" data-nav="#/plan">Xem các gói cước</button></div>`}
           <div class="plan-card__actions"><button class="btn btn-sm btn-outline" data-nav="#/knowledge">▣ ${t('guide')}</button><button class="btn btn-sm btn-outline" id="btnAppleId"> ${t('get_apple_id')}</button><button class="btn btn-sm btn-outline" id="btnResetLink">⟳ ${t('reset_link')}</button></div>
           <div class="plan-card__sync"><div class="plan-card__sync-row"><button class="btn btn-sm btn-accent" id="btnSyncApp" ${activeSubscription ? '' : 'disabled'} aria-haspopup="dialog"><span class="sync-glyph" aria-hidden="true">⟳</span> Đồng bộ máy chủ về app</button></div><div class="plan-card__platforms" aria-label="Các hệ điều hành hỗ trợ"><span title="Windows">${platformIcon('windows')}</span><span title="Apple">${platformIcon('apple')}</span><span title="Android">${platformIcon('android')}</span><span title="Linux">${platformIcon('linux')}</span></div></div>
         </div>
       </div>
 
-      <section class="card dashboard-billing-card">
-        <div class="dashboard-billing-card__head"><div><span class="dashboard-billing-card__eyebrow">PerralVPN BILLING</span><h2>Quản lý gói cước & thanh toán</h2><p>Theo dõi gói đang dùng, tạo đơn hàng và thanh toán qua QR Bank.</p></div><span class="dashboard-billing-card__icon">${icon('wallet')}</span></div>
-        <div class="dashboard-billing-card__body">
-          <div class="dashboard-billing-card__active"><span class="text-secondary">Gói hiện tại</span><strong>${escapeHTML(activeSubscription?.planName || 'Chưa có gói đang hoạt động')}</strong><small>${activeSubscription ? `${activeSubscription.capacity} · ${activeSubscription.speed}` : 'Chọn một gói phù hợp để bắt đầu sử dụng.'}</small></div>
-          <div class="dashboard-billing-card__status"><span class="text-secondary">Trạng thái thanh toán</span><strong>${recentOrders[0] ? (recentOrders[0].status === 'paid' ? 'Đã thanh toán' : recentOrders[0].status === 'pending' ? 'Chờ đối soát' : 'Chưa có thanh toán hoàn tất') : 'Chưa có đơn hàng'}</strong><small>${recentOrders[0] ? `Đơn gần nhất: ${escapeHTML(recentOrders[0].id)}` : 'Các đơn hàng mới sẽ xuất hiện tại đây.'}</small></div>
-          <div class="dashboard-billing-card__actions"><button class="btn btn-primary" data-nav="#/manage-plan">${icon('shield')} Quản lý gói cước</button><button class="btn btn-secondary" data-nav="#/order">${icon('receipt')} Xem đơn hàng</button></div>
-        </div>
-      </section>
 
       <div class="card">
         <div class="card-title">${t('quick_menu')}</div>

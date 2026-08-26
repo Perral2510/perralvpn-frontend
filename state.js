@@ -1,9 +1,19 @@
 /* =========================================================
    PerralVPN — Global state & navigation config
    ========================================================= */
+const THEME_STORAGE_KEY = 'perralvpn-theme';
+const SAVED_THEME = (() => {
+  try {
+    const value = localStorage.getItem(THEME_STORAGE_KEY);
+    return value === 'dark' || value === 'light' ? value : 'light';
+  } catch {
+    return 'light';
+  }
+})();
+
 const STATE = {
   lang: 'vi',
-  theme: 'light',
+  theme: SAVED_THEME,
   sidebarCollapsed: false,
   mobileNavOpen: false,
   currentRoute: '#/dashboard',

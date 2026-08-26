@@ -866,3 +866,39 @@ body.auth-mode .site-watermark-bg{display:none}
 .dashboard-billing-card{display:none!important}
 
 .plan-card__usage-grid--single{grid-template-columns:minmax(0,1fr)}
+
+
+/* ---------- Mobile dashboard polish ---------- */
+@media (max-width:600px){
+  .page-container>.grid.grid-2>.card:first-child>.flex.gap-2{grid-template-columns:minmax(0,1.25fr) minmax(0,.75fr);align-items:stretch}
+  .page-container>.grid.grid-2>.card:first-child>.flex.gap-2 .btn{min-width:0;overflow:hidden;text-overflow:ellipsis}
+  .page-container>.grid.grid-2>.card:first-child>.flex.gap-2 .btn:nth-child(3){grid-column:1/-1}
+  .plan-card--pro .plan-card__pro-head{grid-template-columns:40px minmax(0,1fr) auto;gap:8px}
+  .plan-card--pro .plan-card__pro-title h3{font-size:16px;line-height:1.08}
+  .plan-card--pro .plan-card__pro-status{max-width:96px;overflow:hidden;text-overflow:ellipsis}
+  .plan-card--pro .plan-card__pro-subhead{grid-template-columns:minmax(0,1fr) minmax(0,auto);align-items:start}
+  .plan-card--pro .plan-card__pro-subhead span:last-child{white-space:nowrap}
+  .plan-card--pro .plan-card__sync{grid-template-columns:minmax(0,1fr);min-height:0}
+  .plan-card--pro .plan-card__sync-row,.plan-card--pro .plan-card__sync-row .btn{width:100%}
+  .plan-card--pro .plan-card__platforms{grid-template-columns:repeat(4,30px);grid-template-rows:30px;gap:6px;width:100%}
+  .plan-card--pro .plan-card__platforms span:nth-child(4){grid-column:auto}
+}
+@media (max-width:380px){
+  .page-container>.grid.grid-2>.card:first-child>.flex.gap-2{grid-template-columns:1fr 1fr}
+  .page-container>.grid.grid-2>.card:first-child>.flex.gap-2 .btn:nth-child(3){grid-column:1/-1}
+  .plan-card--pro .plan-card__pro-head{grid-template-columns:36px minmax(0,1fr);gap:8px}
+  .plan-card--pro .plan-card__pro-mark{width:36px;height:36px}
+  .plan-card--pro .plan-card__pro-status{grid-column:2;justify-self:start;margin-top:-3px;max-width:none}
+  .plan-card--pro .plan-card__platforms{grid-template-columns:repeat(4,27px);gap:5px}
+  .plan-card--pro .plan-card__platforms span,.plan-card--pro .plan-card__platforms .platform-icon{width:27px;height:27px}
+}
+
+@media (max-width:600px){
+  .plan-card--pro .plan-card__pro-subhead span{min-width:0}
+  .plan-card--pro .plan-card__pro-subhead b{white-space:normal;overflow-wrap:anywhere}
+  .plan-card--pro .plan-metric>strong{white-space:normal;overflow-wrap:anywhere;font-size:14px;line-height:1.2;letter-spacing:-.02em}
+  .plan-card--pro .plan-metric>small{white-space:normal;line-height:1.3}
+}
+@media (max-width:380px){
+  .plan-card--pro .plan-metric>strong{font-size:13px}
+}

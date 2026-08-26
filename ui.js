@@ -143,6 +143,7 @@ function applyTheme(theme, animate = false){
   }
   root.setAttribute('data-theme', theme);
   STATE.theme = theme;
+  try { localStorage.setItem(THEME_STORAGE_KEY, theme); } catch {}
   const btn = qs('#themeToggle');
   if (btn) btn.innerHTML = theme === 'dark' ? icon('sun') : icon('moon');
 }

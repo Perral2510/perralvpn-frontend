@@ -18,6 +18,7 @@ const FRONTEND_TIKTOK_TIERS = [
   { key: 'pro-vpn', name: 'Pro VPN', nameEn: 'Pro VPN', price: 40000, capacity: '3000GB', speed: '300Mbps', devices: 2, base: 'TikTok', simSupport: 'Mọi loại sim', gameSupport: 'Có', category: 'vpn', popular: false, frontendOnly: true },
   { key: 'vip-vpn', name: 'Vip VPN', nameEn: 'Vip VPN', price: 60000, capacity: '6000GB', speed: '700Mbps', devices: 3, base: 'TikTok', simSupport: 'Mọi loại sim', gameSupport: 'Có', category: 'vpn', popular: true, frontendOnly: true },
   { key: 'max-vpn', name: 'Max VPN', nameEn: 'Max VPN', price: 90000, capacity: '9999GB', speed: '1Gbps', devices: 5, base: 'TikTok', simSupport: 'Mọi loại sim', gameSupport: 'Có', category: 'vpn', popular: false, lifetime: true, frontendOnly: true },
+  { key: 'admin', name: 'VPN ADMIN', nameEn: 'VPN ADMIN', price: 999000, capacity: 'KGH', speed: 'KGH', devices: 'KGH', base: '0 nền + TikTok', simSupport: 'Mọi loại sim', gameSupport: 'Có', category: 'vpn', popular: false, lifetime: true, frontendOnly: true },
 ];
 
 function buildFrontendPlanCatalog(apiPlans = []){

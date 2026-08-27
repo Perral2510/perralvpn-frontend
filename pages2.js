@@ -16,7 +16,7 @@ const FRONTEND_VINA_TIERS = [
 function buildFrontendPlanCatalog(apiPlans = []){
   const source = apiPlans.find(plan => /vina-khong-nen(?: basic)?/i.test(`${plan?.slug || ''} ${plan?.name || ''}`)) || apiPlans[0] || {};
   const backendVina = new Map(apiPlans.filter(plan => /vina-khong-nen/i.test(`${plan?.slug || ''} ${plan?.name || ''}`)).map(plan => [String(plan.slug || '').toLowerCase(), plan]));
-  const basic = { ...FRONTEND_VINA_TIERS[0], ...source, id: source.id ?? 'vina-basic' };
+  const basic = { ...FRONTEND_VINA_TIERS[0], ...source, price: FRONTEND_VINA_TIERS[0].price, id: source.id ?? 'vina-basic' };
   const newTiers = FRONTEND_VINA_TIERS.slice(1).map(tier => {
     const slug = `vina-khong-nen-${tier.key}`;
     return { ...tier, ...(backendVina.get(slug) || {}), id: backendVina.get(slug)?.id ?? `vina-${tier.key}` };

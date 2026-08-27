@@ -43,7 +43,14 @@ function frontendPlanCapacity(plan){
 PAGES['#/plan'] = async (root) => {
   root.innerHTML = `
     <div class="page-container page-enter">
-      ${pageHeader('plan_title', 'plan_desc')}
+      <div class="plan-catalog-head">
+        <h1>Chọn gói phù hợp với bạn nhất</h1>
+        <div class="plan-filter" role="tablist" aria-label="Bộ lọc gói dịch vụ">
+          <button type="button" class="plan-filter__tab is-active" data-plan-view="all" role="tab" aria-selected="true">Tất cả</button>
+          <button type="button" class="plan-filter__tab" data-plan-view="cycle" role="tab" aria-selected="false">Chu kỳ</button>
+          <button type="button" class="plan-filter__tab" data-plan-view="traffic" role="tab" aria-selected="false">Theo lưu lượng</button>
+        </div>
+      </div>
       <div id="planGrid" class="grid grid-4">${skeletonCards(4)}</div>
     </div>
   `;
@@ -55,10 +62,23 @@ PAGES['#/plan'] = async (root) => {
     return;
   }
   let cat = 'all';
+  let viewMode = 'all';
+
+  const capacityRank = (plan) => {
+    const capacity = String(frontendPlanCapacity(plan) || '').toLowerCase();
+    if (/kgh|không giới hạn/.test(capacity)) return Number.POSITIVE_INFINITY;
+    const value = Number.parseFloat(capacity.replace(/[^0-9.]/g, ''));
+    return Number.isFinite(value) ? value : Number.POSITIVE_INFINITY;
+  };
 
   const paint = () => {
     const grid = qs('#planGrid', root);
-    const list = cat === 'all' ? plans : plans.filter(p => p.category === cat);
+    let list = cat === 'all' ? [...plans] : plans.filter(p => p.category === cat);
+    if (viewMode === 'cycle') {
+      list.sort((a, b) => Number(Boolean(a.lifetime)) - Number(Boolean(b.lifetime)) || Number(a.price || 0) - Number(b.price || 0));
+    } else if (viewMode === 'traffic') {
+      list.sort((a, b) => capacityRank(a) - capacityRank(b) || Number(a.price || 0) - Number(b.price || 0));
+    }
     grid.innerHTML = list.map(p => `
       <div class="card" style="display:flex;flex-direction:column;${p.popular ? 'border-color:var(--brand-400);box-shadow:0 0 0 3px rgba(47,111,237,.12);' : ''}">
         ${p.popular ? `<span class="badge badge-info" style="align-self:flex-start;margin-bottom:10px;">${t('popular')}</span>` : ''}
@@ -85,10 +105,19 @@ PAGES['#/plan'] = async (root) => {
       CHECKOUT_STATE.cycle = '1';
       location.hash = '#/checkout';
     }));
+
+    qsa('[data-plan-view]', root).forEach(tab => {
+      const active = tab.dataset.planView === viewMode;
+      tab.classList.toggle('is-active', active);
+      tab.setAttribute('aria-selected', String(active));
+    });
   };
 
-
   paint();
+  qsa('[data-plan-view]', root).forEach(tab => tab.addEventListener('click', () => {
+    viewMode = tab.dataset.planView || 'all';
+    paint();
+  }));
 };
 
 function openPurchaseModal(plan){

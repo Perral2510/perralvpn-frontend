@@ -13,6 +13,13 @@ const FRONTEND_VINA_TIERS = [
   { key: 'mxh', name: 'VINA KHÔNG NỀN MXH', nameEn: 'VINA KHÔNG NỀN MXH', price: 15000, capacity: '1000GB', speed: '100Mbps', devices: 2, base: '0 nền', simSupport: 'Vina', gameSupport: 'Không', category: 'vn', popular: false, frontendOnly: true },
 ];
 
+const FRONTEND_TIKTOK_TIERS = [
+  { key: 'basic-vpn', name: 'Basic VPN', nameEn: 'Basic VPN', price: 20000, capacity: '1000GB', speed: '100Mbps', devices: 1, base: 'TikTok', simSupport: 'Mọi loại sim', gameSupport: 'Có', category: 'vpn', popular: false, frontendOnly: true },
+  { key: 'pro-vpn', name: 'Pro VPN', nameEn: 'Pro VPN', price: 40000, capacity: '3000GB', speed: '300Mbps', devices: 2, base: 'TikTok', simSupport: 'Mọi loại sim', gameSupport: 'Có', category: 'vpn', popular: false, frontendOnly: true },
+  { key: 'vip-vpn', name: 'Vip VPN', nameEn: 'Vip VPN', price: 60000, capacity: '6000GB', speed: '700Mbps', devices: 3, base: 'TikTok', simSupport: 'Mọi loại sim', gameSupport: 'Có', category: 'vpn', popular: true, frontendOnly: true },
+  { key: 'max-vpn', name: 'Max VPN', nameEn: 'Max VPN', price: 90000, capacity: '9999GB', speed: '1Gbps', devices: 5, base: 'TikTok', simSupport: 'Mọi loại sim', gameSupport: 'Có', category: 'vpn', popular: false, lifetime: true, frontendOnly: true },
+];
+
 function buildFrontendPlanCatalog(apiPlans = []){
   const source = apiPlans.find(plan => /vina-khong-nen(?: basic)?/i.test(`${plan?.slug || ''} ${plan?.name || ''}`)) || apiPlans[0] || {};
   const backendVina = new Map(apiPlans.filter(plan => /vina-khong-nen/i.test(`${plan?.slug || ''} ${plan?.name || ''}`)).map(plan => [String(plan.slug || '').toLowerCase(), plan]));
@@ -21,9 +28,10 @@ function buildFrontendPlanCatalog(apiPlans = []){
     const slug = `vina-khong-nen-${tier.key}`;
     return { ...tier, ...(backendVina.get(slug) || {}), id: backendVina.get(slug)?.id ?? `vina-${tier.key}` };
   });
+  const tiktokPlans = FRONTEND_TIKTOK_TIERS.map(tier => ({ ...tier, id: `vpn-${tier.key}` }));
   const vinaIds = new Set([source.id, ...newTiers.map(plan => plan.id)].map(String));
   const otherPlans = apiPlans.filter(plan => !vinaIds.has(String(plan.id)) && !/vina-khong-nen/i.test(`${plan?.slug || ''} ${plan?.name || ''}`));
-  return [basic, ...newTiers, ...otherPlans];
+  return [basic, ...newTiers, ...tiktokPlans, ...otherPlans];
 }
 
 function frontendPlanCapacity(plan){

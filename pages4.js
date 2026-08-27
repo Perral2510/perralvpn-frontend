@@ -79,7 +79,7 @@ PAGES['#/checkout'] = async (root) => {
                 <div style="font-family:var(--font-display);font-weight:600;font-size:16px;">${escapeHTML(plan.name)}</div>
                 <div class="text-sm text-secondary">${escapeHTML(plan.capacity)} · ${escapeHTML(plan.speed)} · ${plan.devices} ${t('device_limit').toLowerCase()}</div>
               </div>
-              <div style="font-family:var(--font-display);font-weight:700;color:var(--brand-500);">${formatCurrency(plan.price)}<span class="text-secondary text-sm">${t('per_month')}</span></div>
+              <div style="font-family:var(--font-display);font-weight:700;color:var(--brand-500);">${formatCurrency(plan.price)}<span class="text-secondary text-sm">${plan.lifetime ? t('lifetime_term') : t('per_month')}</span></div>
             </div>
 
             <div class="field mb-0">

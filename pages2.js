@@ -71,6 +71,8 @@ PAGES['#/plan'] = async (root) => {
           <li><span class="plan-spec-list__icon">${icon('gamepad')}</span><span>Hỗ trợ game: <strong>${escapeHTML(p.gameSupport || 'Có')}</strong></span></li>
         </ul>
         <button class="btn btn-primary btn-block" data-buy="${p.id}">${t('buy_now')}</button>
+        <div class="plan-support-note">Vào box để được admin hỗ trợ</div>
+        <div class="plan-thanks-marquee" aria-label="Cảm ơn đã sử dụng dịch vụ của chúng tôi"><span>Cảm ơn đã sử dụng dịch vụ của chúng tôi</span></div>
       </div>
     `).join('');
     if (!list.length) grid.innerHTML = emptyState({ title: t('no_data_title'), desc: t('no_data_desc') });

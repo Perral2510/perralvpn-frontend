@@ -7,10 +7,10 @@
    --------------------------------------------------------- */
 const FRONTEND_VINA_TIERS = [
   { key: 'basic', name: 'VINA KHÔNG NỀN BASIC', nameEn: 'VINA KHÔNG NỀN BASIC', price: 20000, capacity: '1000GB', speed: '100Mbps', devices: 2, base: '0 nền', simSupport: 'Vina', gameSupport: 'Có', category: 'vn', popular: false, frontendOnly: false },
-  { key: 'mxh', name: 'VINA KHÔNG NỀN MXH', nameEn: 'VINA KHÔNG NỀN MXH', price: 15000, capacity: '1000GB', speed: '100Mbps', devices: 2, base: '0 nền', simSupport: 'Vina', gameSupport: 'Không', category: 'vn', popular: false, frontendOnly: true },
   { key: 'pro', name: 'VINA KHÔNG NỀN PRO', nameEn: 'VINA KHÔNG NỀN PRO', price: 35000, capacity: '3000GB', speed: '300Mbps', devices: 5, base: '0 nền', simSupport: 'Vina', gameSupport: 'Có', category: 'vn', popular: false, frontendOnly: true },
   { key: 'max', name: 'VINA KHÔNG NỀN MAX', nameEn: 'VINA KHÔNG NỀN MAX', price: 65000, capacity: '6000GB', speed: '700Mbps', devices: 8, base: '0 nền', simSupport: 'Vina', gameSupport: 'Có', category: 'vn', popular: true, frontendOnly: true },
   { key: 'vv', name: 'VINA KHÔNG NỀN VV', nameEn: 'VINA KHÔNG NỀN VV', price: 79000, capacity: '2000GB', speed: '1Gbps', devices: 2, base: '0 nền', simSupport: 'Vina', gameSupport: 'Có', category: 'vn', popular: false, lifetime: true, frontendOnly: true },
+  { key: 'mxh', name: 'VINA KHÔNG NỀN MXH', nameEn: 'VINA KHÔNG NỀN MXH', price: 15000, capacity: '1000GB', speed: '100Mbps', devices: 2, base: '0 nền', simSupport: 'Vina', gameSupport: 'Không', category: 'vn', popular: false, frontendOnly: true },
 ];
 
 function buildFrontendPlanCatalog(apiPlans = []){

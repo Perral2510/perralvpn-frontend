@@ -19,6 +19,11 @@ const FRONTEND_TIKTOK_TIERS = [
   { key: 'vip-vpn', name: 'Vip VPN', nameEn: 'Vip VPN', price: 60000, capacity: '6000GB', speed: '700Mbps', devices: 3, base: 'TikTok', simSupport: 'Mọi loại sim', gameSupport: 'Có', category: 'vpn', popular: true, frontendOnly: true },
   { key: 'max-vpn', name: 'Max VPN', nameEn: 'Max VPN', price: 90000, capacity: '9999GB', speed: '1Gbps', devices: 5, base: 'TikTok', simSupport: 'Mọi loại sim', gameSupport: 'Có', category: 'vpn', popular: false, lifetime: true, frontendOnly: true },
   { key: 'admin', name: 'VPN ADMIN', nameEn: 'VPN ADMIN', price: 999000, capacity: 'KGH', speed: 'KGH', devices: 'KGH', base: '0 nền + TikTok', simSupport: 'Mọi loại sim', gameSupport: 'Có', category: 'vpn', popular: false, lifetime: true, frontendOnly: true },
+  { key: 'ultra-vpn', name: 'Ultra VPN', nameEn: 'Ultra VPN', price: 129000, capacity: '15000GB', speed: '1.2Gbps', devices: 6, base: 'TikTok', simSupport: 'Mọi loại sim', gameSupport: 'Có', category: 'vpn', popular: false, frontendOnly: true },
+  { key: 'premium-vpn', name: 'Premium VPN', nameEn: 'Premium VPN', price: 159000, capacity: '25000GB', speed: '1.5Gbps', devices: 8, base: '0 nền + TikTok', simSupport: 'Mọi loại sim', gameSupport: 'Có', category: 'vpn', popular: false, frontendOnly: true },
+  { key: 'business-vpn', name: 'Business VPN', nameEn: 'Business VPN', price: 299000, capacity: 'KGH', speed: 'KGH', devices: 12, base: '0 nền + TikTok', simSupport: 'Mọi loại sim', gameSupport: 'Có', category: 'vpn', popular: false, frontendOnly: true },
+  { key: 'enterprise-vpn', name: 'Enterprise VPN', nameEn: 'Enterprise VPN', price: 499000, capacity: 'KGH', speed: 'KGH', devices: 20, base: '0 nền + TikTok', simSupport: 'Mọi loại sim', gameSupport: 'Có', category: 'vpn', popular: false, frontendOnly: true },
+  { key: 'vip-lifetime-vpn', name: 'VIP Lifetime VPN', nameEn: 'VIP Lifetime VPN', price: 1499000, capacity: 'KGH', speed: 'KGH', devices: 'KGH', base: '0 nền + TikTok', simSupport: 'Mọi loại sim', gameSupport: 'Có', category: 'vpn', popular: false, lifetime: true, frontendOnly: true },
 ];
 
 function buildFrontendPlanCatalog(apiPlans = []){

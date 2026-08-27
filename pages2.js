@@ -34,9 +34,17 @@ function buildFrontendPlanCatalog(apiPlans = []){
     const slug = `vina-khong-nen-${tier.key}`;
     return { ...tier, ...(backendVina.get(slug) || {}), id: backendVina.get(slug)?.id ?? `vina-${tier.key}` };
   });
-  const tiktokPlans = FRONTEND_TIKTOK_TIERS.map(tier => ({ ...tier, id: `vpn-${tier.key}` }));
-  const vinaIds = new Set([source.id, ...newTiers.map(plan => plan.id)].map(String));
-  const otherPlans = apiPlans.filter(plan => !vinaIds.has(String(plan.id)) && !/vina-khong-nen/i.test(`${plan?.slug || ''} ${plan?.name || ''}`));
+  const backendBySlug = new Map(apiPlans.map(plan => [String(plan?.slug || '').toLowerCase(), plan]));
+  const tiktokPlans = FRONTEND_TIKTOK_TIERS.map(tier => {
+    const backend = backendBySlug.get(tier.key.toLowerCase());
+    return { ...tier, ...(backend || {}), id: backend?.id ?? `vpn-${tier.key}` };
+  });
+  const catalogIds = new Set([basic, ...newTiers, ...tiktokPlans].map(plan => String(plan.id)));
+  const catalogSlugs = new Set([
+    ...FRONTEND_VINA_TIERS.map(tier => tier.key === 'basic' ? 'vina-khong-nen' : `vina-khong-nen-${tier.key}`),
+    ...FRONTEND_TIKTOK_TIERS.map(tier => tier.key),
+  ]);
+  const otherPlans = apiPlans.filter(plan => !catalogIds.has(String(plan.id)) && !catalogSlugs.has(String(plan?.slug || '').toLowerCase()));
   return [basic, ...newTiers, ...tiktokPlans, ...otherPlans];
 }
 

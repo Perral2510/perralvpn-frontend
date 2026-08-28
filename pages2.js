@@ -6,33 +6,33 @@
    4) PLANS
    --------------------------------------------------------- */
 const FRONTEND_VINA_TIERS = [
-  { key: 'basic', name: 'VINA KHÔNG NỀN BASIC', nameEn: 'VINA KHÔNG NỀN BASIC', price: 20000, capacity: '1000GB', speed: '100Mbps', devices: 2, base: '0 nền', simSupport: 'Vina', gameSupport: 'Có', category: 'vn', popular: false, frontendOnly: false },
-  { key: 'pro', name: 'VINA KHÔNG NỀN PRO', nameEn: 'VINA KHÔNG NỀN PRO', price: 35000, capacity: '3000GB', speed: '300Mbps', devices: 5, base: '0 nền', simSupport: 'Vina', gameSupport: 'Có', category: 'vn', popular: false, frontendOnly: true },
-  { key: 'max', name: 'VINA KHÔNG NỀN MAX', nameEn: 'VINA KHÔNG NỀN MAX', price: 65000, capacity: '6000GB', speed: '700Mbps', devices: 8, base: '0 nền', simSupport: 'Vina', gameSupport: 'Có', category: 'vn', popular: true, frontendOnly: true },
-  { key: 'vv', name: 'VINA KHÔNG NỀN VV', nameEn: 'VINA KHÔNG NỀN VV', price: 79000, capacity: '2000GB', speed: '1Gbps', devices: 2, base: '0 nền', simSupport: 'Vina', gameSupport: 'Có', category: 'vn', popular: false, lifetime: true, frontendOnly: true },
-  { key: 'mxh', name: 'VINA KHÔNG NỀN MXH', nameEn: 'VINA KHÔNG NỀN MXH', price: 15000, capacity: '1000GB', speed: '100Mbps', devices: 2, base: '0 nền', simSupport: 'Vina', gameSupport: 'Không', category: 'vn', popular: false, frontendOnly: true },
+  { key: 'basic', name: 'VINA KHÔNG NỀN BASIC', nameEn: 'VINA KHÔNG NỀN BASIC', price: 20000, capacity: '1000GB', speed: '300Mbps', devices: 2, base: '0 nền', simSupport: 'Vina', gameSupport: 'Có', category: 'vn', popular: false, frontendOnly: false },
+  { key: 'pro', name: 'VINA KHÔNG NỀN PRO', nameEn: 'VINA KHÔNG NỀN PRO', price: 35000, capacity: '3000GB', speed: '500Mbps', devices: 5, base: '0 nền', simSupport: 'Vina', gameSupport: 'Có', category: 'vn', popular: false, frontendOnly: true },
+  { key: 'max', name: 'VINA KHÔNG NỀN MAX', nameEn: 'VINA KHÔNG NỀN MAX', price: 65000, capacity: '6000GB', speed: '1Gbps', devices: 8, base: '0 nền', simSupport: 'Vina', gameSupport: 'Có', category: 'vn', popular: true, frontendOnly: true },
+  { key: 'vv', name: 'VINA KHÔNG NỀN VV', nameEn: 'VINA KHÔNG NỀN VV', price: 79000, capacity: '2000GB', speed: '1.5Gbps', devices: 2, base: '0 nền', simSupport: 'Vina', gameSupport: 'Có', category: 'vn', popular: false, lifetime: true, frontendOnly: true },
+  { key: 'mxh', name: 'VINA KHÔNG NỀN MXH', nameEn: 'VINA KHÔNG NỀN MXH', price: 15000, capacity: '1000GB', speed: '300Mbps', devices: 2, base: '0 nền', simSupport: 'Vina', gameSupport: 'Không', category: 'vn', popular: false, frontendOnly: true },
 ];
 
 const FRONTEND_TIKTOK_TIERS = [
-  { key: 'basic-vpn', name: 'Basic VPN', nameEn: 'Basic VPN', price: 20000, capacity: '1000GB', speed: '100Mbps', devices: 1, base: 'TikTok', simSupport: 'Mọi loại sim', gameSupport: 'Có', category: 'vpn', popular: false, frontendOnly: true },
-  { key: 'pro-vpn', name: 'Pro VPN', nameEn: 'Pro VPN', price: 40000, capacity: '3000GB', speed: '300Mbps', devices: 2, base: 'TikTok', simSupport: 'Mọi loại sim', gameSupport: 'Có', category: 'vpn', popular: false, frontendOnly: true },
-  { key: 'vip-vpn', name: 'Vip VPN', nameEn: 'Vip VPN', price: 60000, capacity: '6000GB', speed: '700Mbps', devices: 3, base: 'TikTok', simSupport: 'Mọi loại sim', gameSupport: 'Có', category: 'vpn', popular: true, frontendOnly: true },
-  { key: 'max-vpn', name: 'Max VPN', nameEn: 'Max VPN', price: 90000, capacity: '9999GB', speed: '1Gbps', devices: 5, base: 'TikTok', simSupport: 'Mọi loại sim', gameSupport: 'Có', category: 'vpn', popular: false, lifetime: true, frontendOnly: true },
-  { key: 'admin', name: 'VPN ADMIN', nameEn: 'VPN ADMIN', price: 999000, capacity: 'KGH', speed: 'KGH', devices: 'KGH', base: '0 nền + TikTok', simSupport: 'Mọi loại sim', gameSupport: 'Có', category: 'vpn', popular: false, lifetime: true, frontendOnly: true },
-  { key: 'ultra-vpn', name: 'Ultra VPN', nameEn: 'Ultra VPN', price: 129000, capacity: '15000GB', speed: '1.2Gbps', devices: 6, base: 'TikTok', simSupport: 'Mọi loại sim', gameSupport: 'Có', category: 'vpn', popular: false, frontendOnly: true },
-  { key: 'premium-vpn', name: 'Premium VPN', nameEn: 'Premium VPN', price: 159000, capacity: '25000GB', speed: '1.5Gbps', devices: 8, base: '0 nền + TikTok', simSupport: 'Mọi loại sim', gameSupport: 'Có', category: 'vpn', popular: false, frontendOnly: true },
-  { key: 'business-vpn', name: 'Business VPN', nameEn: 'Business VPN', price: 299000, capacity: 'KGH', speed: 'KGH', devices: 12, base: '0 nền + TikTok', simSupport: 'Mọi loại sim', gameSupport: 'Có', category: 'vpn', popular: false, frontendOnly: true },
-  { key: 'enterprise-vpn', name: 'Enterprise VPN', nameEn: 'Enterprise VPN', price: 499000, capacity: 'KGH', speed: 'KGH', devices: 20, base: '0 nền + TikTok', simSupport: 'Mọi loại sim', gameSupport: 'Có', category: 'vpn', popular: false, frontendOnly: true },
-  { key: 'vip-lifetime-vpn', name: 'VIP Lifetime VPN', nameEn: 'VIP Lifetime VPN', price: 1499000, capacity: 'KGH', speed: 'KGH', devices: 'KGH', base: '0 nền + TikTok', simSupport: 'Mọi loại sim', gameSupport: 'Có', category: 'vpn', popular: false, lifetime: true, frontendOnly: true },
+  { key: 'basic-vpn', name: 'Basic VPN', nameEn: 'Basic VPN', price: 20000, capacity: '1000GB', speed: '300Mbps', devices: 1, base: 'TikTok', simSupport: 'Mọi loại sim', gameSupport: 'Có', category: 'vpn', popular: false, frontendOnly: true },
+  { key: 'pro-vpn', name: 'Pro VPN', nameEn: 'Pro VPN', price: 40000, capacity: '3000GB', speed: '600Mbps', devices: 2, base: 'TikTok', simSupport: 'Mọi loại sim', gameSupport: 'Có', category: 'vpn', popular: false, frontendOnly: true },
+  { key: 'vip-vpn', name: 'Vip VPN', nameEn: 'Vip VPN', price: 60000, capacity: '6000GB', speed: '1Gbps', devices: 3, base: 'TikTok', simSupport: 'Mọi loại sim', gameSupport: 'Có', category: 'vpn', popular: true, frontendOnly: true },
+  { key: 'max-vpn', name: 'Max VPN', nameEn: 'Max VPN', price: 90000, capacity: '9999GB', speed: '2Gbps', devices: 5, base: 'TikTok', simSupport: 'Mọi loại sim', gameSupport: 'Có', category: 'vpn', popular: false, lifetime: true, frontendOnly: true },
+  { key: 'admin', name: 'VPN ADMIN', nameEn: 'VPN ADMIN', price: 999000, capacity: 'KGH', speed: '9Gbps', devices: 'KGH', base: '0 nền + TikTok', simSupport: 'Mọi loại sim', gameSupport: 'Có', category: 'vpn', popular: false, lifetime: true, frontendOnly: true },
+  { key: 'ultra-vpn', name: 'Ultra VPN', nameEn: 'Ultra VPN', price: 129000, capacity: '15000GB', speed: '3Gbps', devices: 6, base: 'TikTok', simSupport: 'Mọi loại sim', gameSupport: 'Có', category: 'vpn', popular: false, frontendOnly: true },
+  { key: 'premium-vpn', name: 'Premium VPN', nameEn: 'Premium VPN', price: 159000, capacity: '25000GB', speed: '4Gbps', devices: 8, base: '0 nền + TikTok', simSupport: 'Mọi loại sim', gameSupport: 'Có', category: 'vpn', popular: false, frontendOnly: true },
+  { key: 'business-vpn', name: 'Business VPN', nameEn: 'Business VPN', price: 299000, capacity: 'KGH', speed: '6Gbps', devices: 12, base: '0 nền + TikTok', simSupport: 'Mọi loại sim', gameSupport: 'Có', category: 'vpn', popular: false, frontendOnly: true },
+  { key: 'enterprise-vpn', name: 'Enterprise VPN', nameEn: 'Enterprise VPN', price: 499000, capacity: 'KGH', speed: '8Gbps', devices: 20, base: '0 nền + TikTok', simSupport: 'Mọi loại sim', gameSupport: 'Có', category: 'vpn', popular: false, frontendOnly: true },
+  { key: 'vip-lifetime-vpn', name: 'VIP Lifetime VPN', nameEn: 'VIP Lifetime VPN', price: 1499000, capacity: 'KGH', speed: '10Gbps', devices: 'KGH', base: '0 nền + TikTok', simSupport: 'Mọi loại sim', gameSupport: 'Có', category: 'vpn', popular: false, lifetime: true, frontendOnly: true },
 ];
 
 function buildFrontendPlanCatalog(apiPlans = []){
   const source = apiPlans.find(plan => /vina-khong-nen(?: basic)?/i.test(`${plan?.slug || ''} ${plan?.name || ''}`)) || apiPlans[0] || {};
   const backendVina = new Map(apiPlans.filter(plan => /vina-khong-nen/i.test(`${plan?.slug || ''} ${plan?.name || ''}`)).map(plan => [String(plan.slug || '').toLowerCase(), plan]));
-  const basic = { ...FRONTEND_VINA_TIERS[0], ...source, price: FRONTEND_VINA_TIERS[0].price, id: source.id ?? 'vina-basic' };
+  const basic = { ...FRONTEND_VINA_TIERS[0], ...source, price: FRONTEND_VINA_TIERS[0].price, speed: FRONTEND_VINA_TIERS[0].speed, id: source.id ?? 'vina-basic' };
   const newTiers = FRONTEND_VINA_TIERS.slice(1).map(tier => {
     const slug = `vina-khong-nen-${tier.key}`;
-    return { ...tier, ...(backendVina.get(slug) || {}), id: backendVina.get(slug)?.id ?? `vina-${tier.key}` };
+    return { ...tier, ...(backendVina.get(slug) || {}), speed: tier.speed, id: backendVina.get(slug)?.id ?? `vina-${tier.key}` };
   });
   const backendBySlug = new Map(apiPlans.map(plan => [String(plan?.slug || '').toLowerCase(), plan]));
   const tiktokPlans = FRONTEND_TIKTOK_TIERS.map(tier => {
@@ -100,6 +100,7 @@ PAGES['#/plan'] = async (root) => {
         <ul class="plan-spec-list" aria-label="Thông tin gói dịch vụ">
           <li><span class="plan-spec-list__icon">${icon('globe')}</span><span>Nền: <strong>${escapeHTML(p.base || (/không nền/i.test(p.name || '') ? '0 nền' : '0 nền'))}</strong></span></li>
           <li><span class="plan-spec-list__icon">${icon('database')}</span><span>Dung lượng: <strong>${escapeHTML(frontendPlanCapacity(p))}</strong></span></li>
+          <li><span class="plan-spec-list__icon">${icon('activity')}</span><span>Tốc độ: <strong>${escapeHTML(p.speed || '300Mbps')}</strong></span></li>
           <li><span class="plan-spec-list__icon">${icon('smartphone')}</span><span>Thiết bị: <strong>${escapeHTML(String(p.devices ?? 0))}</strong></span></li>
           <li><span class="plan-spec-list__icon">${icon('sim')}</span><span>Hỗ trợ SIM: <strong>${escapeHTML(p.simSupport || (/vina/i.test(`${p.name || ''} ${p.category || ''}`) ? 'Vina' : 'Tất cả'))}</strong></span></li>
           <li><span class="plan-spec-list__icon">${icon('gamepad')}</span><span>Hỗ trợ game: <strong>${escapeHTML(p.gameSupport || 'Có')}</strong></span></li>

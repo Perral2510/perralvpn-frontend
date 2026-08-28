@@ -7,7 +7,7 @@
   const PAGES = {};
   const APPLE_ID_TRIAL_URL = 'https://idshadow.hoantienviet.com/';
 const PROMO_BANNER_IMAGES = ['assets/promo-anime-01.jpg', 'assets/promo-anime-02.jpg', 'assets/promo-anime-03.jpg'];
-const ZALO_GROUP_URL = 'https://zalo.me/g/8kps1zwougt3wzqi57jq';
+const ZALO_GROUP_URL = 'https://zalo.me/g/itfs9rhv3lkcdmenhafc';
 const TELEGRAM_GROUP_URL = 'https://t.me/+Nn5cWIk05sNiYTM1';
 
 function setVpnResetButtonBusy(button, busy) {

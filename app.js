@@ -91,10 +91,29 @@ function setupAccountMenu(){
   });
 }
 
-function setupSupportFab(){
-  qs('#supportFab').addEventListener('click', () => {
-    showToast({ type: 'info', title: t('support_chat'), message: t('support_online') });
+function openSupportChoiceModal(){
+  const backdrop = openModal({
+    title: 'Chọn kênh hỗ trợ',
+    bodyHTML: `
+      <p class="support-choice__intro">Chọn một kênh để liên hệ với admin.</p>
+      <div class="support-choice-grid">
+        <a class="support-choice support-choice--zalo" href="${escapeHTML(ZALO_GROUP_URL)}" target="_blank" rel="noopener noreferrer">
+          <span class="support-choice__logo">Z</span>
+          <span><strong>Zalo</strong><small>Nhắn tin qua nhóm Zalo</small></span>
+        </a>
+        <a class="support-choice support-choice--telegram" href="${escapeHTML(TELEGRAM_GROUP_URL)}" target="_blank" rel="noopener noreferrer">
+          <span class="support-choice__logo">T</span>
+          <span><strong>Telegram</strong><small>Tham gia nhóm Telegram</small></span>
+        </a>
+      </div>
+    `,
+    size: '420px',
   });
+  backdrop.querySelectorAll('.support-choice').forEach(link => link.addEventListener('click', () => closeModal()));
+}
+
+function setupSupportFab(){
+  qs('#supportFab').addEventListener('click', openSupportChoiceModal);
 }
 
 function setupThemeDropdownButtons(){

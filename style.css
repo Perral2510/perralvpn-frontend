@@ -337,6 +337,19 @@ table.data-table{ min-width:640px; }
 .support-fab__pulse::after{ content:''; position:absolute; inset:-4px; border-radius:50%; border:2px solid var(--accent-400); animation:pulse-ring 1.8s var(--ease) infinite; }
 @keyframes pulse-ring{ 0%{ transform:scale(.6); opacity:.9;} 100%{ transform:scale(1.9); opacity:0;} }
 
+/* ---------- Support channel chooser ---------- */
+.support-choice__intro{margin:0 0 16px;color:var(--text-secondary);font-size:13px}
+.support-choice-grid{display:grid;gap:10px}
+.support-choice{display:flex;align-items:center;gap:12px;padding:13px 14px;border:1px solid var(--border-color);border-radius:var(--radius-md);background:var(--bg-surface-2);color:var(--text-primary);text-decoration:none;transition:transform .16s var(--ease),border-color .16s var(--ease),background .16s var(--ease)}
+.support-choice:hover{transform:translateY(-1px);border-color:var(--brand-400);background:var(--bg-surface)}
+.support-choice:active{transform:scale(.98)}
+.support-choice__logo{display:grid;place-items:center;width:36px;height:36px;border-radius:11px;color:#fff;font-weight:800;font-size:18px;flex-shrink:0}
+.support-choice--zalo .support-choice__logo{background:linear-gradient(135deg,#1188f5,#0064d8)}
+.support-choice--telegram .support-choice__logo{background:linear-gradient(135deg,#2aabee,#168acd)}
+.support-choice strong,.support-choice small{display:block}
+.support-choice strong{font-size:14px;margin-bottom:2px}
+.support-choice small{color:var(--text-secondary);font-size:12px}
+
 /* ---------- Utility layout ---------- */
 .flex{ display:flex; }
 .items-center{ align-items:center; }

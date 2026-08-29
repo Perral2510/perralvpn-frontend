@@ -24,6 +24,8 @@
   try {
     const savedTheme = localStorage.getItem('perralvpn-theme');
     if (savedTheme === 'dark' || savedTheme === 'light') document.documentElement.dataset.theme = savedTheme;
+    const savedLang = localStorage.getItem('perralvpn-language');
+    if (savedLang === 'vi' || savedLang === 'en') document.documentElement.lang = savedLang;
   } catch {}
 </script>
 <link rel="stylesheet" href="variables.css">

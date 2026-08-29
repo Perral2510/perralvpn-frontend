@@ -2,6 +2,15 @@
    PerralVPN — Global state & navigation config
    ========================================================= */
 const THEME_STORAGE_KEY = 'perralvpn-theme';
+const LANG_STORAGE_KEY = 'perralvpn-language';
+const SAVED_LANG = (() => {
+  try {
+    const value = localStorage.getItem(LANG_STORAGE_KEY);
+    return value === 'vi' || value === 'en' ? value : 'vi';
+  } catch {
+    return 'vi';
+  }
+})();
 const SAVED_THEME = (() => {
   try {
     const value = localStorage.getItem(THEME_STORAGE_KEY);
@@ -12,7 +21,7 @@ const SAVED_THEME = (() => {
 })();
 
 const STATE = {
-  lang: 'vi',
+  lang: SAVED_LANG,
   theme: SAVED_THEME,
   sidebarCollapsed: false,
   mobileNavOpen: false,

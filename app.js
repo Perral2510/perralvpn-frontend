@@ -55,7 +55,8 @@ function refreshStaticText(){
 
 function setupLangDropdown(){
   qsa('[data-lang]').forEach(btn => btn.addEventListener('click', () => {
-    STATE.lang = btn.dataset.lang;
+    STATE.lang = btn.dataset.lang === 'en' ? 'en' : 'vi';
+    try { localStorage.setItem(LANG_STORAGE_KEY, STATE.lang); } catch {}
     document.documentElement.lang = STATE.lang;
     refreshStaticText();
     renderRoute();

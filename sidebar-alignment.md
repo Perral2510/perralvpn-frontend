@@ -9,7 +9,3 @@ The rules will be applied as a small final stylesheet. It will not change route 
 ## Browser check
 
 The cache-busted dashboard route without authentication rendered the sidebar and showed the new single-rail alignment visually. The page content correctly remained empty because the route requires an authenticated user. A DOM bounding-box probe returned zero-sized content for the not-authenticated render, so final alignment validation relies on the visible sidebar screenshot and static rule inspection rather than that probe.
-
-## Live verification
-
-The live domain loads `sidebar-alignment.css?v=sidebar-align-1`, so this is not a stale stylesheet issue. In the unauthenticated live state, `.sidebar` is intentionally `display:none` and its measured bounds are zero; the visible sidebar screenshot provided by the user is therefore from the authenticated desktop shell. Alignment must be validated against the authenticated render, not the logged-out route.

@@ -26,37 +26,3 @@
   .nav-group__title{padding:0 8px}
   .sidebar__footer{padding:12px 7px 14px}
 }
-
-/* Rail v2: brand text and nav labels share the same x-origin. */
-.sidebar__brand{padding-left:8px;padding-right:8px;gap:10px}
-.nav-group{padding-left:0;padding-right:0}
-.nav-group__title{padding-left:8px;padding-right:8px}
-.nav-item{grid-template-columns:34px minmax(0,1fr);column-gap:10px;padding-left:8px;padding-right:8px}
-.nav-item .icon{width:18px;height:18px;justify-self:center}
-.sidebar__collapse-btn{grid-template-columns:34px minmax(0,1fr);column-gap:10px;padding-left:8px;padding-right:8px}
-.sidebar__collapse-btn .icon{width:18px;height:18px;justify-self:center}
-.app-shell.sidebar-collapsed .nav-group{padding-left:0;padding-right:0}
-.app-shell.sidebar-collapsed .nav-item{grid-template-columns:1fr;padding-left:8px;padding-right:8px}
-.app-shell.sidebar-collapsed .sidebar__collapse-btn{grid-template-columns:1fr;padding-left:8px;padding-right:8px}
-@media(max-width:600px){
-  .sidebar__brand{padding-left:8px;padding-right:8px}
-  .nav-item{grid-template-columns:34px minmax(0,1fr);padding-left:7px;padding-right:7px}
-  .nav-group__title{padding-left:7px;padding-right:7px}
-  .sidebar__collapse-btn{grid-template-columns:34px minmax(0,1fr);padding-left:7px;padding-right:7px}
-}
-
-/* Final optical correction: text rail x46 at the compact sidebar width. */
-.sidebar__brand{padding-left:8px;padding-right:8px;gap:4px}
-.nav-group{padding-left:8px;padding-right:8px}
-.nav-item{grid-template-columns:22px minmax(0,1fr);column-gap:10px;padding-left:6px;padding-right:6px}
-.nav-item .icon{width:18px;height:18px}
-.sidebar__collapse-btn{grid-template-columns:22px minmax(0,1fr);column-gap:10px;padding-left:6px;padding-right:6px}
-.sidebar__collapse-btn .icon{width:18px;height:18px}
-.app-shell.sidebar-collapsed .nav-group{padding-left:8px;padding-right:8px}
-.app-shell.sidebar-collapsed .nav-item,.app-shell.sidebar-collapsed .sidebar__collapse-btn{grid-template-columns:1fr;padding-left:6px;padding-right:6px}
-@media(max-width:600px){
-  .sidebar__brand{padding-left:8px;padding-right:8px;gap:4px}
-  .nav-group{padding-left:7px;padding-right:7px}
-  .nav-item{grid-template-columns:22px minmax(0,1fr);padding-left:6px;padding-right:6px}
-  .sidebar__collapse-btn{grid-template-columns:22px minmax(0,1fr);padding-left:6px;padding-right:6px}
-}

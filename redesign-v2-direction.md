@@ -57,3 +57,11 @@ After cache-busting the page URL, the new stylesheet loaded correctly. The auth 
 ## Theme validation
 
 The dark theme was toggled at runtime and the auth card/input returned distinct dark surface values (`#171a22` and `#0f1117`) while retaining readable light text and the indigo/cyan signal accents. This confirms the theme is defined as its own visual treatment rather than only a light-theme inversion.
+
+## Desktop polish checkpoint
+
+The desktop dashboard mock now uses the full available workspace rather than a narrow centered column. The account and active-plan cards align at their natural content height instead of stretching into a large empty panel. Quick actions sit in a single balanced row, navigation and topbar icons share one 18px optical box, and the new desktop motion is scoped above 860px so the existing mobile treatment is not overwritten. The mock's quick-action labels appear as raw keys because the temporary browser data bypasses the real translation payload; this is not a production data change.
+
+## Dark theme desktop validation
+
+The desktop dashboard mock was switched to dark mode at runtime. The card surface resolved to `#171a22`, the sidebar to `#0c0e13`, and the two-column dashboard grid resolved to a balanced `433px / 470px` layout at the test viewport. A subsequent computed-style read showed the body root at the intended dark canvas value after the transition settled.

@@ -1,0 +1,101 @@
+/* PerralVPN desktop polish — intentionally scoped above 860px.
+   Mobile layout remains owned by refresh-v2.css. */
+@media (min-width:861px){
+  :root{--desktop-gutter:clamp(28px,3.2vw,56px);--desktop-gap:20px;--desktop-panel-radius:16px}
+  body{overflow-x:hidden}
+  .app-shell{min-height:100vh}
+  .sidebar{width:246px;background:var(--bg-surface);border-right:1px solid var(--border-color)}
+  .app-shell.sidebar-collapsed .sidebar{width:76px}
+  .sidebar__brand{height:72px;padding:0 22px}
+  .sidebar__brand-mark{width:34px;height:34px;border-radius:10px}
+  .sidebar__brand-text{font-size:16px}
+  .nav-group{padding:0 14px;margin-top:26px}
+  .nav-group__title{padding:0 11px;margin-bottom:9px;font-size:9px;letter-spacing:.18em}
+  .nav-item{min-height:42px;margin:4px 0;padding:11px 12px;gap:12px;border-radius:10px;font-size:13px}
+  .nav-item .icon{width:18px;height:18px;stroke-width:1.75}
+  .sidebar .nav-item.active{background:color-mix(in srgb,var(--brand-500) 15%,var(--bg-surface));color:var(--brand-500);box-shadow:inset 3px 0 0 var(--brand-500)}
+  :root[data-theme="dark"] .sidebar .nav-item.active{background:rgba(123,124,242,.16);color:var(--brand-300);box-shadow:inset 3px 0 0 var(--brand-400)}
+  .sidebar .nav-item.active::after{display:none}
+  .sidebar__footer{padding:16px}
+  .sidebar__collapse-btn{min-height:38px}
+
+  .topbar{height:72px;padding:0 var(--desktop-gutter);border-bottom-color:var(--border-color);background:color-mix(in srgb,var(--bg-surface) 94%,transparent);box-shadow:0 5px 18px rgba(10,20,40,.03)}
+  .topbar__right{gap:8px}.topbar .icon-btn{width:38px;height:38px;border-radius:10px}.topbar .icon-btn .icon{width:17px;height:17px;stroke-width:1.8}.topbar .avatar-btn{min-height:42px;padding:4px 10px 4px 5px;gap:9px;border-radius:12px}.topbar .avatar{width:32px;height:32px}.topbar .avatar-name{font-size:12px;font-weight:650}
+  .dropdown__menu{top:calc(100% + 10px);min-width:210px;border-radius:13px;padding:6px}.dropdown__item{min-height:38px;padding:9px 11px;font-size:12px}
+
+  .page-container{width:100%;max-width:none;padding:34px var(--desktop-gutter) 48px}
+  .page-header{display:flex;align-items:flex-end;justify-content:space-between;gap:24px;margin-bottom:24px}.page-header h1{font-size:30px;line-height:1.08}.page-header p{max-width:360px;margin:0;text-align:right;font-size:12px}
+  .main-content>footer{padding:20px var(--desktop-gutter) 28px!important}
+
+  /* Dashboard composition: content uses the viewport instead of a narrow centered island. */
+  #pageContent .carousel{margin-bottom:20px;border-radius:18px;box-shadow:0 16px 34px rgba(0,0,0,.12)}
+  #pageContent .carousel__slide{min-height:230px;padding:34px 44px}
+  #pageContent .carousel__slide h2{font-size:clamp(30px,2.5vw,42px);max-width:580px}
+  #pageContent .carousel__slide p{max-width:530px;font-size:13px}
+  #pageContent .carousel__nav{width:36px;height:36px}
+  #pageContent .carousel__dots{bottom:14px}
+  #pageContent .carousel + .grid.grid-2{grid-template-columns:minmax(0,1.04fr) minmax(470px,.96fr);align-items:start;gap:var(--desktop-gap);margin-bottom:20px!important}
+  #pageContent .carousel + .grid.grid-2>.card{height:auto;min-height:0;align-self:start}
+  #pageContent .carousel + .grid.grid-2>.card:first-child{min-height:280px}
+  #pageContent .carousel + .grid.grid-2>.card:first-child .grid.grid-2{grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+  #pageContent .carousel + .grid.grid-2>.card:first-child>.flex.gap-2{gap:8px}
+  #pageContent .carousel + .grid.grid-2>.card:first-child>.flex.gap-2 .btn{min-height:40px}
+  #pageContent .card{padding:20px;border-radius:var(--desktop-panel-radius)}
+  #pageContent .card-title{margin-bottom:16px;font-size:14px}
+  #pageContent .plan-card--pro{padding:20px}
+  #pageContent .plan-card__pro-head{padding-bottom:14px}
+  #pageContent .plan-card__pro-title h3{font-size:17px}
+  #pageContent .plan-card__pro-subhead{padding:13px 0;font-size:10px}
+  #pageContent .plan-card__pro-metrics{grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+  #pageContent .plan-metric{padding:11px 10px;min-height:70px}
+  #pageContent .plan-metric>strong{font-size:15px;line-height:1.12}
+  #pageContent .plan-metric>small{font-size:8px}
+  #pageContent .plan-card__pro-progress{margin-top:12px;padding:12px}
+  #pageContent .plan-card__usage-grid{margin-top:10px}
+  #pageContent .plan-card__features{margin-top:10px;padding:10px 11px}
+  #pageContent .plan-card__features ul{gap:4px 14px}
+  #pageContent .plan-card__features li{font-size:8px}
+  #pageContent .plan-card--pro .plan-card__actions{gap:6px;margin-top:12px}
+  #pageContent .plan-card--pro .plan-card__actions .btn{min-height:34px;padding:7px 9px;font-size:10px}
+  #pageContent .plan-card--pro .plan-card__sync{margin-top:12px;min-height:70px;padding:8px 10px}
+  #pageContent .plan-card--pro .plan-card__sync-row .btn{min-height:36px;min-width:240px;font-size:11px}
+  #pageContent .plan-card--pro .plan-card__platforms{gap:12px}
+  #pageContent .plan-card--pro .plan-card__platforms span,#pageContent .plan-card--pro .plan-card__platforms .platform-icon{width:32px;height:32px}
+  #pageContent>.page-container>.card:last-child{margin-top:0}
+  #pageContent>.page-container>.card:last-child .grid-3{grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+  #pageContent>.page-container>.card:last-child .nav-item{justify-content:flex-start;min-height:52px;padding:12px 14px;font-size:12px}
+  #pageContent>.page-container>.card:last-child .nav-item .icon{width:18px;height:18px}
+
+  /* Other desktop surfaces share the same reading width and compact rhythm. */
+  #pageContent .checkout-grid{grid-template-columns:minmax(0,1.15fr) minmax(360px,.85fr);gap:var(--desktop-gap)}
+  #pageContent .account-layout{grid-template-columns:minmax(0,1.35fr) minmax(320px,.65fr);gap:var(--desktop-gap)}
+  #pageContent .account-hero{padding:20px 22px;border-radius:16px}
+  #pageContent .account-section{padding:20px}
+  #pageContent .app-card{min-height:180px}
+
+  /* One icon language: same optical box, stroke and color treatment everywhere. */
+  svg.icon{display:inline-block;width:18px;height:18px;flex:0 0 18px;stroke-width:1.8;vector-effect:non-scaling-stroke}
+  .btn .icon,.dropdown__item .icon,.toast__icon .icon{width:16px;height:16px;flex-basis:16px;stroke-width:1.8}
+  .nav-item .icon,.quick-menu .nav-item .icon{color:currentColor}
+  .quick-menu li:hover .icon{color:var(--brand-500)}
+
+  /* Motion: deliberate entrance, no bouncing or permanent glow. */
+  #pageContent>.page-container:not(:has(.skeleton))>.carousel{animation:desktop-enter .42s var(--ease-out) both}
+  #pageContent>.page-container:not(:has(.skeleton))>.carousel + .grid.grid-2{animation:desktop-enter .42s .06s var(--ease-out) both}
+  #pageContent>.page-container:not(:has(.skeleton))>.card:last-child{animation:desktop-enter .42s .12s var(--ease-out) both}
+  @keyframes desktop-enter{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+  .card,.quick-menu li,.btn,.nav-item,.icon-btn{will-change:transform}
+  .card:hover{transform:translateY(-2px)}.quick-menu li:hover{transform:translateY(-3px)}
+  .btn:hover:not(:disabled){transform:translateY(-1px)}
+  .support-fab{transition:transform .24s var(--ease-out),box-shadow .24s var(--ease-out),background .24s var(--ease)}.support-fab:hover{transform:translateY(-3px);box-shadow:0 14px 28px rgba(35,183,165,.28)}
+  .theme-transitioning body,.theme-transitioning .sidebar,.theme-transitioning .topbar,.theme-transitioning .card,.theme-transitioning .btn,.theme-transitioning .input{transition-duration:.28s!important}
+}
+@media (min-width:1400px){
+  .page-container{padding-left:clamp(40px,4.2vw,80px);padding-right:clamp(40px,4.2vw,80px)}
+  .topbar{padding-left:clamp(40px,4.2vw,80px);padding-right:clamp(40px,4.2vw,80px)}
+  #pageContent .carousel + .grid.grid-2{grid-template-columns:minmax(0,1.1fr) minmax(510px,.9fr)}
+}
+@media (prefers-reduced-motion:reduce){
+  #pageContent>.page-container:not(:has(.skeleton))>.carousel,#pageContent>.page-container:not(:has(.skeleton))>.carousel + .grid.grid-2,#pageContent>.page-container:not(:has(.skeleton))>.card:last-child{animation:none}
+  .card:hover,.quick-menu li:hover,.btn:hover:not(:disabled),.support-fab:hover{transform:none}
+}

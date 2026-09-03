@@ -1046,3 +1046,305 @@ textarea.input {
     scroll-behavior: auto !important;
   }
 }
+
+/* Precision pass: remove cascade drift from the auth layout and dense controls. */
+html,
+body {
+  overflow-x: hidden;
+}
+
+body.auth-mode .page-container {
+  width: 100%;
+  max-width: none;
+  padding: 0;
+}
+
+body.auth-mode .auth-wrap--scene {
+  box-sizing: border-box;
+  width: 100%;
+  min-height: 100vh;
+  margin: 0;
+  padding: clamp(42px, 7vw, 84px) clamp(24px, 7vw, 92px);
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(390px, 430px);
+  align-items: center;
+  justify-content: center;
+  gap: clamp(48px, 8vw, 128px);
+  border-radius: 0;
+}
+
+body.auth-mode .auth-promo,
+body.auth-mode .auth-card--glass {
+  box-sizing: border-box;
+}
+
+body.auth-mode .auth-promo {
+  width: min(100%, 490px);
+  justify-self: end;
+  padding: 28px 0;
+}
+
+body.auth-mode .auth-card--glass {
+  width: 100%;
+  max-width: 430px;
+  justify-self: start;
+  padding: 34px;
+}
+
+.auth-card__brand,
+.auth-card h1,
+.auth-card .auth-desc,
+.auth-card label,
+.auth-card strong,
+.auth-card span,
+.auth-card p,
+.auth-card .field,
+.auth-card .auth-row-between,
+.auth-card .auth-footer {
+  transition: none;
+}
+
+.auth-card__brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 36px;
+}
+
+.auth-card__brand strong {
+  color: var(--quiet-ink);
+  font-size: 12px;
+  letter-spacing: -0.02em;
+}
+
+.auth-card__brand .auth-live-dot {
+  margin-left: auto;
+  padding: 6px 9px;
+  font-size: 10px;
+  line-height: 1;
+}
+
+.auth-card .field {
+  display: grid;
+  gap: 7px;
+  margin: 0 0 17px;
+}
+
+.auth-card .field label {
+  line-height: 1.2;
+}
+
+.auth-card .field .input {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.auth-card .error-msg:empty {
+  display: none;
+}
+
+.auth-card .auth-row-between {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  min-height: 24px;
+  margin: 1px 0 19px;
+}
+
+.auth-card .checkbox-line {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  min-width: 0;
+  color: var(--quiet-muted);
+  white-space: nowrap;
+}
+
+.auth-card .checkbox-line input {
+  flex: 0 0 auto;
+  margin: 0;
+}
+
+.auth-card .link-btn {
+  white-space: nowrap;
+}
+
+.auth-card .btn-block {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+}
+
+.auth-card .auth-footer {
+  text-align: center;
+}
+
+.page-enter,
+.auth-promo,
+.auth-card--glass {
+  will-change: opacity, transform;
+}
+
+@media (max-width: 860px) {
+  body.auth-mode .auth-wrap--scene {
+    min-height: 100vh;
+    grid-template-columns: minmax(0, 500px);
+    padding: 36px 20px;
+  }
+
+  body.auth-mode .auth-card--glass {
+    justify-self: center;
+  }
+}
+
+@media (max-width: 600px) {
+  body.auth-mode .auth-wrap--scene {
+    padding: 24px 14px;
+  }
+
+  body.auth-mode .auth-card--glass {
+    padding: 28px 22px;
+  }
+}
+
+/* Keep frequent controls responsive; do not animate layout/text properties. */
+.btn,
+.icon-btn,
+.avatar-btn,
+.sidebar__collapse-btn,
+.support-fab,
+.nav-item,
+.dropdown__item,
+.carousel__nav,
+.quick-menu li {
+  transition-property: transform, background-color, border-color, color, box-shadow, opacity;
+  transition-duration: 160ms;
+  transition-timing-function: var(--ease-out);
+}
+
+.auth-card .input,
+.auth-card .btn,
+.auth-card .link-btn {
+  transition-duration: 150ms;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .page-enter,
+  .auth-promo,
+  .auth-card--glass {
+    will-change: auto;
+  }
+}
+
+/* Final cascade cleanup: typography and surfaces should not animate or jump. */
+h1,
+h2,
+h3,
+h4,
+p,
+label,
+strong,
+span,
+.card,
+.plan-card,
+.plan-spec-list li {
+  transition: none;
+}
+
+.card:hover,
+.plan-card:hover,
+.plan-spec-list li:hover {
+  transform: none;
+  box-shadow: none;
+}
+
+.card,
+.plan-card,
+.plan-spec-list li {
+  will-change: auto;
+}
+
+body.auth-mode .auth-wrap--scene::after {
+  pointer-events: none;
+}
+
+@media (max-width: 860px) {
+  body.auth-mode .auth-wrap--scene::after {
+    left: 20px;
+    top: 18px;
+  }
+}
+
+/* Route-class correction: the app marks auth routes with body.auth-page. */
+body.auth-page {
+  background: var(--quiet-dark);
+}
+
+body.auth-page .main-content {
+  background: var(--quiet-dark);
+}
+
+body.auth-page .page-container {
+  width: 100%;
+  max-width: none;
+  padding: 0;
+}
+
+body.auth-page .main-content > footer {
+  display: none;
+}
+
+body.auth-page .auth-wrap--scene {
+  box-sizing: border-box;
+  width: 100%;
+  min-height: 100vh;
+  margin: 0;
+  padding: clamp(42px, 7vw, 84px) clamp(24px, 7vw, 92px);
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(390px, 430px);
+  align-items: center;
+  justify-content: center;
+  gap: clamp(48px, 8vw, 128px);
+  border-radius: 0;
+}
+
+body.auth-page .auth-promo {
+  width: min(100%, 490px);
+  justify-self: end;
+  padding: 28px 0;
+}
+
+body.auth-page .auth-card--glass {
+  width: 100%;
+  max-width: 430px;
+  justify-self: start;
+  padding: 34px;
+}
+
+@media (max-width: 860px) {
+  body.auth-page .auth-wrap--scene {
+    min-height: 100vh;
+    grid-template-columns: minmax(0, 500px);
+    padding: 36px 20px;
+  }
+
+  body.auth-page .auth-promo {
+    display: none;
+  }
+
+  body.auth-page .auth-card--glass {
+    justify-self: center;
+  }
+}
+
+@media (max-width: 600px) {
+  body.auth-page .auth-wrap--scene {
+    padding: 24px 14px;
+  }
+
+  body.auth-page .auth-card--glass {
+    padding: 28px 22px;
+  }
+}

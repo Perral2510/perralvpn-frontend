@@ -6,7 +6,6 @@
 
   const PAGES = {};
   const APPLE_ID_TRIAL_URL = 'https://idshadow.hoantienviet.com/';
-const PROMO_BANNER_IMAGES = ['assets/promo-anime-01.jpg', 'assets/promo-anime-02.jpg', 'assets/promo-anime-03.jpg'];
 const ZALO_GROUP_URL = 'https://zalo.me/g/itfs9rhv3lkcdmenhafc';
 const TELEGRAM_GROUP_URL = 'https://t.me/+Nn5cWIk05sNiYTM1';
 
@@ -26,8 +25,15 @@ function setVpnResetButtonBusy(button, busy) {
   }
 }
 
-function pageHeader(titleKey, descKey){
-  return `<div class="page-header"><h1>${t(titleKey)}</h1><p>${t(descKey)}</p></div>`;
+function pageHeader(titleKey, descKey, meta = ''){
+  return `<div class="page-header">
+    <div class="page-header__main">
+      <span class="page-header__kicker">PERRAL NETWORK</span>
+      <h1>${t(titleKey)}</h1>
+      ${descKey ? `<p>${t(descKey)}</p>` : ''}
+    </div>
+    ${meta ? `<span class="page-header__meta mono">${escapeHTML(meta)}</span>` : ''}
+  </div>`;
 }
 
 function platformIcon(platform){
@@ -98,40 +104,71 @@ PAGES['#/dashboard'] = async (root) => {
   const dataPercent = dataMaxBytes > 0 ? Math.min(100, Math.max(0, Math.round((dataUsedBytes / dataMaxBytes) * 100))) : 0;
   const deviceLimitLabel = machinesMax > 0 ? String(machinesMax) : 'Không giới hạn';
   const planFeatures = Array.isArray(activeSubscription?.features) ? activeSubscription.features : [];
+  const promoSlides = promos.length ? promos : [{
+    title: 'Một đường truyền riêng, tốc độ thật.',
+    titleEn: 'A private line. Real speed.',
+    desc: 'Quản lý gói VPN, thiết bị và dung lượng của bạn trong một bảng điều khiển gọn gàng.',
+    descEn: 'Manage your VPN plan, devices and traffic from one quiet dashboard.',
+  }];
+  const promoText = (p) => STATE.lang === 'vi' ? p.title : (p.titleEn || p.title);
+  const promoDesc = (p) => STATE.lang === 'vi' ? p.desc : (p.descEn || p.desc);
   root.innerHTML = `
     <div class="page-container page-enter">
-      <div class="page-header"><h1>${t('welcome_back')}</h1><p>${escapeHTML(user.name)}</p></div>
-
-      <div class="carousel" id="promoCarousel">
-        <div class="carousel__track" id="carouselTrack">
-          ${promos.map((p, promoIndex) => `
-            <div class="carousel__slide" style="background-image:linear-gradient(115deg,rgba(14,51,128,.72),rgba(20,184,166,.32)),url('${PROMO_BANNER_IMAGES[promoIndex % PROMO_BANNER_IMAGES.length]}');">
-              <h2>${escapeHTML(STATE.lang === 'vi' ? p.title : p.titleEn)}</h2>
-              <p>${escapeHTML(STATE.lang === 'vi' ? p.desc : p.descEn)}</p>
-            </div>`).join('')}
+      <div class="page-header">
+        <div class="page-header__main">
+          <span class="page-header__kicker">PERRAL NETWORK · ${t('nav_dashboard')}</span>
+          <h1>${t('welcome_back')}</h1>
+          <p>${escapeHTML(user.name)}</p>
         </div>
-        <button class="carousel__nav prev" aria-label="Previous slide">‹</button>
-        <button class="carousel__nav next" aria-label="Next slide">›</button>
-        <div class="carousel__dots">
-          ${promos.map((_, i) => `<button class="carousel__dot ${i === 0 ? 'active' : ''}" data-idx="${i}" aria-label="Slide ${i+1}"></button>`).join('')}
-        </div>
+        <span class="page-header__meta mono">${t('topup')} · ${formatCurrency(accountBalance)}</span>
       </div>
 
-      <div class="grid grid-2" style="margin-bottom:24px;">
-        <div class="card">
-          <div class="card-title">${t('account_info')}</div>
-          <div class="flex items-center gap-3 mb-0" style="margin-bottom:16px;">
-            <img class="avatar" style="width:52px;height:52px;" src="${user.avatar || EMPTY_AVATAR_DATA_URL}" alt="${escapeHTML(user.name)}" loading="lazy">
-            <div>
-              <div class="flex items-center gap-2"><strong>${escapeHTML(user.name)}</strong> ${user.verified ? `<span class="badge badge-info">${icon('check')} ${t('verified')}</span>` : ''}</div>
-              <div class="text-secondary text-sm">${escapeHTML(user.email)}</div>
+      <section class="hero ${promoSlides.length === 1 ? 'hero--single' : ''}" id="promoCarousel" role="region" aria-roledescription="carousel" aria-label="${t('app_name')}">
+        <div class="hero__track" id="carouselTrack">
+          ${promoSlides.map((p, promoIndex) => `
+            <article class="hero__slide" role="group" aria-roledescription="slide" aria-label="${promoIndex + 1} / ${promoSlides.length}">
+              <span class="hero__index mono">0${promoIndex + 1} — 0${promoSlides.length}</span>
+              <div class="hero__copy">
+                <span class="hero__eyebrow">${t('app_name')} · ${t('nav_dashboard')}</span>
+                <h2 class="hero__title">${escapeHTML(promoText(p))}</h2>
+                <p class="hero__desc">${escapeHTML(promoDesc(p))}</p>
+                <div class="hero__actions">
+                  <a class="btn btn-primary" href="#/plan">${t('buy_now')} ${icon('arrowUpRight')}</a>
+                  <a class="hero__link" href="#/knowledge">${t('nav_knowledge')} ${icon('chevronRight')}</a>
+                </div>
+              </div>
+              <div class="hero__graphic" aria-hidden="true">
+                <span class="hero__bar"></span><span class="hero__bar"></span><span class="hero__bar"></span>
+                <span class="hero__bar"></span><span class="hero__bar"></span><span class="hero__bar"></span><span class="hero__bar"></span>
+              </div>
+            </article>`).join('')}
+        </div>
+        <div class="hero__controls">
+          <div class="carousel__dots" role="tablist" aria-label="${t('nav_dashboard')}">
+            ${promoSlides.map((_, i) => `<button type="button" class="carousel__dot ${i === 0 ? 'active' : ''}" data-idx="${i}" role="tab" aria-selected="${i === 0}" aria-label="Slide ${i + 1}"></button>`).join('')}
+          </div>
+          <div class="hero__nav">
+            <button type="button" class="carousel__nav prev" aria-label="Previous slide">${icon('chevronLeft')}</button>
+            <button type="button" class="carousel__nav next" aria-label="Next slide">${icon('chevronRight')}</button>
+          </div>
+        </div>
+      </section>
+
+      <div class="grid grid-2" style="margin-bottom:18px;">
+        <div class="card id-card">
+          <div class="id-card__top">
+            <img class="avatar id-card__avatar" src="${user.avatar || EMPTY_AVATAR_DATA_URL}" alt="${escapeHTML(user.name)}" loading="lazy">
+            <div class="id-card__who">
+              <strong>${escapeHTML(user.name)} ${user.verified ? `<span class="badge badge-signal">${icon('check')} ${t('verified')}</span>` : ''}</strong>
+              <span>${escapeHTML(user.email)}</span>
             </div>
           </div>
-          <div class="grid grid-2 text-sm" style="margin-bottom:18px;">
-            <div><div class="text-secondary">${t('join_date')}</div><div class="mono">${formatDate(user.joinDate, STATE.lang)}</div></div>
-            <div><div class="text-secondary">${t('user_id')}</div><div class="mono">${escapeHTML(user.userId)}</div></div>
+          <div class="id-card__meta">
+            <div><span>${t('join_date')}</span><strong>${formatDate(user.joinDate, STATE.lang)}</strong></div>
+            <div><span>${t('user_id')}</span><strong>${escapeHTML(user.userId)}</strong></div>
+            <div><span>${t('devices_online')}</span><strong>${escapeHTML(deviceLimitLabel)}</strong></div>
           </div>
-          <div class="flex gap-2" style="flex-wrap:wrap;">
+          <div class="id-card__actions">
             <button class="btn btn-primary" id="btnTopup">${icon('wallet')} ${t('topup')} · ${formatCurrency(accountBalance)}</button>
             <button class="btn btn-secondary" id="btnZalo">Zalo</button>
             <button class="btn btn-secondary" id="btnTelegram">Telegram</button>
@@ -140,45 +177,55 @@ PAGES['#/dashboard'] = async (root) => {
 
         <div class="card plan-card plan-card--pro">
           <div class="plan-card__pro-head">
-            <div class="plan-card__pro-mark">DA</div>
-            <div class="plan-card__pro-title"><span>${activeSubscription ? 'GÓI ĐANG KÍCH HOẠT' : 'GÓI DỊCH VỤ'}</span><h3>${escapeHTML(activeSubscription?.planName || 'Chưa có gói đang hoạt động')}</h3></div>
+            <div class="plan-card__pro-mark">PR</div>
+            <div class="plan-card__pro-title"><span>${activeSubscription ? 'Gói đang kích hoạt' : 'Gói dịch vụ'}</span><h3>${escapeHTML(activeSubscription?.planName || 'Chưa có gói đang hoạt động')}</h3></div>
             <span class="plan-card__pro-status"><i></i> ${activeSubscription ? 'Đang hoạt động' : 'Chưa kích hoạt'}</span>
           </div>
-          ${activeSubscription ? `<div class="plan-card__pro-subhead"><span>Hạn sử dụng <b>${activeSubscription.lifetime ? 'Vĩnh viễn' : formatDate(activeSubscription.expiresAt, STATE.lang)}</b></span><span><b>${escapeHTML(deviceLimitLabel)}</b> thiết bị tối đa</span></div><div class="plan-card__pro-metrics"><div class="plan-metric"><span>Data đã dùng</span><strong>${escapeHTML(dataLabel)}</strong><small>${dataPercent}% dung lượng gói</small></div><div class="plan-metric"><span>Dung lượng gói</span><strong>${escapeHTML(activeSubscription.capacity)}</strong><small>theo gói đã mua</small></div><div class="plan-metric"><span>Tốc độ</span><strong>${escapeHTML(activeSubscription.speed)}</strong><small>băng thông dịch vụ</small></div></div><div class="plan-card__usage-grid plan-card__usage-grid--single"><div class="plan-usage"><div class="plan-usage__head"><span>Dữ liệu sử dụng</span><b>${dataPercent}%</b></div><div class="progress"><div class="progress__bar" style="width:${dataPercent}%"></div></div><small>${escapeHTML(dataLabel)}</small></div></div>${planFeatures.length ? `<div class="plan-card__features"><strong>Chức năng gói</strong><ul>${planFeatures.map(feature => `<li>${escapeHTML(feature)}</li>`).join('')}</ul></div>` : ''}` : `<div class="plan-empty-state"><strong>Bạn chưa có gói VPN hoạt động</strong><span>Chọn gói phù hợp và thanh toán qua QR Bank để bắt đầu sử dụng.</span><button class="btn btn-sm btn-primary" data-nav="#/plan">Xem các gói cước</button></div>`}
-          <div class="plan-card__actions"><button class="btn btn-sm btn-outline" data-nav="#/knowledge">▣ ${t('guide')}</button><button class="btn btn-sm btn-outline" id="btnAppleId"> ${t('get_apple_id')}</button><button class="btn btn-sm btn-outline" id="btnResetLink">⟳ ${t('reset_link')}</button></div>
-          <div class="plan-card__sync"><div class="plan-card__sync-row"><button class="btn btn-sm btn-accent" id="btnSyncApp" ${activeSubscription ? '' : 'disabled'} aria-haspopup="dialog"><span class="sync-glyph" aria-hidden="true">⟳</span> Đồng bộ máy chủ về app</button></div><div class="plan-card__platforms" aria-label="Các hệ điều hành hỗ trợ"><span title="Windows">${platformIcon('windows')}</span><span title="Apple">${platformIcon('apple')}</span><span title="Android">${platformIcon('android')}</span><span title="Linux">${platformIcon('linux')}</span></div></div>
+          ${activeSubscription ? `<div class="plan-card__pro-subhead"><span>Hạn sử dụng <b>${activeSubscription.lifetime ? 'Vĩnh viễn' : formatDate(activeSubscription.expiresAt, STATE.lang)}</b></span><span><b>${escapeHTML(deviceLimitLabel)}</b> thiết bị tối đa</span></div><div class="plan-card__pro-metrics"><div class="plan-metric"><span>Data đã dùng</span><strong>${escapeHTML(dataLabel)}</strong><small>${dataPercent}% dung lượng gói</small></div><div class="plan-metric"><span>Dung lượng gói</span><strong>${escapeHTML(activeSubscription.capacity)}</strong><small>theo gói đã mua</small></div><div class="plan-metric"><span>Tốc độ</span><strong>${escapeHTML(activeSubscription.speed)}</strong><small>băng thông dịch vụ</small></div></div><div class="plan-card__usage-grid plan-card__usage-grid--single"><div class="plan-usage"><div class="plan-usage__head"><span>Dữ liệu sử dụng</span><b>${dataPercent}%</b></div><div class="progress"><div class="progress__bar" style="width:${dataPercent}%"></div></div><small>${escapeHTML(dataLabel)}</small></div></div>${planFeatures.length ? `<div class="plan-card__features"><strong>Chức năng gói</strong><ul>${planFeatures.map(feature => `<li>${escapeHTML(feature)}</li>`).join('')}</ul></div>` : ''}` : `<div class="plan-empty-state"><strong>Bạn chưa có gói VPN hoạt động</strong><span>Chọn gói phù hợp và thanh toán qua SePay để bắt đầu sử dụng.</span><button class="btn btn-sm btn-accent" data-nav="#/plan">Xem các gói cước</button></div>`}
+          <div class="plan-card__actions"><button class="btn btn-sm btn-outline" data-nav="#/knowledge">${icon('book')} ${t('guide')}</button><button class="btn btn-sm btn-outline" id="btnAppleId">${icon('key')} ${t('get_apple_id')}</button><button class="btn btn-sm btn-outline" id="btnResetLink">${icon('refresh')} ${t('reset_link')}</button></div>
+          <div class="plan-card__sync"><div class="plan-card__sync-row"><button class="btn btn-sm btn-accent" id="btnSyncApp" ${activeSubscription ? '' : 'disabled'} aria-haspopup="dialog">${icon('refresh')} Đồng bộ máy chủ về app</button></div><div class="plan-card__platforms" aria-label="Các hệ điều hành hỗ trợ"><span title="Windows">${platformIcon('windows')}</span><span title="Apple">${platformIcon('apple')}</span><span title="Android">${platformIcon('android')}</span><span title="Linux">${platformIcon('linux')}</span></div></div>
         </div>
       </div>
 
-
-      <div class="card">
+      <div class="card quick-card">
         <div class="card-title">${t('quick_menu')}</div>
-        <ul class="grid grid-3">
+        <div class="quick-grid">
           ${menu.map(m => `
-            <li>
-              <a href="${routeFor(m.labelKey)}" class="nav-item" style="color:var(--text-primary);border:1px solid var(--border-color);">
-                ${icon(m.icon)}<span class="nav-label">${t(m.labelKey)}</span>
-              </a>
-            </li>`).join('')}
-        </ul>
+            <a href="${routeFor(m.labelKey)}" class="quick-tile">
+              <span class="quick-tile__icon">${icon(m.icon)}</span>
+              <span class="quick-tile__label">${t(m.labelKey)}</span>
+              <span class="quick-tile__arrow">${icon('arrowUpRight')}</span>
+            </a>`).join('')}
+        </div>
       </div>
     </div>
   `;
 
-  // Carousel wiring
+  const carousel = qs('#promoCarousel', root);
   const track = qs('#carouselTrack', root);
   const dots = qsa('.carousel__dot', root);
+  let autoTimer = null;
+  const stopAuto = () => { if (autoTimer) { clearInterval(autoTimer); autoTimer = null; } };
   const setSlide = (i) => {
-    slideIdx = (i + promos.length) % promos.length;
+    if (!carousel.isConnected) { stopAuto(); return; }
+    slideIdx = (i + promoSlides.length) % promoSlides.length;
     track.style.transform = `translateX(-${slideIdx * 100}%)`;
-    dots.forEach((d, idx) => d.classList.toggle('active', idx === slideIdx));
+    dots.forEach((d, idx) => {
+      d.classList.toggle('active', idx === slideIdx);
+      d.setAttribute('aria-selected', String(idx === slideIdx));
+    });
   };
-  qs('.carousel__nav.prev', root).addEventListener('click', () => setSlide(slideIdx - 1));
-  qs('.carousel__nav.next', root).addEventListener('click', () => setSlide(slideIdx + 1));
+  qs('.carousel__nav.prev', root)?.addEventListener('click', () => setSlide(slideIdx - 1));
+  qs('.carousel__nav.next', root)?.addEventListener('click', () => setSlide(slideIdx + 1));
   dots.forEach(d => d.addEventListener('click', () => setSlide(Number(d.dataset.idx))));
-  let autoTimer = setInterval(() => setSlide(slideIdx + 1), 5000);
-  qs('#promoCarousel', root).addEventListener('mouseenter', () => clearInterval(autoTimer));
-  qs('#promoCarousel', root).addEventListener('mouseleave', () => { autoTimer = setInterval(() => setSlide(slideIdx + 1), 5000); });
+  if (promoSlides.length > 1) {
+    const startAuto = () => { stopAuto(); autoTimer = setInterval(() => setSlide(slideIdx + 1), 6000); };
+    carousel.addEventListener('mouseenter', stopAuto);
+    carousel.addEventListener('mouseleave', startAuto);
+    carousel.addEventListener('focusin', stopAuto);
+    carousel.addEventListener('focusout', startAuto);
+    startAuto();
+  }
 
   qsa('[data-nav]', root).forEach(b => b.addEventListener('click', () => { location.hash = b.dataset.nav; }));
   qs('#btnTopup', root).addEventListener('click', () => openTopupModal(accountBalance));
@@ -323,8 +370,9 @@ function openAppleIdModal(){
 PAGES['#/knowledge'] = async (root) => {
   root.innerHTML = `
     <div class="page-container page-enter">
-      ${pageHeader('knowledge_title', 'knowledge_desc')}
-      <div class="field" style="max-width:420px;">
+      ${pageHeader('knowledge_title', 'knowledge_desc', 'FIELD MANUAL')}
+      <div class="kb-search">
+        ${icon('search')}
         <input class="input" type="search" id="kbSearch" placeholder="${t('search_placeholder')}" aria-label="${t('search_placeholder')}">
       </div>
       <div id="kbResults" class="grid grid-3">${skeletonCards(3)}</div>
@@ -342,9 +390,9 @@ PAGES['#/knowledge'] = async (root) => {
     }
     results.className = 'grid grid-3';
     results.innerHTML = list.map(a => `
-      <button class="card" style="text-align:left;cursor:pointer;border:1px solid var(--border-color);" data-id="${a.id}">
-        <div class="card-title" style="margin-bottom:8px;">${escapeHTML(STATE.lang === 'vi' ? a.title : a.titleEn)}</div>
-        <div class="text-sm text-secondary">${t('updated_at')}: ${formatDate(a.date, STATE.lang)}</div>
+      <button class="kb-card" data-id="${a.id}">
+        <div class="kb-card__title">${escapeHTML(STATE.lang === 'vi' ? a.title : a.titleEn)}</div>
+        <span class="kb-card__meta">${icon('calendar')} ${t('updated_at')} · ${formatDate(a.date, STATE.lang)}</span>
       </button>
     `).join('');
     qsa('[data-id]', results).forEach(card => card.addEventListener('click', () => {
@@ -372,7 +420,7 @@ PAGES['#/knowledge'] = async (root) => {
 PAGES['#/application'] = async (root) => {
   root.innerHTML = `
     <div class="page-container page-enter">
-      ${pageHeader('application_title', 'application_desc')}
+      ${pageHeader('application_title', 'application_desc', 'CLIENT BUILDS')}
       <div class="tabs" id="osTabs" role="tablist"></div>
       <div id="appList" class="grid grid-3">${skeletonCards(3)}</div>
     </div>
@@ -383,18 +431,18 @@ PAGES['#/application'] = async (root) => {
   let active = platforms[0];
 
   const tabsEl = qs('#osTabs', root);
-  tabsEl.innerHTML = platforms.map(p => `<button class="tab-btn ${p === active ? 'active' : ''}" role="tab" data-p="${p}">${p}</button>`).join('');
+  tabsEl.innerHTML = platforms.map(p => `<button class="tab-btn ${p === active ? 'active' : ''}" role="tab" aria-selected="${p === active}" data-p="${p}">${p}</button>`).join('');
 
   const paintList = () => {
     const listEl = qs('#appList', root);
     const items = apps[active];
     listEl.innerHTML = items.map((app, i) => `
-      <div class="app-card card">
-        <div class="app-card__top"><div class="app-card__icon">${escapeHTML(app.icon || '◈')}</div><span class="badge ${app.free ? 'badge-success' : 'badge-warning'}">${app.free ? t('free') : t('paid')}</span></div>
+      <article class="app-card card">
+        <div class="app-card__top"><div class="app-card__icon">${escapeHTML(app.icon || 'P')}</div><span class="badge ${app.free ? 'badge-success' : 'badge-warning'}">${app.free ? t('free') : t('paid')}</span></div>
         <div class="app-card__name">${escapeHTML(app.name)}</div>
-        <div class="text-sm text-secondary" style="margin-bottom:16px;">${t('version')}: <span class="mono">${escapeHTML(app.version)}</span></div>
+        <div class="text-sm text-secondary">${t('version')} <span class="mono">${escapeHTML(app.version)}</span></div>
         <a class="btn btn-primary btn-block app-download" href="${escapeHTML(safeExternalUrl(app.url))}" target="_blank" rel="noopener noreferrer" data-dl="${active}-${i}">${icon('download')} ${t('download')}</a>
-      </div>
+      </article>
     `).join('');
     qsa('[data-dl]', listEl).forEach(link => link.addEventListener('click', () => {
       showToast({ type: 'info', title: t('download'), message: active });
@@ -405,7 +453,11 @@ PAGES['#/application'] = async (root) => {
     const b = e.target.closest('.tab-btn');
     if (!b) return;
     active = b.dataset.p;
-    qsa('.tab-btn', tabsEl).forEach(x => x.classList.toggle('active', x === b));
+    qsa('.tab-btn', tabsEl).forEach(x => {
+      const on = x === b;
+      x.classList.toggle('active', on);
+      x.setAttribute('aria-selected', String(on));
+    });
     paintList();
   });
 

@@ -29,9 +29,9 @@ PAGES['#/order'] = async (root) => {
     const pageItems = orders.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
     const container = qs('.page-container', root);
     container.innerHTML = `
-      ${pageHeader('order_title', 'order_desc')}
+      ${pageHeader('order_title', 'order_desc', `${orders.length} ORDERS`)}
       ${orders.length ? `
-      <div class="table-wrap">
+      <div class="table-wrap" tabindex="0" role="region" aria-label="${t('order_title')} — bảng đơn hàng">
         <table class="data-table">
           <thead><tr>
             <th class="no-sort">${t('col_order_id')}</th>
@@ -44,11 +44,11 @@ PAGES['#/order'] = async (root) => {
           <tbody>
             ${pageItems.map(o => `
               <tr>
-                <td class="mono">${escapeHTML(o.id)}</td>
+                <td><span class="order-id">${escapeHTML(o.id)}</span></td>
                 <td>${escapeHTML(o.cycle)}</td>
-                <td class="mono">${formatCurrency(o.amount)}</td>
+                <td><span class="order-amount">${formatCurrency(o.amount)}</span></td>
                 <td><span class="badge ${getStatusMeta(o).badge}">${getStatusMeta(o).label}</span></td>
-                <td class="mono">${escapeHTML(o.createdAt)}</td>
+                <td><span class="order-date">${escapeHTML(o.createdAt)}</span></td>
                 <td>
                   <div class="flex gap-2">
                     <button class="btn btn-sm btn-secondary" data-view="${o.id}">${t('view_detail')}</button>
@@ -60,11 +60,11 @@ PAGES['#/order'] = async (root) => {
           </tbody>
         </table>
       </div>
-      <div class="flex justify-between items-center mt-4">
-        <span class="text-sm text-secondary">${t('col_order_id')} ${(page-1)*PAGE_SIZE+1}-${Math.min(page*PAGE_SIZE, orders.length)} / ${orders.length}</span>
-        <div class="flex gap-2">
-          <button class="btn btn-sm btn-secondary" id="prevPage" ${page === 1 ? 'disabled' : ''}>‹</button>
-          <button class="btn btn-sm btn-secondary" id="nextPage" ${page === totalPages ? 'disabled' : ''}>›</button>
+      <div class="table-foot">
+        <span class="table-foot__range">${(page-1)*PAGE_SIZE+1} — ${Math.min(page*PAGE_SIZE, orders.length)} / ${orders.length}</span>
+        <div class="pager">
+          <button class="btn btn-sm btn-secondary" id="prevPage" aria-label="Trang trước" ${page === 1 ? 'disabled' : ''}>${icon('chevronLeft')}</button>
+          <button class="btn btn-sm btn-secondary" id="nextPage" aria-label="Trang sau" ${page === totalPages ? 'disabled' : ''}>${icon('chevronRight')}</button>
         </div>
       </div>
       ` : emptyState({ title: t('no_data_title'), desc: t('no_data_desc'), iconName: 'receipt' })}
@@ -75,13 +75,13 @@ PAGES['#/order'] = async (root) => {
       openModal({
         title: t('order_detail'),
         bodyHTML: `
-          <div class="text-sm" style="display:grid;gap:10px;">
-            <div class="flex justify-between"><span class="text-secondary">${t('col_order_id')}</span><span class="mono">${escapeHTML(o.id)}</span></div>
-            <div class="flex justify-between"><span class="text-secondary">${t('col_cycle')}</span><span>${escapeHTML(o.cycle)}</span></div>
-            <div class="flex justify-between"><span class="text-secondary">${t('col_amount')}</span><span class="mono">${formatCurrency(o.amount)}</span></div>
-            <div class="flex justify-between"><span class="text-secondary">${t('col_status')}</span><span class="badge ${getStatusMeta(o).badge}">${getStatusMeta(o).label}</span></div>
-            <div class="flex justify-between"><span class="text-secondary">${t('col_created')}</span><span class="mono">${escapeHTML(o.createdAt)}</span></div>
-          </div>
+          <dl class="meta-list">
+            <div><dt>${t('col_order_id')}</dt><dd class="mono">${escapeHTML(o.id)}</dd></div>
+            <div><dt>${t('col_cycle')}</dt><dd>${escapeHTML(o.cycle)}</dd></div>
+            <div><dt>${t('col_amount')}</dt><dd class="mono">${formatCurrency(o.amount)}</dd></div>
+            <div><dt>${t('col_status')}</dt><dd><span class="badge ${getStatusMeta(o).badge}">${getStatusMeta(o).label}</span></dd></div>
+            <div><dt>${t('col_created')}</dt><dd class="mono">${escapeHTML(o.createdAt)}</dd></div>
+          </dl>
         `,
         footerHTML: `<button class="btn btn-primary" data-act="ok">${t('close')}</button>`,
         onMount: (backdrop) => backdrop.querySelector('[data-act="ok"]').addEventListener('click', closeModal)
@@ -134,41 +134,42 @@ PAGES['#/invite'] = async (root) => {
     container.innerHTML = `
       ${pageHeader('invite_title', 'invite_desc')}
 
-      <div class="card" style="margin-bottom:24px;background:linear-gradient(120deg,var(--brand-600),var(--accent-600));color:#fff;border:none;">
-        <div class="flex justify-between items-center" style="flex-wrap:wrap;gap:16px;">
-          <div>
-            <div style="opacity:.85;font-size:13px;">${t('commission_balance')}</div>
-            <div style="font-family:var(--font-display);font-size:28px;font-weight:700;">${formatCurrency(data.commissionBalance)}</div>
-          </div>
-          <div class="flex gap-2">
-            <button class="btn" style="background:rgba(255,255,255,.18);color:#fff;" id="btnTransfer">${t('transfer')}</button>
-            <button class="btn" style="background:#fff;color:var(--brand-600);" id="btnWithdraw">${t('withdraw')}</button>
-          </div>
+      <div class="invite-hero">
+        <div>
+          <span class="invite-hero__label">${t('commission_balance')}</span>
+          <div class="invite-hero__value">${formatCurrency(data.commissionBalance)}</div>
+          <p class="invite-hero__sub">Hoa hồng được ghi nhận sau khi đơn của người được giới thiệu thanh toán thành công.</p>
+        </div>
+        <div class="invite-hero__actions">
+          <button class="btn btn-outline" id="btnTransfer">${icon('arrowUpRight')} ${t('transfer')}</button>
+          <button class="btn btn-accent" id="btnWithdraw">${icon('wallet')} ${t('withdraw')}</button>
         </div>
       </div>
 
-      <div class="grid grid-4" style="margin-bottom:24px;">
-        <div class="card"><div class="text-secondary text-sm">${t('stat_registers')}</div><div style="font-size:22px;font-weight:700;font-family:var(--font-display);">${data.registers}</div></div>
-        <div class="card"><div class="text-secondary text-sm">${t('stat_rate')}</div><div style="font-size:22px;font-weight:700;font-family:var(--font-display);">${data.rate}</div></div>
-        <div class="card"><div class="text-secondary text-sm">${t('stat_pending')}</div><div style="font-size:22px;font-weight:700;font-family:var(--font-display);">${formatCurrency(data.pendingCommission)}</div></div>
-        <div class="card"><div class="text-secondary text-sm">${t('stat_total')}</div><div style="font-size:22px;font-weight:700;font-family:var(--font-display);">${formatCurrency(data.totalCommission)}</div></div>
+      <div class="invite-stats">
+        <div class="invite-stat"><span>${t('stat_registers')}</span><strong>${data.registers}</strong></div>
+        <div class="invite-stat"><span>${t('stat_rate')}</span><strong>${escapeHTML(data.rate)}</strong></div>
+        <div class="invite-stat"><span>${t('stat_pending')}</span><strong>${formatCurrency(data.pendingCommission)}</strong></div>
+        <div class="invite-stat"><span>${t('stat_total')}</span><strong>${formatCurrency(data.totalCommission)}</strong></div>
       </div>
 
-      <div class="card" style="margin-bottom:24px;">
+      <div class="card" style="margin-bottom:18px;">
         <div class="card-title">${t('util_subweb_title')}</div>
-        <p class="text-sm">${t('util_subweb_desc')}</p>
-        ${data.subdomainNS.map(ns => `
-          <div class="input-group" style="margin-bottom:10px;">
-            <div class="input mono" style="flex:1;">${escapeHTML(ns)}</div>
-            <button class="btn btn-secondary" data-copy2="${escapeHTML(ns)}">${icon('copy')} ${t('copy')}</button>
-          </div>
-        `).join('')}
+        <p class="util-card__lead">${t('util_subweb_desc')}</p>
+        <div class="ns-list">
+          ${data.subdomainNS.map(ns => `
+            <div class="ns-row">
+              <code>${escapeHTML(ns)}</code>
+              <button class="btn btn-sm btn-secondary" data-copy2="${escapeHTML(ns)}">${icon('copy')} ${t('copy')}</button>
+            </div>
+          `).join('')}
+        </div>
       </div>
 
       <div class="card">
-        <div class="card-title">${t('referral_codes')}<button class="btn btn-sm btn-primary" id="btnCreateCode">${t('create_code')}</button></div>
+        <div class="card-title">${t('referral_codes')}<button class="btn btn-sm btn-primary" id="btnCreateCode">${icon('plus')} ${t('create_code')}</button></div>
         ${data.codes.length ? `
-          <div class="table-wrap">
+          <div class="table-wrap" tabindex="0" role="region" aria-label="${t('referral_codes')}">
             <table class="data-table">
               <thead><tr><th class="no-sort">${t('col_code')}</th><th class="no-sort">${t('col_uses')}</th><th class="no-sort">${t('col_created_at')}</th></tr></thead>
               <tbody>${data.codes.map(c => `<tr><td class="mono">${escapeHTML(c.code)}</td><td>${c.uses}</td><td class="mono">${escapeHTML(c.createdAt)}</td></tr>`).join('')}</tbody>
@@ -258,35 +259,40 @@ PAGES['#/traffic'] = async (root) => {
   };
   const maxLabel = max > 0 ? formatTraffic(max) : 'Không giới hạn';
   const remainingLabel = max > 0 ? formatTraffic(Math.max(0, max - used)) : 'Không giới hạn';
-  const ringStyle = `background:conic-gradient(var(--brand-500) ${usedPercent}%, var(--border-color) 0);`;
+  const ringStyle = `background:conic-gradient(var(--signal-strong) ${usedPercent}%, var(--surface-3) 0);`;
   const container = qs('.page-container', root);
   container.innerHTML = `
-    ${pageHeader('traffic_title', 'traffic_desc')}
-    <div class="grid grid-3" style="margin-bottom:24px;">
-      <div class="card"><div class="text-secondary text-sm">${t('data_used')}</div><div style="font-size:26px;font-weight:700;font-family:var(--font-display);margin-top:8px;">${formatTraffic(used)}</div><div class="text-secondary text-sm" style="margin-top:4px;">trên ${maxLabel}</div></div>
-      <div class="card"><div class="text-secondary text-sm">Dung lượng còn lại</div><div style="font-size:26px;font-weight:700;font-family:var(--font-display);margin-top:8px;color:var(--success-500);">${remainingLabel}</div><div class="text-secondary text-sm" style="margin-top:4px;">${max > 0 ? `${Math.max(0, 100 - Math.round(usedPercent))}% khả dụng` : 'Theo gói không giới hạn'}</div></div>
-      <div class="card"><div class="text-secondary text-sm">Tổng lưu lượng</div><div style="font-size:26px;font-weight:700;font-family:var(--font-display);margin-top:8px;">${formatTraffic(total)}</div><div class="text-secondary text-sm" style="margin-top:4px;">Upload + Download</div></div>
+    ${pageHeader('traffic_title', 'traffic_desc', maxLabel)}
+    <div class="traffic-stats">
+      <div class="traffic-stat"><span>${t('data_used')}</span><strong>${formatTraffic(used)}</strong><small>trên ${maxLabel}</small></div>
+      <div class="traffic-stat"><span>Dung lượng còn lại</span><strong class="is-good">${remainingLabel}</strong><small>${max > 0 ? `${Math.max(0, 100 - Math.round(usedPercent))}% khả dụng` : 'Theo gói không giới hạn'}</small></div>
+      <div class="traffic-stat"><span>Tổng lưu lượng</span><strong>${formatTraffic(total)}</strong><small>Upload + Download</small></div>
     </div>
-    <div class="card" style="margin-bottom:24px;">
+    <div class="card" style="margin-bottom:18px;">
       <div class="card-title">Tổng quan sử dụng thực tế</div>
-      <div class="grid grid-2" style="align-items:center;gap:28px;">
-        <div style="display:flex;justify-content:center;">
-          <div style="width:190px;height:190px;border-radius:50%;${ringStyle}display:grid;place-items:center;">
-            <div style="width:140px;height:140px;border-radius:50%;background:var(--surface-1);display:grid;place-items:center;text-align:center;"><strong style="font-size:28px;font-family:var(--font-display);">${max > 0 ? `${Math.round(usedPercent)}%` : '∞'}</strong><span class="text-secondary text-sm">đã dùng</span></div>
+      <div class="usage-panel">
+        <div class="usage-ring" style="${ringStyle}">
+          <div class="usage-ring__center">
+            <strong>${max > 0 ? `${Math.round(usedPercent)}%` : '∞'}</strong>
+            <span>đã dùng</span>
           </div>
         </div>
-        <div>
-          <div class="flex justify-between text-sm" style="margin-bottom:8px;"><span><span style="display:inline-block;width:10px;height:10px;border-radius:3px;background:var(--brand-500);margin-right:7px;"></span>Tải lên</span><strong>${formatTraffic(upload)} · ${uploadPercent}%</strong></div>
-          <div style="height:10px;background:var(--border-color);border-radius:99px;overflow:hidden;margin-bottom:18px;"><span style="display:block;width:${uploadPercent}%;height:100%;background:var(--brand-500);"></span></div>
-          <div class="flex justify-between text-sm" style="margin-bottom:8px;"><span><span style="display:inline-block;width:10px;height:10px;border-radius:3px;background:var(--accent-500);margin-right:7px;"></span>Tải xuống</span><strong>${formatTraffic(download)} · ${downloadPercent}%</strong></div>
-          <div style="height:10px;background:var(--border-color);border-radius:99px;overflow:hidden;"><span style="display:block;width:${downloadPercent}%;height:100%;background:var(--accent-500);"></span></div>
-          <p class="text-secondary text-sm" style="margin-top:18px;">Số liệu được lấy trực tiếp từ upload/download của client trên 3x-ui. Không sử dụng dữ liệu mẫu hoặc lịch sử giả.</p>
+        <div class="usage-legend">
+          <div class="usage-legend__row">
+            <div class="usage-legend__head"><span>Tải lên</span><b>${formatTraffic(upload)} · ${uploadPercent}%</b></div>
+            <div class="usage-legend__track"><span class="usage-legend__fill is-up" style="width:${uploadPercent}%"></span></div>
+          </div>
+          <div class="usage-legend__row">
+            <div class="usage-legend__head"><span>Tải xuống</span><b>${formatTraffic(download)} · ${downloadPercent}%</b></div>
+            <div class="usage-legend__track"><span class="usage-legend__fill is-down" style="width:${downloadPercent}%"></span></div>
+          </div>
+          <p class="usage-note">Số liệu được lấy trực tiếp từ upload/download của client trên 3x-ui. Không sử dụng dữ liệu mẫu hoặc lịch sử giả.</p>
         </div>
       </div>
     </div>
-    <div class="table-wrap">
+    <div class="table-wrap" tabindex="0" role="region" aria-label="${t('traffic_title')} — bảng lưu lượng">
       <table class="data-table">
-        <thead><tr><th>Thời điểm cập nhật</th><th>Tải lên</th><th>Tải xuống</th><th>Tổng đã dùng</th></tr></thead>
+        <thead><tr><th class="no-sort">Thời điểm cập nhật</th><th class="no-sort">Tải lên</th><th class="no-sort">Tải xuống</th><th class="no-sort">Tổng đã dùng</th></tr></thead>
         <tbody><tr><td class="mono">${formatDate(data.updatedAt, STATE.lang)}</td><td class="mono">${formatTraffic(upload)}</td><td class="mono">${formatTraffic(download)}</td><td class="mono">${formatTraffic(total)}</td></tr></tbody>
       </table>
     </div>
@@ -337,26 +343,35 @@ PAGES['#/control'] = async (root) => {
 
   const container = qs('.page-container', root);
   container.innerHTML = `
-    ${pageHeader('nav_control', 'util_desc')}
-    <div class="grid grid-2">
-      <div class="card">
-        <div class="card-title">${t('account_info')}</div>
-        <div class="grid grid-2 text-sm">
-          <div><div class="text-secondary">${t('user_id')}</div><div class="mono">${escapeHTML(user.userId)}</div></div>
-          <div><div class="text-secondary">Email</div><div>${escapeHTML(user.email)}</div></div>
-          <div><div class="text-secondary">${t('join_date')}</div><div class="mono">${formatDate(user.joinDate, STATE.lang)}</div></div>
-          <div><div class="text-secondary">${t('devices_online')}</div><div class="mono">${plan.devicesOnline}/${plan.deviceLimit}</div></div>
+    ${pageHeader('nav_control', 'util_desc', 'CONTROL CENTRE')}
+    <div class="control-grid">
+      <section class="card account-section">
+        <div class="account-section__head">
+          <div><span class="account-section__eyebrow">DANH TÍNH</span><h2>${t('account_info')}</h2></div>
+          <span class="account-section__icon">${icon('user')}</span>
         </div>
-      </div>
-      <div class="card">
-        <div class="card-title">${t('change_password')}</div>
+        <div class="info-grid">
+          <div><span>${t('user_id')}</span><strong class="mono">${escapeHTML(user.userId)}</strong></div>
+          <div><span>Email</span><strong>${escapeHTML(user.email)}</strong></div>
+          <div><span>${t('join_date')}</span><strong class="mono">${formatDate(user.joinDate, STATE.lang)}</strong></div>
+          <div><span>${t('devices_online')}</span><strong class="mono">${plan.devicesOnline}/${plan.deviceLimit}</strong></div>
+        </div>
+      </section>
+      <section class="card account-section">
+        <div class="account-section__head">
+          <div><span class="account-section__eyebrow">BẢO MẬT</span><h2>${t('change_password')}</h2></div>
+          <span class="account-section__icon">${icon('lock')}</span>
+        </div>
         <form id="controlPasswordForm" class="account-form">
-          <div class="field"><label for="controlCurrentPassword">Mật khẩu hiện tại</label><input class="input" id="controlCurrentPassword" type="password" autocomplete="current-password" required></div>
-          <div class="field"><label for="controlNewPassword">Mật khẩu mới</label><input class="input" id="controlNewPassword" type="password" autocomplete="new-password" minlength="8" required></div>
-          <div class="field"><label for="controlConfirmPassword">Nhập lại mật khẩu mới</label><input class="input" id="controlConfirmPassword" type="password" autocomplete="new-password" minlength="8" required></div>
-          <button class="btn btn-primary" type="submit">${t('save')}</button>
+          <div class="field"><label for="controlCurrentPassword">Mật khẩu hiện tại</label><input class="input" id="controlCurrentPassword" type="password" autocomplete="current-password" placeholder="Nhập mật khẩu hiện tại" required></div>
+          <div class="field"><label for="controlNewPassword">Mật khẩu mới</label><input class="input" id="controlNewPassword" type="password" autocomplete="new-password" placeholder="Tối thiểu 8 ký tự" minlength="8" required></div>
+          <div class="field"><label for="controlConfirmPassword">Nhập lại mật khẩu mới</label><input class="input" id="controlConfirmPassword" type="password" autocomplete="new-password" placeholder="Nhập lại mật khẩu mới" minlength="8" required></div>
+          <div class="account-form__footer">
+            <span class="text-secondary">Sau khi đổi mật khẩu, mọi phiên đăng nhập sẽ kết thúc.</span>
+            <button class="btn btn-primary" type="submit">${icon('check')} ${t('save')}</button>
+          </div>
         </form>
-      </div>
+      </section>
     </div>
   `;
   qs('#controlPasswordForm', container).addEventListener('submit', (event) => handlePasswordChangeSubmit(event, container));
@@ -371,7 +386,7 @@ PAGES['#/account'] = async (root) => {
     <div class="page-container page-enter account-page">
       <div class="account-hero">
         <div class="account-hero__identity">
-          <img class="account-hero__avatar" src="data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='32' r='31' fill='%232F6FED'/%3E%3Ctext x='32' y='37' text-anchor='middle' font-family='Arial,sans-serif' font-size='22' font-weight='700' fill='%23ffffff'%3EPR%3C/text%3E%3C/svg%3E" alt="Chưa đăng nhập">
+          <img class="account-hero__avatar" src="${EMPTY_AVATAR_DATA_URL}" alt="Chưa đăng nhập">
           <div><span class="account-kicker">PERRALVPN ACCOUNT</span><h1>Quản lý tài khoản</h1><p>Cập nhật hồ sơ, bảo mật và các thiết bị đang sử dụng.</p></div>
         </div>
         <span class="account-verified" id="accountVerified">${icon('check')} Đang kiểm tra</span>
@@ -382,14 +397,14 @@ PAGES['#/account'] = async (root) => {
             <div class="account-section__head"><div><span class="account-section__eyebrow">HỒ SƠ CÁ NHÂN</span><h2>Thông tin tài khoản</h2></div><span class="account-section__icon">${icon('user')}</span></div>
             <div class="account-profile-summary"><div class="account-mini-avatar" id="accountMiniAvatar">PR</div><div><strong id="accountSummaryName">Đang tải...</strong><span id="accountSummaryEmail">Đang tải...</span></div><span class="account-id-pill mono" id="accountUserId">—</span></div>
             <form id="profileForm" class="account-form">
-              <div class="grid grid-2"><div class="field"><label>Họ và tên</label><input class="input" id="profileName" value="" autocomplete="name"></div><div class="field"><label>Email</label><input class="input" id="profileEmail" value="" type="email" disabled></div></div>
-              <div class="grid grid-2"><div class="field"><label>Số điện thoại</label><input class="input" id="profilePhone" value="" autocomplete="tel" placeholder="Chưa cập nhật"></div><div class="field"><label>Ngày tham gia</label><input class="input" id="profileJoinDate" value="" disabled></div></div>
+              <div class="grid grid-2"><div class="field"><label for="profileName">Họ và tên</label><input class="input" id="profileName" value="" autocomplete="name"></div><div class="field"><label for="profileEmail">Email</label><input class="input" id="profileEmail" value="" type="email" disabled></div></div>
+              <div class="grid grid-2"><div class="field"><label for="profilePhone">Số điện thoại</label><input class="input" id="profilePhone" value="" autocomplete="tel" placeholder="Chưa cập nhật"></div><div class="field"><label for="profileJoinDate">Ngày tham gia</label><input class="input" id="profileJoinDate" value="" disabled></div></div>
               <div class="account-form__footer"><span class="text-secondary">Email đăng nhập không thể thay đổi trong bản demo.</span><button class="btn btn-primary" type="submit">${icon('check')} Lưu thay đổi</button></div>
             </form>
           </section>
           <section class="card account-section" id="security">
             <div class="account-section__head"><div><span class="account-section__eyebrow">BẢO MẬT</span><h2>Đổi mật khẩu</h2></div><span class="account-section__icon">${icon('lock')}</span></div>
-            <form id="passwordForm" class="account-form"><div class="field"><label>Mật khẩu hiện tại</label><input class="input" id="currentPassword" type="password" autocomplete="current-password" placeholder="Nhập mật khẩu hiện tại"></div><div class="grid grid-2"><div class="field"><label>Mật khẩu mới</label><input class="input" id="newPassword" type="password" autocomplete="new-password" placeholder="Tối thiểu 8 ký tự"></div><div class="field"><label>Nhập lại mật khẩu mới</label><input class="input" id="confirmPassword" type="password" autocomplete="new-password" placeholder="Nhập lại mật khẩu mới"></div></div><div class="account-form__footer"><span class="text-secondary">Nên dùng mật khẩu riêng, khó đoán và không trùng dịch vụ khác.</span><button class="btn btn-primary" type="submit">${icon('lock')} Cập nhật mật khẩu</button></div></form>
+            <form id="passwordForm" class="account-form"><div class="field"><label for="currentPassword">Mật khẩu hiện tại</label><input class="input" id="currentPassword" type="password" autocomplete="current-password" placeholder="Nhập mật khẩu hiện tại"></div><div class="grid grid-2"><div class="field"><label for="newPassword">Mật khẩu mới</label><input class="input" id="newPassword" type="password" autocomplete="new-password" placeholder="Tối thiểu 8 ký tự"></div><div class="field"><label for="confirmPassword">Nhập lại mật khẩu mới</label><input class="input" id="confirmPassword" type="password" autocomplete="new-password" placeholder="Nhập lại mật khẩu mới"></div></div><div class="account-form__footer"><span class="text-secondary">Nên dùng mật khẩu riêng, khó đoán và không trùng dịch vụ khác.</span><button class="btn btn-primary" type="submit">${icon('lock')} Cập nhật mật khẩu</button></div></form>
           </section>
         </div>
         <aside class="account-side-column">

@@ -5,7 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Trang chủ · PerralVPN</title>
 <meta name="description" content="PerralVPN — Bảng điều khiển quản lý tài khoản dịch vụ VPN: mua gói, theo dõi dung lượng, trạng thái node và cộng tác viên.">
-<meta name="theme-color" content="#2F6FED">
+<meta name="theme-color" content="#F1EFE8">
+<meta name="color-scheme" content="light dark">
 
 <!-- Open Graph -->
 <meta property="og:type" content="website">
@@ -14,11 +15,11 @@
 <meta property="og:image" content="https://api.dicebear.com/7.x/shapes/svg?seed=PerralVPN">
 <meta property="og:site_name" content="PerralVPN">
 
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%232F6FED'/%3E%3Ctext x='16' y='22' font-size='16' font-family='Arial' font-weight='700' fill='white' text-anchor='middle'%3EDA%3C/text%3E%3C/svg%3E">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23C9F24D'/%3E%3Cg stroke='%23141510' stroke-width='2.6' stroke-linecap='square'%3E%3Cpath d='M8 24V18'/%3E%3Cpath d='M13.3 24V13'/%3E%3Cpath d='M18.6 24V15'/%3E%3Cpath d='M24 24V8'/%3E%3C/g%3E%3C/svg%3E">
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400;1,600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 
 <script>
   try {
@@ -28,24 +29,35 @@
     if (savedLang === 'vi' || savedLang === 'en') document.documentElement.lang = savedLang;
   } catch {}
 </script>
-<link rel="stylesheet" href="variables.css">
-<link rel="stylesheet" href="style.css?v=support-chooser-1">
-<link rel="stylesheet" href="refresh-v2.css?v=quiet-signal-4">
+<link rel="stylesheet" href="ui.css?v=ink-signal-9">
 </head>
 <body>
+
+<a class="skip-link" href="#pageContent">Bỏ qua điều hướng</a>
 
 <div class="app-shell">
 
   <!-- ============ SIDEBAR ============ -->
   <aside class="sidebar" aria-label="Điều hướng chính">
     <div class="sidebar__brand">
-      <div class="sidebar__brand-mark" aria-hidden="true">DA</div>
-      <span class="sidebar__brand-text" id="sidebarBrandText">PerralVPN</span>
+      <span class="brand-mark" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="square">
+          <path d="M4 19v-5"/>
+          <path d="M9.3 19V9"/>
+          <path d="M14.6 19v-4"/>
+          <path d="M20 19V5"/>
+        </svg>
+      </span>
+      <span class="sidebar__brand-copy">
+        <span class="sidebar__brand-text" id="sidebarBrandText">PerralVPN</span>
+        <span class="brand-sub">Private network</span>
+      </span>
     </div>
-    <nav id="sidebarNav"></nav>
+    <nav id="sidebarNav" aria-label="Các mục chính"></nav>
     <div class="sidebar__footer">
+      <span class="sidebar__meta mono">OPS · 2026</span>
       <button class="sidebar__collapse-btn" id="collapseBtn" aria-label="Thu gọn menu">
-        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="9" y1="3" x2="9" y2="21"/></svg>
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="9" y1="3" x2="9" y2="21"/></svg>
         <span id="collapseBtnLabel">Thu gọn</span>
       </button>
     </div>
@@ -56,8 +68,8 @@
   <div class="main-content">
     <header class="topbar">
       <div class="topbar__left">
-        <button class="hamburger" id="hamburgerBtn" aria-label="Mở menu điều hướng">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="22" height="22"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+        <button class="hamburger" id="hamburgerBtn" aria-label="Mở menu điều hướng" aria-controls="sidebarNav" aria-expanded="false">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="22" height="22"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
         </button>
         <nav class="breadcrumb" aria-label="Breadcrumb">
           <span class="breadcrumb__current" id="breadcrumbCurrent">Trang chủ</span>
@@ -66,12 +78,14 @@
 
       <div class="topbar__right">
         <!-- Theme toggle -->
-        <button class="icon-btn" id="themeToggle" aria-label="Chuyển giao diện sáng/tối"></button>
+        <button class="icon-btn" id="themeToggle" data-theme-toggle aria-label="Chuyển giao diện sáng/tối"></button>
+
+        <span class="topbar__divider" aria-hidden="true"></span>
 
         <!-- Settings dropdown -->
         <div class="dropdown">
           <button class="icon-btn dropdown-trigger" aria-label="Cài đặt" aria-haspopup="true">
-            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
           </button>
           <div class="dropdown__menu" role="menu">
             <button class="dropdown__item" role="menuitem" onclick="location.hash='#/control'" id="settingsControlLink">Trung tâm kiểm soát</button>
@@ -82,18 +96,18 @@
         <!-- Language dropdown -->
         <div class="dropdown">
           <button class="icon-btn dropdown-trigger" aria-label="Chọn ngôn ngữ" aria-haspopup="true">
-            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
           </button>
           <div class="dropdown__menu" role="menu">
-            <button class="dropdown__item" data-lang="vi" role="menuitem">🇻🇳 Tiếng Việt</button>
-            <button class="dropdown__item" data-lang="en" role="menuitem">🇬🇧 English</button>
+            <button class="dropdown__item dropdown__item--lang" data-lang="vi" role="menuitem"><span class="lang-code mono">VI</span> Tiếng Việt</button>
+            <button class="dropdown__item dropdown__item--lang" data-lang="en" role="menuitem"><span class="lang-code mono">EN</span> English</button>
           </div>
         </div>
 
         <!-- Avatar dropdown -->
         <div class="dropdown">
           <button class="avatar-btn dropdown-trigger" aria-haspopup="true" aria-label="Tài khoản">
-            <img class="avatar" src="data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='32' r='31' fill='%232F6FED'/%3E%3Ctext x='32' y='37' text-anchor='middle' font-family='Arial,sans-serif' font-size='22' font-weight='700' fill='%23ffffff'%3EPR%3C/text%3E%3C/svg%3E" alt="Chưa đăng nhập" loading="lazy">
+            <img class="avatar" src="data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='18' fill='%23C9F24D'/%3E%3Ctext x='32' y='40' text-anchor='middle' font-family='Arial,sans-serif' font-size='24' font-weight='700' fill='%23141510'%3EPR%3C/text%3E%3C/svg%3E" alt="Chưa đăng nhập" loading="lazy">
             <span class="avatar-name" id="avatarName">Chưa đăng nhập</span>
           </button>
           <div class="dropdown__menu" role="menu">
@@ -108,8 +122,10 @@
 
     <main id="pageContent" aria-live="polite" aria-busy="false"></main>
 
-    <footer style="padding:24px;text-align:center;color:var(--text-secondary);font-size:12.5px;">
-      © 2026 PerralVPN. All rights reserved.
+    <footer class="app-footer">
+      <span class="app-footer__brand mono">PERRALVPN</span>
+      <span class="app-footer__copy">© 2026 PerralVPN. All rights reserved.</span>
+      <span class="app-footer__meta mono">BUILD 2026.10</span>
     </footer>
   </div>
 </div>
@@ -117,7 +133,7 @@
 <!-- Support chat FAB -->
 <button class="support-fab" id="supportFab" aria-label="Mở hỗ trợ trực tuyến">
   <span class="support-fab__pulse" aria-hidden="true"></span>
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="18" height="18"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="18" height="18"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
   <span id="supportLabel">Hỗ trợ</span>
 </button>
 
@@ -125,18 +141,18 @@
 <div class="toast-region" id="toastRegion" aria-live="polite"></div>
 
 
-<script src="state.js?v=mobile-theme-1"></script>
-<script src="i18n.js?v=reset-label-1"></script>
-<script src="mock-data.js?v=avatar-logo-1"></script>
-<script src="utils.js?v=security-1"></script>
-<script src="frontend-config.js?v=reset-1"></script>
-<script src="api.js?v=checkout-flow-2"></script>
-<script src="ui.js?v=mobile-theme-1"></script>
-<script src="pages.js?v=reset-label-1"></script>
-<script src="pages2.js?v=speed-tiers-1"></script>
-<script src="pages3.js?v=password-reset-1"></script>
-<script src="pages4.js?v=tiktok-checkout-1"></script>
-<script src="router.js?v=sepay-checkout-1"></script>
-<script src="app.js?v=support-chooser-1"></script>
+<script src="state.js?v=ink-signal-9"></script>
+<script src="i18n.js?v=ink-signal-9"></script>
+<script src="mock-data.js?v=ink-signal-9"></script>
+<script src="utils.js?v=ink-signal-9"></script>
+<script src="frontend-config.js?v=ink-signal-9"></script>
+<script src="api.js?v=ink-signal-9"></script>
+<script src="ui.js?v=ink-signal-9"></script>
+<script src="pages.js?v=ink-signal-9"></script>
+<script src="pages2.js?v=ink-signal-9"></script>
+<script src="pages3.js?v=ink-signal-9"></script>
+<script src="pages4.js?v=ink-signal-9"></script>
+<script src="router.js?v=ink-signal-9"></script>
+<script src="app.js?v=ink-signal-9"></script>
 </body>
 </html>

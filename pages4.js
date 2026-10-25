@@ -69,62 +69,63 @@ PAGES['#/checkout'] = async (root) => {
     const grandTotal = Math.max(0, price.total - promoDiscount);
 
     container.innerHTML = `
-      ${pageHeader('checkout_title', 'checkout_desc')}
+      ${pageHeader('checkout_title', 'checkout_desc', 'SECURE CHECKOUT')}
       <div class="checkout-grid">
-        <div>
-          <div class="card" style="margin-bottom:20px;">
+        <div class="checkout-col">
+          <section class="card">
             <div class="card-title">${t('order_summary')}</div>
-            <div class="flex justify-between items-center" style="margin-bottom:18px;">
+            <div class="order-product">
               <div>
-                <div style="font-family:var(--font-display);font-weight:600;font-size:16px;">${escapeHTML(plan.name)}</div>
-                <div class="text-sm text-secondary">${escapeHTML(plan.capacity)} · ${escapeHTML(plan.speed)} · ${plan.devices} ${t('device_limit').toLowerCase()}</div>
+                <p class="order-product__name">${escapeHTML(plan.name)}</p>
+                <span class="order-product__meta">${escapeHTML(plan.capacity)} · ${escapeHTML(plan.speed)} · ${plan.devices} ${t('device_limit').toLowerCase()}</span>
               </div>
-              <div style="font-family:var(--font-display);font-weight:700;color:var(--brand-500);">${formatCurrency(plan.price)}<span class="text-secondary text-sm">${plan.lifetime ? t('lifetime_term') : t('per_month')}</span></div>
+              <div class="order-product__price">${formatCurrency(plan.price)}<span>${plan.lifetime ? t('lifetime_term') : t('per_month')}</span></div>
             </div>
 
             <div class="field mb-0">
               <label>${t('billing_cycle')}</label>
-              <div class="flex gap-2" style="flex-wrap:wrap;">
+              <div class="cycle-options">
                 ${availableCycles.map(c => `
-                  <button type="button" class="btn btn-sm ${cycle === c.key ? 'btn-primary' : 'btn-secondary'}" data-cycle="${c.key}">${c.label || t('cycle_' + c.key)}</button>
+                  <button type="button" class="cycle-option ${cycle === c.key ? 'is-active' : ''}" data-cycle="${c.key}" aria-pressed="${cycle === c.key}">${c.label || t('cycle_' + c.key)}</button>
                 `).join('')}
               </div>
             </div>
-          </div>
+          </section>
 
-          <div class="card">
+          <section class="card">
             <div class="card-title">${t('payment_method')}</div>
             ${PAYMENT_METHODS.map(m => `
               <label class="pay-method ${method === m.key ? 'selected' : ''}" data-method="${m.key}">
                 <input type="radio" name="payMethod" value="${m.key}" ${method === m.key ? 'checked' : ''}>
                 <span class="pay-method__icon">${icon(m.icon)}</span>
-                <span style="flex:1;">
-                  <div style="font-weight:600;font-size:14px;">${m.label}</div>
-                  <div class="text-sm text-secondary">${m.desc}</div>
+                <span>
+                  <strong>${m.label}</strong>
+                  <small>${m.desc}</small>
                 </span>
               </label>
             `).join('')}
-          </div>
+          </section>
         </div>
 
         <div>
-          <div class="card" style="position:sticky;top:calc(var(--header-h) + 16px);">
+          <section class="card summary-card">
             <div class="card-title">${t('promo_code')}</div>
             <div class="field" id="promoField">
               <div class="input-group">
-                <input class="input" id="promoInput" placeholder="${t('promo_code_placeholder')}" value="${promoApplied ? escapeHTML(promoApplied) : ''}">
+                <input class="input" id="promoInput" aria-label="${t('promo_code')}" placeholder="${t('promo_code_placeholder')}" value="${promoApplied ? escapeHTML(promoApplied) : ''}">
                 <button class="btn btn-secondary" id="btnApplyPromo">${t('apply')}</button>
               </div>
               ${promoError ? `<div class="error-msg" style="display:block;">${escapeHTML(promoError)}</div>` : ''}
             </div>
 
-            <div class="summary-row"><span>${t('subtotal')}</span><span class="mono">${formatCurrency(price.raw)}</span></div>
-            ${price.discount ? `<div class="summary-row"><span>${t('term_discount')}</span><span class="mono">-${formatCurrency(price.discount)}</span></div>` : ''}
-            ${promoApplied ? `<div class="summary-row"><span>${t('discount')}</span><span class="mono">-${formatCurrency(promoDiscount)}</span></div>` : ''}
-            <div class="summary-row total"><span>${t('total')}</span><span class="amount mono">${formatCurrency(grandTotal)}</span></div>
+            <div class="summary-row"><span>${t('subtotal')}</span><span>${formatCurrency(price.raw)}</span></div>
+            ${price.discount ? `<div class="summary-row discount"><span>${t('term_discount')}</span><span>-${formatCurrency(price.discount)}</span></div>` : ''}
+            ${promoApplied ? `<div class="summary-row discount"><span>${t('discount')}</span><span>-${formatCurrency(promoDiscount)}</span></div>` : ''}
+            <div class="summary-row total"><span>${t('total')}</span><span class="amount">${formatCurrency(grandTotal)}</span></div>
 
-            <button class="btn btn-primary btn-block" id="btnPayNow" style="margin-top:14px;">${t('pay_now')}</button>
-          </div>
+            <button class="btn btn-primary btn-block checkout-pay" id="btnPayNow">${t('pay_now')} ${icon('arrowUpRight')}</button>
+            <p class="checkout-secure">${icon('lock')} Thanh toán an toàn qua SePay</p>
+          </section>
         </div>
       </div>
     `;
@@ -156,7 +157,7 @@ PAGES['#/checkout'] = async (root) => {
         checkoutInProgress = false;
         btn.disabled = false;
         btn.removeAttribute('aria-busy');
-        btn.innerHTML = t('pay_now');
+        btn.innerHTML = `${t('pay_now')} ${icon('arrowUpRight')}`;
       };
       btn.disabled = true;
       btn.setAttribute('aria-busy', 'true');
@@ -213,7 +214,26 @@ PAGES['#/payment-result'] = async (root) => {
     : status === 'cancel'
       ? 'Thanh toán đã được hủy và đơn hàng đang được cập nhật sang trạng thái Đã hủy.'
       : 'SePay chưa xác nhận giao dịch thành công. Bạn có thể kiểm tra lại đơn hàng hoặc thử thanh toán lại.';
-  root.innerHTML = `<div class="page-container page-enter"><div class="checkout-success" style="max-width:700px;margin:0 auto;text-align:center;"><div class="checkout-success__icon">${icon(status === 'success' ? 'wallet' : 'receipt')}</div><h2>${title}</h2><p>${description}</p><div id="paymentStatus" class="card" style="margin-top:20px;text-align:left;"><div class="text-sm text-secondary">Mã đơn hàng</div><div class="mono" style="margin-top:6px;">${escapeHTML(orderId || '—')}</div><div class="text-sm text-secondary" style="margin-top:14px;">Trạng thái</div><div id="paymentStatusText" style="margin-top:6px;">Đang tải...</div></div><div class="flex gap-2" style="justify-content:center;flex-wrap:wrap;margin-top:20px;"><button class="btn btn-secondary" id="btnResultOrders">Xem đơn hàng</button><button class="btn btn-primary" id="btnResultHome">Về trang chủ</button></div></div></div>`;
+  root.innerHTML = `
+    <div class="page-container page-enter">
+      <div class="result-shell">
+        <section class="card result-card">
+          <div class="result-icon">${icon(status === 'success' ? 'check' : status === 'cancel' ? 'x' : 'info')}</div>
+          <span class="page-header__kicker" style="margin-bottom:10px;">PAYMENT RESULT</span>
+          <h1>${title}</h1>
+          <p>${description}</p>
+          <dl class="result-meta" id="paymentStatus">
+            <div><dt>Mã đơn hàng</dt><dd class="mono">${escapeHTML(orderId || '—')}</dd></div>
+            <div><dt>Trạng thái</dt><dd id="paymentStatusText">Đang tải...</dd></div>
+          </dl>
+          <div class="result-actions">
+            <button class="btn btn-secondary" id="btnResultOrders">Xem đơn hàng</button>
+            <button class="btn btn-primary" id="btnResultHome">Về trang chủ</button>
+          </div>
+        </section>
+      </div>
+    </div>
+  `;
   qs('#btnResultOrders', root).addEventListener('click', () => { location.hash = '#/order'; });
   qs('#btnResultHome', root).addEventListener('click', () => { location.hash = '#/dashboard'; });
   const statusText = qs('#paymentStatusText', root);
@@ -257,20 +277,19 @@ PAGES['#/payment-result'] = async (root) => {
 PAGES['#/login'] = async (root) => {
   root.innerHTML = `
     <div class="page-container page-enter">
-      <div class="auth-wrap auth-wrap--scene">
-        <div class="auth-scene__glow auth-scene__glow--one"></div>
-        <div class="auth-scene__glow auth-scene__glow--two"></div>
+      <div class="auth-wrap">
         <div class="auth-promo">
           <div class="auth-promo__eyebrow">PERRALVPN · KẾT NỐI TỰ DO</div>
           <h2>Internet mượt mà,<br><span>ở mọi nơi bạn đến.</span></h2>
           <p>Bảo vệ kết nối, tăng tốc trải nghiệm và quản lý dịch vụ VPN trong một không gian trực quan.</p>
           <div class="auth-promo__stats"><span><strong>24/7</strong> Hỗ trợ</span><span><strong>99.9%</strong> Ổn định</span></div>
         </div>
-        <div class="auth-card auth-card--glass">
+        <div class="auth-card">
           <div class="auth-card__brand">
             <div class="auth-card__brand-mark">PR</div>
             <strong>${t('app_name')}</strong>
             <span class="auth-live-dot">Trực tuyến</span>
+            <button class="auth-theme-btn" type="button" data-theme-toggle aria-label="${t('theme_toggle')}"></button>
           </div>
           <h1>${t('login_title')}</h1>
           <p class="auth-desc">${t('login_desc')}</p>
@@ -333,19 +352,18 @@ PAGES['#/login'] = async (root) => {
 PAGES['#/forgot-password'] = async (root) => {
   root.innerHTML = `
     <div class="page-container page-enter">
-      <div class="auth-wrap auth-wrap--scene">
-        <div class="auth-scene__glow auth-scene__glow--one"></div>
-        <div class="auth-scene__glow auth-scene__glow--two"></div>
+      <div class="auth-wrap">
         <div class="auth-promo">
           <div class="auth-promo__eyebrow">PERRALVPN · KHÔI PHỤC TÀI KHOẢN</div>
           <h2>Lấy lại quyền truy cập,<br><span>an toàn và nhanh chóng.</span></h2>
           <p>Nhận mã xác nhận qua email để tạo mật khẩu mới cho tài khoản PerralVPN của bạn.</p>
         </div>
-        <div class="auth-card auth-card--glass">
+        <div class="auth-card">
           <div class="auth-card__brand">
             <div class="auth-card__brand-mark">PR</div>
             <strong>${t('app_name')}</strong>
             <span class="auth-live-dot">Trực tuyến</span>
+            <button class="auth-theme-btn" type="button" data-theme-toggle aria-label="${t('theme_toggle')}"></button>
           </div>
           <h1>${t('forgot_title')}</h1>
           <p class="auth-desc">${t('forgot_desc')}</p>
@@ -462,20 +480,19 @@ PAGES['#/forgot-password'] = async (root) => {
 PAGES['#/register'] = async (root) => {
   root.innerHTML = `
     <div class="page-container page-enter">
-      <div class="auth-wrap auth-wrap--scene">
-        <div class="auth-scene__glow auth-scene__glow--one"></div>
-        <div class="auth-scene__glow auth-scene__glow--two"></div>
+      <div class="auth-wrap">
         <div class="auth-promo">
           <div class="auth-promo__eyebrow">PERRALVPN · KHỞI ĐẦU AN TOÀN</div>
           <h2>Một tài khoản,<br><span>mọi kết nối.</span></h2>
           <p>Đăng ký để theo dõi dung lượng, node, ứng dụng và gói dịch vụ của bạn ngay trên một bảng điều khiển.</p>
           <div class="auth-promo__stats"><span><strong>5+</strong> Nền tảng</span><span><strong>24/7</strong> Hỗ trợ</span></div>
         </div>
-        <div class="auth-card auth-card--glass">
+        <div class="auth-card">
           <div class="auth-card__brand">
             <div class="auth-card__brand-mark">PR</div>
             <strong>${t('app_name')}</strong>
             <span class="auth-live-dot">Bắt đầu ngay</span>
+            <button class="auth-theme-btn" type="button" data-theme-toggle aria-label="${t('theme_toggle')}"></button>
           </div>
           <h1>${t('register_title')}</h1>
           <p class="auth-desc">${t('register_desc')}</p>

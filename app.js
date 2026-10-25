@@ -26,7 +26,7 @@ function getUserInitials(name, fallback = 'PR'){
 
 function initialsAvatarUrl(name, fallback = 'PR'){
   const initials = getUserInitials(name, fallback).replace(/[^\p{L}\p{N}]/gu, '').slice(0, 2) || fallback;
-  const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><circle cx="32" cy="32" r="31" fill="#2F6FED"/><text x="32" y="37" text-anchor="middle" font-family="Arial,sans-serif" font-size="22" font-weight="700" fill="#ffffff">${initials}</text></svg>`;
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><rect width="64" height="64" rx="18" fill="#C9F24D"/><text x="32" y="40" text-anchor="middle" font-family="'Be Vietnam Pro',Arial,sans-serif" font-size="23" font-weight="700" fill="#14150F">${initials}</text></svg>`;
   return `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(svg)}`;
 }
 
@@ -66,12 +66,22 @@ function setupLangDropdown(){
 
 function setupSidebarToggle(){
   const shell = qs('.app-shell');
+  const hamburger = qs('#hamburgerBtn');
+  const setMobileNav = (open) => {
+    shell.classList.toggle('mobile-nav-open', open);
+    hamburger?.setAttribute('aria-expanded', String(open));
+  };
   qs('#collapseBtn').addEventListener('click', () => {
     STATE.sidebarCollapsed = !STATE.sidebarCollapsed;
     shell.classList.toggle('sidebar-collapsed', STATE.sidebarCollapsed);
   });
-  qs('#hamburgerBtn').addEventListener('click', () => shell.classList.toggle('mobile-nav-open'));
-  qs('#sidebarScrim').addEventListener('click', () => shell.classList.remove('mobile-nav-open'));
+  hamburger.addEventListener('click', () => setMobileNav(!shell.classList.contains('mobile-nav-open')));
+  qs('#sidebarScrim').addEventListener('click', () => setMobileNav(false));
+  document.addEventListener('keydown', (e) => {
+    if (e.key !== 'Escape') return;
+    if (shell.classList.contains('mobile-nav-open')) setMobileNav(false);
+    qsa('.dropdown.open').forEach(d => d.classList.remove('open'));
+  });
 }
 
 function setupAccountMenu(){
@@ -118,7 +128,14 @@ function setupSupportFab(){
 }
 
 function setupThemeDropdownButtons(){
-  qs('#themeToggle').addEventListener('click', toggleTheme);
+  // Delegated so the toggle also works on the auth screens, which are
+  // rendered after bootstrap.
+  document.addEventListener('click', (e) => {
+    const btn = e.target.closest('[data-theme-toggle]');
+    if (!btn) return;
+    e.preventDefault();
+    toggleTheme();
+  });
 }
 
 document.addEventListener('DOMContentLoaded', () => {

@@ -26,7 +26,7 @@ const I18N = {
     support_chat: "Hỗ trợ",
 
     // Dashboard
-    welcome_back: "Chào mừng trở lại 👋",
+    welcome_back: "Chào mừng trở lại",
     topup: "Nạp tiền",
     join_date: "Ngày tham gia",
     user_id: "ID định danh",
@@ -226,6 +226,7 @@ const I18N = {
     password_placeholder: "Tối thiểu 8 ký tự",
     confirm_password: "Xác nhận mật khẩu",
     remember_me: "Ghi nhớ đăng nhập",
+    theme_toggle: "Chuyển giao diện sáng/tối",
     forgot_password: "Quên mật khẩu?",
     login_btn: "Đăng nhập",
     register_btn: "Đăng ký",
@@ -275,7 +276,7 @@ const I18N = {
     support_online: "Online 24/7",
     support_chat: "Support",
 
-    welcome_back: "Welcome back 👋",
+    welcome_back: "Welcome back",
     topup: "Top up",
     join_date: "Joined",
     user_id: "User ID",
@@ -465,6 +466,7 @@ const I18N = {
     password_placeholder: "At least 8 characters",
     confirm_password: "Confirm password",
     remember_me: "Remember me",
+    theme_toggle: "Toggle light/dark theme",
     forgot_password: "Forgot password?",
     login_btn: "Log in",
     register_btn: "Sign up",

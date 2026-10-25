@@ -43,10 +43,12 @@ const NAV_CONFIG = [
   { type: 'item', route: '#/application', icon: 'grid', labelKey: 'nav_application' },
   { type: 'group', titleKey: 'nav_group_plan', items: [
     { route: '#/plan', icon: 'shield', labelKey: 'nav_plan' },
+    { route: '#/node', icon: 'activity', labelKey: 'nav_node' },
     { route: '#/changepro', icon: 'sliders', labelKey: 'nav_changepro' },
   ]},
   { type: 'group', titleKey: 'nav_group_finance', items: [
     { route: '#/order', icon: 'receipt', labelKey: 'nav_order' },
+    { route: '#/invite', icon: 'users', labelKey: 'nav_invite' },
   ]},
   { type: 'group', titleKey: 'nav_group_user', items: [
     { route: '#/control', icon: 'control', labelKey: 'nav_control' },

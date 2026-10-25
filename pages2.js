@@ -57,14 +57,17 @@ PAGES['#/plan'] = async (root) => {
   root.innerHTML = `
     <div class="page-container page-enter">
       <div class="plan-catalog-head">
-        <h1>Chọn gói phù hợp với bạn nhất</h1>
+        <div>
+          <span class="page-header__kicker">PERRAL NETWORK · CATALOG</span>
+          <h1>Chọn gói phù hợp với bạn nhất</h1>
+        </div>
         <div class="plan-filter" role="tablist" aria-label="Bộ lọc gói dịch vụ">
           <button type="button" class="plan-filter__tab is-active" data-plan-view="all" role="tab" aria-selected="true">Tất cả</button>
           <button type="button" class="plan-filter__tab" data-plan-view="cycle" role="tab" aria-selected="false">Chu kỳ</button>
           <button type="button" class="plan-filter__tab" data-plan-view="traffic" role="tab" aria-selected="false">Theo lưu lượng</button>
         </div>
       </div>
-      <div id="planGrid" class="grid grid-4">${skeletonCards(4)}</div>
+      <div id="planGrid" class="tier-grid">${Array.from({ length: 8 }).map(() => '<div class="skeleton skel-card" style="height:360px;"></div>').join('')}</div>
     </div>
   `;
 
@@ -92,23 +95,25 @@ PAGES['#/plan'] = async (root) => {
     } else if (viewMode === 'traffic') {
       list.sort((a, b) => capacityRank(a) - capacityRank(b) || Number(a.price || 0) - Number(b.price || 0));
     }
-    grid.innerHTML = list.map(p => `
-      <div class="card" style="display:flex;flex-direction:column;${p.popular ? 'border-color:var(--brand-400);box-shadow:0 0 0 3px rgba(47,111,237,.12);' : ''}">
-        ${p.popular ? `<span class="badge badge-info" style="align-self:flex-start;margin-bottom:10px;">${t('popular')}</span>` : ''}
-        <div style="font-family:var(--font-display);font-weight:600;font-size:16px;margin-bottom:4px;">${escapeHTML(STATE.lang === 'en' ? (p.nameEn || p.name) : p.name)}</div>
-        <div style="margin-bottom:14px;"><span style="font-size:24px;font-weight:700;color:var(--brand-500);font-family:var(--font-display);">${formatCurrency(p.price)}</span> <span class="text-secondary text-sm">${p.lifetime ? t('lifetime_term') : t('per_month')}</span></div>
+    grid.innerHTML = list.map((p, idx) => `
+      <article class="tier-card ${p.popular ? 'is-popular' : ''}">
+        <div class="tier-card__top">
+          <span class="tier-card__code mono">${p.category === 'vina' ? 'VINA' : 'TIKTOK'} · ${String(idx + 1).padStart(2, '0')}</span>
+          ${p.popular ? `<span class="badge badge-signal">${t('popular')}</span>` : ''}
+        </div>
+        <h3 class="tier-card__name">${escapeHTML(STATE.lang === 'en' ? (p.nameEn || p.name) : p.name)}</h3>
+        <div class="tier-card__price"><strong>${formatCurrency(p.price)}</strong><span>${p.lifetime ? t('lifetime_term') : t('per_month')}</span></div>
         <ul class="plan-spec-list" aria-label="Thông tin gói dịch vụ">
-          <li><span class="plan-spec-list__icon">${icon('globe')}</span><span>Nền: <strong>${escapeHTML(p.base || (/không nền/i.test(p.name || '') ? '0 nền' : '0 nền'))}</strong></span></li>
-          <li><span class="plan-spec-list__icon">${icon('database')}</span><span>Dung lượng: <strong>${escapeHTML(frontendPlanCapacity(p))}</strong></span></li>
-          <li><span class="plan-spec-list__icon">${icon('activity')}</span><span>Tốc độ: <strong>${escapeHTML(p.speed || '300Mbps')}</strong></span></li>
-          <li><span class="plan-spec-list__icon">${icon('smartphone')}</span><span>Thiết bị: <strong>${escapeHTML(String(p.devices ?? 0))}</strong></span></li>
-          <li><span class="plan-spec-list__icon">${icon('sim')}</span><span>Hỗ trợ SIM: <strong>${escapeHTML(p.simSupport || (/vina/i.test(`${p.name || ''} ${p.category || ''}`) ? 'Vina' : 'Tất cả'))}</strong></span></li>
-          <li><span class="plan-spec-list__icon">${icon('gamepad')}</span><span>Hỗ trợ game: <strong>${escapeHTML(p.gameSupport || 'Có')}</strong></span></li>
+          <li><span class="plan-spec-list__icon">${icon('globe')}</span><span><em>Nền</em><strong>${escapeHTML(p.base || '0 nền')}</strong></span></li>
+          <li><span class="plan-spec-list__icon">${icon('database')}</span><span><em>Dung lượng</em><strong>${escapeHTML(frontendPlanCapacity(p))}</strong></span></li>
+          <li><span class="plan-spec-list__icon">${icon('activity')}</span><span><em>Tốc độ</em><strong>${escapeHTML(p.speed || '300Mbps')}</strong></span></li>
+          <li><span class="plan-spec-list__icon">${icon('smartphone')}</span><span><em>Thiết bị</em><strong>${escapeHTML(String(p.devices ?? 0))}</strong></span></li>
+          <li><span class="plan-spec-list__icon">${icon('sim')}</span><span><em>Hỗ trợ SIM</em><strong>${escapeHTML(p.simSupport || (/vina/i.test(`${p.name || ''} ${p.category || ''}`) ? 'Vina' : 'Tất cả'))}</strong></span></li>
+          <li><span class="plan-spec-list__icon">${icon('gamepad')}</span><span><em>Hỗ trợ game</em><strong>${escapeHTML(p.gameSupport || 'Có')}</strong></span></li>
         </ul>
-        <button class="btn btn-primary btn-block" data-buy="${p.id}">${t('buy_now')}</button>
-        <div class="plan-support-note">Vào box để được admin hỗ trợ</div>
-        <div class="plan-thanks-marquee" aria-label="Cảm ơn đã sử dụng dịch vụ của chúng tôi"><span>Cảm ơn đã sử dụng dịch vụ của chúng tôi</span></div>
-      </div>
+        <button class="btn btn-primary btn-block" data-buy="${p.id}">${t('buy_now')} ${icon('arrowUpRight')}</button>
+        <p class="tier-card__note">Vào box để được admin hỗ trợ</p>
+      </article>
     `).join('');
     if (!list.length) grid.innerHTML = emptyState({ title: t('no_data_title'), desc: t('no_data_desc') });
 
@@ -207,11 +212,11 @@ PAGES['#/node'] = async (root) => {
       });
     }
     qs('.page-container', root).innerHTML = `
-      ${pageHeader('node_title', 'node_desc')}
-      <div class="table-wrap">
+      ${pageHeader('node_title', 'node_desc', `${list.length} NODES`)}
+      <div class="table-wrap" tabindex="0" role="region" aria-label="${t('node_title')} — bảng trạng thái node">
         <table class="data-table">
           <thead><tr>
-            ${cols.map(c => `<th data-key="${c.key}" ${c.tooltip ? `title="${escapeHTML(c.tooltip)}"` : ''} class="${sortKey === c.key ? 'sorted' : ''}">${c.label}${sortKey === c.key ? `<span class="sort-arrow">${sortDir === 1 ? '▲' : '▼'}</span>` : ''}</th>`).join('')}
+            ${cols.map(c => `<th data-key="${c.key}" ${c.tooltip ? `title="${escapeHTML(c.tooltip)}"` : ''} class="${sortKey === c.key ? 'sorted' : ''}" aria-sort="${sortKey === c.key ? (sortDir === 1 ? 'ascending' : 'descending') : 'none'}">${c.label}${sortKey === c.key ? `<span class="sort-arrow">${sortDir === 1 ? icon('chevronUp') : icon('chevronDown')}</span>` : ''}</th>`).join('')}
           </tr></thead>
           <tbody>
             ${list.map(n => `
@@ -219,9 +224,14 @@ PAGES['#/node'] = async (root) => {
                 <td>${escapeHTML(n.name)}</td>
                 <td>${escapeHTML(n.location)}</td>
                 <td><span class="badge ${statusMeta[n.status].badge}"><span class="status-dot ${statusMeta[n.status].cls}"></span>${statusMeta[n.status].label}</span></td>
-                <td class="mono">${n.load}%</td>
+                <td>
+                  <div class="load-meter">
+                    <span class="load-meter__track"><span class="load-meter__fill ${n.load >= 85 ? 'is-critical' : n.load >= 65 ? 'is-busy' : ''}" style="width:${Math.min(100, Math.max(0, Number(n.load) || 0))}%"></span></span>
+                    <b>${n.load}%</b>
+                  </div>
+                </td>
                 <td class="mono">${escapeHTML(n.multiplier)}</td>
-                <td class="mono">${n.latency}ms</td>
+                <td class="node-latency">${n.latency}ms</td>
               </tr>
             `).join('')}
           </tbody>
@@ -245,31 +255,33 @@ PAGES['#/changepro'] = async (root) => {
   root.innerHTML = `
     <div class="page-container page-enter">
       ${pageHeader('util_title', 'util_desc')}
-      <div class="grid grid-2">
+      <div class="util-grid">
         <div class="card">
-          <div class="card-title">${t('util_giftcode_title')}</div>
-          <p class="text-sm">${t('util_giftcode_desc')}</p>
+          <div class="card-title"><span class="flex items-center gap-2">${icon('gift')} ${t('util_giftcode_title')}</span></div>
+          <p class="util-card__lead">${t('util_giftcode_desc')}</p>
           <div class="field" id="giftField">
             <label for="giftInput">${t('util_giftcode_title')}</label>
             <input class="input" id="giftInput" placeholder="${t('util_giftcode_placeholder')}">
             <div class="error-msg">${t('required_field')}</div>
           </div>
-          <button class="btn btn-primary" id="btnRedeem">${t('util_redeem')}</button>
+          <button class="btn btn-primary" id="btnRedeem">${icon('zap')} ${t('util_redeem')}</button>
+          <div class="gift-hint">${icon('info')}<span>Mỗi mã chỉ có hiệu lực một lần và được cộng trực tiếp vào thời hạn gói đang dùng.</span></div>
         </div>
 
         <div class="card">
-          <div class="card-title">${t('util_avatar_title')}</div>
-          <p class="text-sm">${t('util_avatar_desc')}</p>
-          <div class="flex items-center gap-3" style="margin-bottom:14px;">
-            <img id="avatarPreview" class="avatar" style="width:56px;height:56px;" src="https://api.dicebear.com/7.x/initials/svg?seed=DA" alt="Avatar preview">
-            <div class="field mb-0" style="flex:1;" id="avatarField">
-              <input class="input" id="avatarInput" placeholder="${t('util_avatar_placeholder')}">
+          <div class="card-title"><span class="flex items-center gap-2">${icon('user')} ${t('util_avatar_title')}</span></div>
+          <p class="util-card__lead">${t('util_avatar_desc')}</p>
+          <div class="avatar-row">
+            <img id="avatarPreview" class="avatar" src="https://api.dicebear.com/7.x/initials/svg?seed=DA" alt="Avatar preview" loading="lazy">
+            <div class="field mb-0" id="avatarField">
+              <label for="avatarInput">${t('util_avatar_placeholder')}</label>
+              <input class="input" id="avatarInput" placeholder="https://…">
               <div class="error-msg">URL không hợp lệ</div>
             </div>
           </div>
-          <button class="btn btn-primary" id="btnSaveAvatar">${t('save')}</button>
+          <button class="btn btn-primary" id="btnSaveAvatar">${icon('check')} ${t('save')}</button>
+          <div class="gift-hint">${icon('externalLink')}<span>Dùng liên kết ảnh HTTPS công khai. Ảnh vuông, tối thiểu 128×128 sẽ hiển thị đẹp nhất.</span></div>
         </div>
-
       </div>
     </div>
   `;

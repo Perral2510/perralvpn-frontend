@@ -36,17 +36,6 @@ function pageHeader(titleKey, descKey, meta = ''){
   </div>`;
 }
 
-function platformIcon(platform){
-  const logos = {
-    windows: ['assets/platform/windows.png', 'Windows'],
-    apple: ['assets/platform/apple.png', 'Apple'],
-    android: ['assets/platform/android.png', 'Android'],
-    linux: ['assets/platform/linux.png', 'Linux'],
-  };
-  const [src, label] = logos[platform] || [];
-  return src ? `<img class="platform-icon platform-icon--${platform}" src="${src}" alt="${label}" loading="lazy" decoding="async">` : '';
-}
-
 /* ---------------------------------------------------------
    1) DASHBOARD
    --------------------------------------------------------- */
@@ -175,7 +164,7 @@ PAGES['#/dashboard'] = async (root) => {
           </div>
         </div>
 
-        <div class="card plan-card plan-card--pro">
+        <div class="card plan-card plan-card--pro ${activeSubscription ? '' : 'plan-card--empty'}">
           <div class="plan-card__pro-head">
             <div class="plan-card__pro-mark">PR</div>
             <div class="plan-card__pro-title"><span>${activeSubscription ? 'Gói đang kích hoạt' : 'Gói dịch vụ'}</span><h3>${escapeHTML(activeSubscription?.planName || 'Chưa có gói đang hoạt động')}</h3></div>
@@ -183,7 +172,7 @@ PAGES['#/dashboard'] = async (root) => {
           </div>
           ${activeSubscription ? `<div class="plan-card__pro-subhead"><span>Hạn sử dụng <b>${activeSubscription.lifetime ? 'Vĩnh viễn' : formatDate(activeSubscription.expiresAt, STATE.lang)}</b></span><span><b>${escapeHTML(deviceLimitLabel)}</b> thiết bị tối đa</span></div><div class="plan-card__pro-metrics"><div class="plan-metric"><span>Data đã dùng</span><strong>${escapeHTML(dataLabel)}</strong><small>${dataPercent}% dung lượng gói</small></div><div class="plan-metric"><span>Dung lượng gói</span><strong>${escapeHTML(activeSubscription.capacity)}</strong><small>theo gói đã mua</small></div><div class="plan-metric"><span>Tốc độ</span><strong>${escapeHTML(activeSubscription.speed)}</strong><small>băng thông dịch vụ</small></div></div><div class="plan-card__usage-grid plan-card__usage-grid--single"><div class="plan-usage"><div class="plan-usage__head"><span>Dữ liệu sử dụng</span><b>${dataPercent}%</b></div><div class="progress"><div class="progress__bar" style="width:${dataPercent}%"></div></div><small>${escapeHTML(dataLabel)}</small></div></div>${planFeatures.length ? `<div class="plan-card__features"><strong>Chức năng gói</strong><ul>${planFeatures.map(feature => `<li>${escapeHTML(feature)}</li>`).join('')}</ul></div>` : ''}` : `<div class="plan-empty-state"><strong>Bạn chưa có gói VPN hoạt động</strong><span>Chọn gói phù hợp và thanh toán qua SePay để bắt đầu sử dụng.</span><button class="btn btn-sm btn-accent" data-nav="#/plan">Xem các gói cước</button></div>`}
           <div class="plan-card__actions"><button class="btn btn-sm btn-outline" data-nav="#/knowledge">${icon('book')} ${t('guide')}</button><button class="btn btn-sm btn-outline" id="btnAppleId">${icon('key')} ${t('get_apple_id')}</button><button class="btn btn-sm btn-outline" id="btnResetLink">${icon('refresh')} ${t('reset_link')}</button></div>
-          <div class="plan-card__sync"><div class="plan-card__sync-row"><button class="btn btn-sm btn-accent" id="btnSyncApp" ${activeSubscription ? '' : 'disabled'} aria-haspopup="dialog">${icon('refresh')} Đồng bộ máy chủ về app</button></div><div class="plan-card__platforms" aria-label="Các hệ điều hành hỗ trợ"><span title="Windows">${platformIcon('windows')}</span><span title="Apple">${platformIcon('apple')}</span><span title="Android">${platformIcon('android')}</span><span title="Linux">${platformIcon('linux')}</span></div></div>
+          <div class="plan-card__sync"><button class="btn btn-sm btn-accent" id="btnSyncApp" ${activeSubscription ? '' : 'disabled'} aria-haspopup="dialog">${icon('refresh')} Đồng bộ máy chủ về app</button></div>
         </div>
       </div>
 

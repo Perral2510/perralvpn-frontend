@@ -44,12 +44,11 @@ function updateHeaderIdentity(user){
 function refreshStaticText(){
   qs('#sidebarBrandText').textContent = t('app_name');
   qs('#collapseBtnLabel').textContent = t('collapse');
-  qs('#globalSearchInput')?.setAttribute('placeholder', t('search_placeholder'));
   qs('#menuAccountInfo').innerHTML = `${icon('control')} ${t('account_info')}`;
   qs('#menuChangePassword').innerHTML = `${icon('settings')} ${t('change_password')}`;
   qs('#menuLogout').innerHTML = `${icon('x')} ${t('logout')}`;
   qs('#supportLabel').textContent = t('support_chat');
-  updateHeaderIdentity(typeof sessionUser !== 'undefined' ? sessionUser : null);
+  updateHeaderIdentity(sessionUser);
   buildSidebarNav();
 }
 
@@ -123,6 +122,13 @@ function openSupportChoiceModal(){
   backdrop.querySelectorAll('.support-choice').forEach(link => link.addEventListener('click', () => closeModal()));
 }
 
+function setupSettingsMenu(){
+  // CSP is `script-src 'self'`, so these navigate from listeners rather
+  // than an inline onclick attribute in the markup.
+  qs('#settingsControlLink').addEventListener('click', () => { location.hash = '#/control'; });
+  qs('#settingsUtilLink').addEventListener('click', () => { location.hash = '#/changepro'; });
+}
+
 function setupSupportFab(){
   qs('#supportFab').addEventListener('click', openSupportChoiceModal);
 }
@@ -142,11 +148,13 @@ document.addEventListener('DOMContentLoaded', () => {
   applyTheme(STATE.theme);
   refreshStaticText();
   setupDropdowns();
+  setupSettingsMenu();
   setupLangDropdown();
   setupSidebarToggle();
   setupAccountMenu();
   setupSupportFab();
   setupThemeDropdownButtons();
+  Motion.observeContent();
   if (!location.hash) location.hash = '#/dashboard';
   renderRoute();
 });

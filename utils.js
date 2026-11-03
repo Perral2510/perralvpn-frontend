@@ -39,7 +39,9 @@ function formatCurrency(n){
 
 function formatDate(dateStr, lang = 'vi'){
   const d = new Date(dateStr);
-  if (isNaN(d)) return dateStr;
+  // The API omits timestamps on fresh accounts; a raw undefined would print
+  // straight into the table.
+  if (isNaN(d)) return dateStr || '—';
   return d.toLocaleDateString(lang === 'vi' ? 'vi-VN' : 'en-US', { year: 'numeric', month: '2-digit', day: '2-digit' });
 }
 

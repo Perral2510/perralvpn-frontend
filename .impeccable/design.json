@@ -1,0 +1,449 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-11-04T00:00:00.000Z",
+  "title": "Design System: PerralVPN",
+  "extensions": {
+    "colorMeta": {
+      "signal": {
+        "role": "primary",
+        "displayName": "Watch Lime",
+        "canonical": "#C9F24D",
+        "lightValue": "#7BAF12",
+        "derivedRamp": true,
+        "tonalRamp": [
+          "oklch(25% 0.06 108)",
+          "oklch(38% 0.11 108)",
+          "oklch(52% 0.16 108)",
+          "oklch(66% 0.19 108)",
+          "oklch(78% 0.20 108)",
+          "oklch(86% 0.20 110)",
+          "#C9F24D",
+          "oklch(97% 0.04 112)"
+        ]
+      },
+      "signal-deep": {
+        "role": "primary-strong",
+        "displayName": "Deep Lime",
+        "canonical": "#9FC72F",
+        "lightValue": "#5F8A06",
+        "tonalRamp": [
+          "oklch(28% 0.07 112)",
+          "oklch(40% 0.12 112)",
+          "oklch(53% 0.16 112)",
+          "#5F8A06",
+          "#7BAF12",
+          "oklch(75% 0.19 110)",
+          "#9FC72F",
+          "#C9F24D"
+        ]
+      },
+      "ground": {
+        "role": "neutral",
+        "displayName": "Night-Watch Ground",
+        "canonical": "#0B1418",
+        "lightValue": "#EDF1EE",
+        "tonalRamp": [
+          "#0B1418",
+          "#0E181D",
+          "#101C21",
+          "#16262C",
+          "#1D3238",
+          "#24383F",
+          "#37555E",
+          "#5FA8C4"
+        ]
+      },
+      "panel": {
+        "role": "surface",
+        "displayName": "Observation Panel",
+        "canonical": "#101C21",
+        "lightValue": "#FBFCFB",
+        "tonalRamp": [
+          "oklch(12% 0.02 215)",
+          "oklch(18% 0.022 215)",
+          "#101C21",
+          "#16262C",
+          "#1D3238",
+          "oklch(48% 0.03 215)",
+          "oklch(60% 0.03 215)",
+          "oklch(74% 0.026 215)"
+        ]
+      },
+      "ink": {
+        "role": "text",
+        "displayName": "Bulletin Ink",
+        "canonical": "#E8F1F0",
+        "lightValue": "#0D1A1E",
+        "tonalRamp": [
+          "#0D1A1E",
+          "#3A4F54",
+          "#41565B",
+          "#4E6468",
+          "oklch(62% 0.014 210)",
+          "#849DA0",
+          "#93ACAF",
+          "#AEC4C6"
+        ]
+      },
+      "rule": {
+        "role": "border",
+        "displayName": "Hairline Rule",
+        "canonical": "#24383F",
+        "lightValue": "#C4D0CA",
+        "tonalRamp": [
+          "#101C21",
+          "#16262C",
+          "#1D3238",
+          "#24383F",
+          "#37555E",
+          "oklch(52% 0.03 215)",
+          "oklch(66% 0.03 215)",
+          "oklch(80% 0.02 215)"
+        ]
+      },
+      "severity": {
+        "role": "decorative-scale",
+        "displayName": "Severity Ramp (tiers 1–5)",
+        "canonical": "#C9F24D → #B03A26",
+        "lightValue": "#4F7A08 / #7F6D05 / #8F5410 / #8E3318 / #702215",
+        "tonalRamp": [
+          "#C9F24D",
+          "#E5DE4F",
+          "#F2A73B",
+          "#E0623A",
+          "#B03A26"
+        ],
+        "lightTonalRamp": [
+          "#4F7A08",
+          "#7F6D05",
+          "#8F5410",
+          "#8E3318",
+          "#702215"
+        ],
+        "contrastNote": "Tier 2 carries near-white ink and is the AA-binding step: #8A7706 measured 4.33:1, #7F6D05 measures 4.99:1."
+      },
+      "steel": {
+        "role": "secondary",
+        "displayName": "Instrument Steel",
+        "canonical": "#5FA8C4",
+        "lightValue": "#2E6F8C",
+        "derivedRamp": true,
+        "tonalRamp": [
+          "oklch(28% 0.05 230)",
+          "oklch(40% 0.08 230)",
+          "#2E6F8C",
+          "oklch(56% 0.10 230)",
+          "oklch(66% 0.10 232)",
+          "#5FA8C4",
+          "oklch(80% 0.07 234)",
+          "oklch(92% 0.03 236)"
+        ]
+      },
+      "status-live": {
+        "role": "tertiary",
+        "displayName": "Reporting Green",
+        "canonical": "#4FD08A",
+        "lightValue": "#1E8A54",
+        "derivedRamp": true,
+        "tonalRamp": [
+          "oklch(30% 0.07 155)",
+          "oklch(42% 0.11 155)",
+          "#1E8A54",
+          "oklch(58% 0.13 155)",
+          "oklch(70% 0.13 156)",
+          "#4FD08A",
+          "oklch(84% 0.09 158)",
+          "oklch(94% 0.04 160)"
+        ]
+      }
+    },
+    "typographyMeta": {
+      "display": {
+        "displayName": "Bulletin Display",
+        "purpose": "Page h1 in the ruled masthead, tier band level, card titles, button labels. Condensed gothic, uppercase where it labels a section."
+      },
+      "headline": {
+        "displayName": "Section Head",
+        "purpose": "h2, auth card title, account section head."
+      },
+      "title": {
+        "displayName": "Module Title",
+        "purpose": "Card and modal headings at 17px."
+      },
+      "body": {
+        "displayName": "Reading Sans",
+        "purpose": "Prose, table cells, descriptions. Vietnamese-complete with tone marks; 13px under 600px; 68ch max measure."
+      },
+      "label": {
+        "displayName": "Micro-Label",
+        "purpose": "Field labels, table heads, nav group titles. Uppercase, .12–.22em tracking, never below 11px."
+      },
+      "mono": {
+        "displayName": "Instrument Mono",
+        "purpose": "Reserved for measured values: latency, quota, serials, codes, dates. Always tabular."
+      }
+    },
+    "shadows": [
+      {
+        "name": "shadow-pop",
+        "value": "0 12px 28px -18px rgba(0,0,0,.75)",
+        "purpose": "Small-travel lift: support FAB hover, raised tile. Light theme uses 0 12px 28px -20px rgba(13,26,30,.35)."
+      },
+      {
+        "name": "shadow-float",
+        "value": "0 26px 54px -26px rgba(0,0,0,.85)",
+        "purpose": "Dismissable floating layers only: dropdown menu, toast, modal. Light theme uses 0 26px 54px -28px rgba(13,26,30,.42)."
+      }
+    ],
+    "motion": [
+      {
+        "name": "ease-out",
+        "value": "cubic-bezier(.16,1,.3,1)",
+        "purpose": "Default for entrance, elevation, colour settles."
+      },
+      {
+        "name": "ease-spring",
+        "value": "cubic-bezier(.22,1.4,.5,1)",
+        "purpose": "Overshoot for tactile confirmations: checkbox tick, FAB hover, arrow nudge. Brief pins the rive.app feel; disabled under data-motion=low."
+      },
+      {
+        "name": "ease-in",
+        "value": "cubic-bezier(.4,0,1,1)",
+        "purpose": "Exit only (toast out)."
+      },
+      {
+        "name": "dur-1",
+        "value": "140ms",
+        "purpose": "State response: hover, focus, colour."
+      },
+      {
+        "name": "dur-2",
+        "value": "240ms",
+        "purpose": "Small moves: dropdown, toast, theme flip."
+      },
+      {
+        "name": "dur-3",
+        "value": "400ms",
+        "purpose": "Structural moves: sidebar collapse, drawer, modal."
+      },
+      {
+        "name": "dur-4",
+        "value": "640ms",
+        "purpose": "Measured values: progress bar to its real width."
+      },
+      {
+        "name": "rise-stagger",
+        "value": "55ms per index, capped at 8",
+        "purpose": "IntersectionObserver-driven module rise ([data-rise] -> .is-risen)."
+      },
+      {
+        "name": "count-up",
+        "value": "720ms, cubic ease-out",
+        "purpose": "rAF count-up on [data-count]; halved to 360ms under data-motion=low."
+      },
+      {
+        "name": "parallax-lean",
+        "value": "translate3d(+-7px, +-5px, 0)",
+        "purpose": "Isobar canvas leans toward the pointer. Suppressed on reduced motion, metered connections and non-hover devices."
+      },
+      {
+        "name": "beacon",
+        "value": "1.4s–2.4s infinite",
+        "purpose": "Severity heartbeat on error states and tiers 4–5."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "xl",
+        "value": "1240px"
+      },
+      {
+        "name": "lg",
+        "value": "1080px"
+      },
+      {
+        "name": "md",
+        "value": "960px"
+      },
+      {
+        "name": "sm-desk",
+        "value": "860px",
+        "purpose": "sidebar becomes a drawer"
+      },
+      {
+        "name": "sm",
+        "value": "600px",
+        "purpose": "body drops to 13px, strips become columns"
+      },
+      {
+        "name": "xs",
+        "value": "420px"
+      }
+    ],
+    "loading": [
+      {
+        "name": "critical-split",
+        "value": "ui-shell.css (render-blocking) + ui-bulletin.css (preload, attached by shell-boot.js)",
+        "purpose": "First paint needs only the shell sheet. Route modules arrive deferred, and .route-view stays held by sheet-pending until both the module sheet and the font sheet resolve."
+      },
+      {
+        "name": "cache-token",
+        "value": "SHEET_VERSION / CHUNK_VERSION = 'bulletin-5'",
+        "purpose": "One constant in shell-boot.js plus 14 ?v= refs in index.html; bump together to bust every cached chunk."
+      },
+      {
+        "name": "reduced-data",
+        "value": "navigator.connection.saveData || slow-2g|2g|3g -> :root[data-motion='low']",
+        "purpose": "Drops ambient motion and halves measured durations on metered connections."
+      }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "The one action per view. Signal fill, uppercase display label, near-square corner.",
+      "html": "<div style=\"display:flex;gap:12px;flex-wrap:wrap;align-items:center;\"><button class=\"ds-btn ds-btn--primary\">BUY PLAN</button><button class=\"ds-btn ds-btn--default\">DETAILS</button><button class=\"ds-btn ds-btn--accent\">CHANGE NODE</button></div>",
+      "css": ".ds-btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:38px;padding:8px 16px;border-radius:var(--rounded-sm,3px);font-family:var(--font-display,Oswald,sans-serif);font-size:13px;font-weight:500;letter-spacing:.04em;text-transform:uppercase;cursor:pointer;border:1px solid transparent;overflow:hidden;transition:background-color 140ms linear,border-color 140ms linear,color 140ms linear,transform 140ms cubic-bezier(.16,1,.3,1);}.ds-btn:hover{transform:none;}.ds-btn:active{transform:translateY(1px);}.ds-btn:focus-visible{outline:2px solid var(--signal,#C9F24D);outline-offset:2px;}.ds-btn--primary{background:var(--signal,#C9F24D);border-color:var(--signal,#C9F24D);color:var(--on-signal,#0B1418);}.ds-btn--primary:hover{background:var(--signal-deep,#9FC72F);border-color:var(--signal-deep,#9FC72F);}.ds-btn--default{background:var(--panel,#101C21);border-color:var(--rule-strong,#37555E);color:var(--ink,#E8F1F0);}.ds-btn--default:hover{background:var(--panel-2,#16262C);border-color:var(--ink-4,#849DA0);}.ds-btn--accent{background:transparent;border-color:var(--signal,#C9F24D);color:var(--signal-ink,#C9F24D);}.ds-btn--accent:hover{background:var(--signal-wash,rgba(201,242,77,.12));}"
+    },
+    {
+      "name": "Text Field",
+      "kind": "input",
+      "refersTo": "input",
+      "description": "Labelled field with a hairline stroke and a signal focus glow instead of an outline.",
+      "html": "<label class=\"ds-field\"><span>Account email</span><input class=\"ds-input\" type=\"email\" placeholder=\"you@example.com\"></label>",
+      "css": ".ds-field{display:flex;flex-direction:column;gap:6px;max-width:360px;}.ds-field>span{font-family:var(--font-display,Oswald,sans-serif);font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-3,#93ACAF);}.ds-input{width:100%;min-height:40px;padding:9px 12px;background:var(--panel,#101C21);border:1px solid var(--rule,#24383F);border-radius:var(--rounded-sm,3px);color:var(--ink,#E8F1F0);font-family:var(--font-body,'Be Vietnam Pro',sans-serif);font-size:14px;transition:border-color 140ms linear,background-color 140ms linear;}.ds-input::placeholder{color:var(--ink-4,#849DA0);}.ds-input:hover{border-color:var(--rule-strong,#37555E);}.ds-input:focus{outline:none;border-color:var(--signal,#C9F24D);box-shadow:0 0 0 3px var(--signal-wash,rgba(201,242,77,.12));}"
+    },
+    {
+      "name": "Ruled Module Card",
+      "kind": "card",
+      "refersTo": "card",
+      "description": "Depth from a hairline and a background step, never a shadow. Title sits above its own rule.",
+      "html": "<section class=\"ds-card\"><header class=\"ds-card__title\"><span>Quota</span><em class=\"ds-badge ds-badge--signal\">TIER 2</em></header><p class=\"ds-card__body\">42.6 GB of 60 GB used this cycle. The allowance line sits at 18 days.</p><div class=\"ds-progress\"><i style=\"width:71%\"></i></div></section>",
+      "css": ".ds-card{padding:20px;background:var(--panel,#101C21);border:1px solid var(--rule,#24383F);border-radius:var(--rounded-md,4px);transition:border-color 240ms cubic-bezier(.16,1,.3,1);}.ds-card:hover{border-color:var(--rule-strong,#37555E);}.ds-card__title{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:16px;padding-bottom:9px;border-bottom:1px solid var(--rule,#24383F);font-family:var(--font-display,Oswald,sans-serif);font-size:12px;font-weight:500;letter-spacing:.13em;text-transform:uppercase;color:var(--ink-2,#AEC4C6);}.ds-card__body{margin:0 0 12px;font-size:13px;line-height:1.55;color:var(--ink-2,#AEC4C6);font-family:var(--font-body,'Be Vietnam Pro',sans-serif);}.ds-progress{height:6px;background:var(--panel-3,#1D3238);border-radius:2px;overflow:hidden;}.ds-progress>i{display:block;height:100%;background:var(--signal,#C9F24D);transition:width 640ms cubic-bezier(.16,1,.3,1);}"
+    },
+    {
+      "name": "Badge / Status Chip",
+      "kind": "chip",
+      "refersTo": "badge",
+      "description": "Mono micro-label in a 2px register; status mixes its hue into panel rather than replacing it.",
+      "html": "<div style=\"display:flex;gap:8px;flex-wrap:wrap;align-items:center;\"><span class=\"ds-badge\">STANDBY</span><span class=\"ds-badge ds-badge--signal\">POPULAR</span><span class=\"ds-badge ds-badge--ok\"><i></i>ONLINE</span><span class=\"ds-badge ds-badge--bad\"><i></i>ERROR</span><span class=\"ds-badge ds-badge--info\">SANDAY</span></div>",
+      "css": ".ds-badge{display:inline-flex;align-items:center;gap:5px;padding:2px 8px;font-family:var(--font-mono,'JetBrains Mono',monospace);font-size:11px;letter-spacing:.04em;border:1px solid var(--rule,#24383F);border-radius:var(--rounded-xs,2px);background:var(--panel-2,#16262C);color:var(--ink-2,#AEC4C6);white-space:nowrap;}.ds-badge>i{width:7px;height:7px;border-radius:999px;background:var(--status-dead,#7A8F92);}.ds-badge--signal{background:var(--signal,#C9F24D);border-color:var(--signal,#C9F24D);color:var(--on-signal,#0B1418);font-weight:500;}.ds-badge--ok{background:color-mix(in srgb,var(--status-live,#4FD08A) 16%,var(--panel,#101C21));border-color:color-mix(in srgb,var(--status-live,#4FD08A) 40%,var(--rule,#24383F));color:var(--status-live,#4FD08A);}.ds-badge--ok>i{background:var(--status-live,#4FD08A);}.ds-badge--bad{background:color-mix(in srgb,var(--status-bad,#E0623A) 16%,var(--panel,#101C21));border-color:color-mix(in srgb,var(--status-bad,#E0623A) 40%,var(--rule,#24383F));color:var(--status-bad,#E0623A);}.ds-badge--bad>i{background:var(--status-bad,#E0623A);animation:ds-beacon 1.4s cubic-bezier(.16,1,.3,1) infinite;}@keyframes ds-beacon{0%,100%{opacity:1;}50%{opacity:.35;}}"
+    },
+    {
+      "name": "Sidebar Nav Item",
+      "kind": "nav",
+      "refersTo": "nav-item-active",
+      "description": "36px row; only the icon takes the signal colour on the active item.",
+      "html": "<nav class=\"ds-nav\"><span class=\"ds-nav__group\">Console</span><a class=\"ds-nav__item is-active\" href=\"#\"><svg class=\"ds-nav__icon\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.6\"><path d=\"M4 20V10M10 20V4M16 20V13M22 20V7\"/></svg>Dashboard</a><a class=\"ds-nav__item\" href=\"#\"><svg class=\"ds-nav__icon\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.6\"><circle cx=\"12\" cy=\"12\" r=\"8\"/><path d=\"M12 4v16\"/></svg>Traffic</a></nav>",
+      "css": ".ds-nav{display:flex;flex-direction:column;gap:2px;max-width:248px;}.ds-nav__group{font-family:var(--font-display,Oswald,sans-serif);font-size:11px;font-weight:500;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-4,#849DA0);padding:0 8px 5px;}.ds-nav__item{display:flex;align-items:center;gap:10px;min-height:36px;padding:6px 9px;border-radius:var(--rounded-sm,3px);color:var(--ink-2,#AEC4C6);font-size:13px;font-weight:500;text-decoration:none;font-family:var(--font-body,'Be Vietnam Pro',sans-serif);white-space:nowrap;transition:background-color 140ms linear,color 140ms linear;}.ds-nav__icon{flex:0 0 18px;width:18px;height:18px;color:var(--ink-4,#849DA0);}.ds-nav__item:hover{background:var(--panel-2,#16262C);color:var(--ink,#E8F1F0);}.ds-nav__item:focus-visible{outline:2px solid var(--signal,#C9F24D);outline-offset:2px;}.ds-nav__item.is-active{background:var(--nav-active-bg,var(--panel-3,#1D3238));color:var(--nav-active-fg,var(--ink,#E8F1F0));}.ds-nav__item.is-active .ds-nav__icon{color:var(--signal,#C9F24D);}"
+    },
+    {
+      "name": "Tier Band",
+      "kind": "custom",
+      "refersTo": "card",
+      "description": "Signature. Full-bleed severity statement with a beaconing flag chip and a five-tick threshold scale.",
+      "html": "<div class=\"ds-band\" data-tier=\"4\"><div class=\"ds-band__body\"><span class=\"ds-band__flag\"><i></i>WARNING</span><div class=\"ds-band__line\"><strong class=\"ds-band__level\">Quota nearly gone</strong><span class=\"ds-band__text\">42.6 / 60 GB used — 3.4 GB left, 18 days remaining.</span></div><div class=\"ds-band__scale\"><span class=\"is-reached\"></span><span class=\"is-reached\"></span><span class=\"is-reached\"></span><span class=\"is-reached\"></span><span></span></div></div><div class=\"ds-band__action\"><button class=\"ds-band__btn\">TOP UP</button></div></div>",
+      "css": ".ds-band{--band-bg:var(--severity-4,#E0623A);--band-ink:var(--severity-5-ink,#FCEDE8);display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:20px;padding:16px 20px;background:var(--band-bg);color:var(--band-ink);border-top:1px solid var(--band-ink);border-bottom:1px solid var(--band-ink);font-family:var(--font-body,'Be Vietnam Pro',sans-serif);}.ds-band__body{min-width:0;display:flex;flex-direction:column;gap:3px;}.ds-band__flag{display:inline-flex;align-items:center;gap:8px;align-self:flex-start;font-family:var(--font-mono,'JetBrains Mono',monospace);font-size:11px;letter-spacing:.22em;text-transform:uppercase;padding:3px 8px;border:1px solid currentColor;border-radius:2px;}.ds-band__flag i{width:7px;height:7px;border-radius:1px;background:currentColor;animation:ds-beacon 1.6s cubic-bezier(.16,1,.3,1) infinite;}.ds-band__line{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;}.ds-band__level{font-family:var(--font-display,Oswald,sans-serif);font-size:20px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;line-height:1;}.ds-band__text{font-size:13px;opacity:.86;}.ds-band__scale{display:flex;gap:2px;margin-top:6px;max-width:220px;}.ds-band__scale span{height:4px;flex:1;background:var(--band-ink);opacity:.2;}.ds-band__scale span.is-reached{opacity:.9;}.ds-band__action{display:flex;align-items:center;}.ds-band__btn{min-height:38px;padding:8px 16px;background:var(--band-ink);color:var(--band-bg);border:1px solid var(--band-ink);border-radius:3px;font-family:var(--font-display,Oswald,sans-serif);font-size:13px;font-weight:500;letter-spacing:.04em;text-transform:uppercase;cursor:pointer;transition:background-color 140ms linear;}.ds-band__btn:hover{background:color-mix(in srgb,var(--band-ink) 86%,var(--band-bg));}@keyframes ds-beacon{0%,100%{opacity:1;}50%{opacity:.35;}}"
+    },
+    {
+      "name": "Station Board Row",
+      "kind": "custom",
+      "refersTo": "card",
+      "description": "Signature. Node reporting as a departure board; hovering one row dims its siblings rather than lifting it.",
+      "html": "<div class=\"ds-board\"><div class=\"ds-board__head\"><span>Station board</span><em>TOKENS · SG · HK</em></div><div class=\"ds-row\"><span class=\"ds-row__code\">SG-01</span><span class=\"ds-row__name\">Singapore<small>Residential</small></span><span class=\"ds-row__load\"><b><i style=\"width:38%\"></i></b>38%</span><span class=\"ds-row__lat\">24 ms</span><span class=\"ds-row__state\"><i></i>ONLINE</span></div><div class=\"ds-row\"><span class=\"ds-row__code\">HK-03</span><span class=\"ds-row__name\">Hong Kong<small>Gateway</small></span><span class=\"ds-row__load\"><b><i style=\"width:81%\"></i></b>81%</span><span class=\"ds-row__lat\">68 ms</span><span class=\"ds-row__state\"><i></i>ERROR</span></div></div>",
+      "css": ".ds-board{display:grid;border:1px solid var(--rule,#24383F);border-radius:var(--rounded-md,4px);background:var(--panel,#101C21);overflow:hidden;font-family:var(--font-body,'Be Vietnam Pro',sans-serif);}.ds-board__head{display:flex;align-items:baseline;justify-content:space-between;gap:16px;padding:10px 20px;border-bottom:1px solid var(--rule,#24383F);background:var(--panel-2,#16262C);font-family:var(--font-mono,'JetBrains Mono',monospace);font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--ink-4,#849DA0);}.ds-row{display:grid;grid-template-columns:54px minmax(0,1fr) 132px 74px 84px;align-items:center;gap:16px;padding:9px 20px;border-top:1px solid var(--rule,#24383F);transition:background 140ms cubic-bezier(.16,1,.3,1),opacity 240ms cubic-bezier(.16,1,.3,1);}.ds-row:first-of-type{border-top:0;}.ds-board:hover .ds-row:not(:hover){opacity:.58;}.ds-row:hover{background:var(--panel-2,#16262C);}.ds-row__code{font-family:var(--font-mono,'JetBrains Mono',monospace);font-size:11px;letter-spacing:.08em;color:var(--ink-4,#849DA0);}.ds-row__name{font-size:13px;font-weight:500;color:var(--ink,#E8F1F0);min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}.ds-row__name small{display:block;font-size:11px;font-weight:400;color:var(--ink-4,#849DA0);letter-spacing:.1em;text-transform:uppercase;}.ds-row__load{display:flex;align-items:center;gap:8px;font-family:var(--font-mono,'JetBrains Mono',monospace);font-size:11px;color:var(--ink-2,#AEC4C6);}.ds-row__load b{flex:1;height:4px;background:var(--panel-3,#1D3238);border-radius:1px;overflow:hidden;}.ds-row__load i{display:block;height:100%;background:var(--signal,#C9F24D);}.ds-row__lat{font-family:var(--font-mono,'JetBrains Mono',monospace);font-size:12px;text-align:right;color:var(--ink,#E8F1F0);font-variant-numeric:tabular-nums;}.ds-row__state{display:flex;align-items:center;gap:7px;font-size:11px;letter-spacing:.06em;color:var(--ink-3,#93ACAF);}.ds-row__state i{width:6px;height:6px;border-radius:50%;background:var(--status-live,#4FD08A);}"
+    },
+    {
+      "name": "Isobar Field",
+      "kind": "custom",
+      "refersTo": "card",
+      "description": "Signature. Traffic as contour rings on a hairline graph grid, with a dotted plan-allowance ellipse. Authored in a 1140x230 viewBox (squash .26, radii 36-470) so the outermost ring spans about three-fifths of the panel; the canvas shortens to 150px under 600px so the sliced frame keeps all three readings.",
+      "html": "<figure class=\"ds-isobar\"><figcaption><span>Isobar field</span><em>60 GB allowance</em></figcaption><div class=\"ds-isobar__canvas\"><svg viewBox=\"0 0 300 140\" aria-hidden=\"true\"><ellipse class=\"ds-limit\" cx=\"150\" cy=\"70\" rx=\"128\" ry=\"54\"/><ellipse class=\"ds-ring\" cx=\"150\" cy=\"70\" rx=\"92\" ry=\"39\"/><ellipse class=\"ds-ring\" cx=\"150\" cy=\"70\" rx=\"58\" ry=\"25\"/><ellipse class=\"ds-ring ds-high\" cx=\"150\" cy=\"70\" rx=\"24\" ry=\"11\"/></svg></div><div class=\"ds-isobar__legend\"><span><i></i>42.6 GB used</span><span><i class=\"ds-dash\"></i>Allowance</span></div></figure>",
+      "css": ".ds-isobar{margin:0;border:1px solid var(--rule,#24383F);border-radius:var(--rounded-md,4px);background:var(--panel,#101C21);overflow:hidden;font-family:var(--font-body,'Be Vietnam Pro',sans-serif);}.ds-isobar figcaption{display:flex;align-items:baseline;justify-content:space-between;gap:16px;padding:10px 20px;border-bottom:1px solid var(--rule,#24383F);font-family:var(--font-mono,'JetBrains Mono',monospace);font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--ink-4,#849DA0);}.ds-isobar__canvas{position:relative;height:160px;background-image:repeating-linear-gradient(90deg,var(--rule,#24383F) 0 1px,transparent 1px 64px),repeating-linear-gradient(0deg,var(--rule,#24383F) 0 1px,transparent 1px 46px);}.ds-isobar__canvas>svg{position:absolute;inset:0;width:100%;height:100%;}.ds-ring{fill:none;stroke:var(--rule-strong,#37555E);stroke-width:1.25;stroke-linecap:round;opacity:.85;}.ds-high{stroke:var(--signal,#C9F24D);stroke-width:2.25;opacity:1;}.ds-limit{fill:none;stroke:var(--rule-strong,#37555E);stroke-width:1;stroke-dasharray:2 6;opacity:.7;vector-effect:non-scaling-stroke;}.ds-isobar__legend{display:flex;align-items:center;gap:16px;flex-wrap:wrap;padding:9px 20px;border-top:1px solid var(--rule,#24383F);background:var(--panel-2,#16262C);font-family:var(--font-mono,'JetBrains Mono',monospace);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-4,#849DA0);}.ds-isobar__legend span{display:inline-flex;align-items:center;gap:6px;}.ds-isobar__legend i{width:14px;height:1px;background:var(--signal,#C9F24D);}.ds-dash{background:repeating-linear-gradient(90deg,var(--rule-strong,#37555E) 0 2px,transparent 2px 8px);}"
+    },
+    {
+      "name": "Support FAB",
+      "kind": "custom",
+      "refersTo": "button-primary",
+      "description": "Icon-only at rest; the translated label appears outside the square so the reveal cannot reflow the shell.",
+      "html": "<button class=\"ds-fab\"><svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.7\"><path d=\"M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z\"/></svg><span>Support channel</span></button>",
+      "css": ".ds-fab{position:fixed;right:22px;bottom:22px;display:grid;place-items:center;width:52px;height:52px;background:var(--signal,#C9F24D);color:var(--on-signal,#0B1418);border:1px solid var(--signal-deep,#9FC72F);border-radius:var(--rounded-sm,3px);cursor:pointer;transition:transform 240ms cubic-bezier(.22,1.4,.5,1),box-shadow 240ms cubic-bezier(.16,1,.3,1);}.ds-fab>svg{width:18px;height:18px;}.ds-fab>span{position:absolute;right:calc(100% + 10px);top:50%;translate:0 -50%;padding:6px 11px;font-size:12.5px;font-weight:600;letter-spacing:.02em;white-space:nowrap;color:var(--ink,#E8F1F0);background:var(--panel,#101C21);border:1px solid var(--rule-strong,#37555E);border-radius:var(--rounded-sm,3px);box-shadow:0 26px 54px -26px rgba(0,0,0,.85);opacity:0;transform:translateX(6px);pointer-events:none;transition:opacity 140ms cubic-bezier(.16,1,.3,1),transform 240ms cubic-bezier(.22,1.4,.5,1);}.ds-fab:hover,.ds-fab:focus-visible{transform:translateY(-2px);box-shadow:0 12px 28px -18px rgba(0,0,0,.75);}.ds-fab:hover>span,.ds-fab:focus-visible>span{opacity:1;transform:none;}.ds-fab:active{transform:translateY(0) scale(.96);}.ds-fab:focus-visible{outline:2px solid var(--signal,#C9F24D);outline-offset:3px;}"
+    },
+    {
+      "name": "Plan Filter Tabs",
+      "kind": "chip",
+      "refersTo": "badge",
+      "description": "Segmented control tiled on a 1px rule background; the active tab inverts to ink.",
+      "html": "<div class=\"ds-tabs\" role=\"tablist\"><button class=\"ds-tabs__tab is-active\" role=\"tab\" aria-selected=\"true\">All plans</button><button class=\"ds-tabs__tab\" role=\"tab\" aria-selected=\"false\">Monthly</button><button class=\"ds-tabs__tab\" role=\"tab\" aria-selected=\"false\">Yearly</button></div>",
+      "css": ".ds-tabs{display:inline-flex;gap:1px;background:var(--rule,#24383F);border:1px solid var(--rule,#24383F);border-radius:var(--rounded-sm,3px);overflow:hidden;}.ds-tabs__tab{position:relative;padding:8px 16px;background:var(--panel,#101C21);border:0;color:var(--ink-3,#93ACAF);font-family:var(--font-body,'Be Vietnam Pro',sans-serif);font-size:12px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;cursor:pointer;transition:color 140ms cubic-bezier(.16,1,.3,1),background 140ms cubic-bezier(.16,1,.3,1);}.ds-tabs__tab:hover{background:var(--panel-2,#16262C);color:var(--ink,#E8F1F0);}.ds-tabs__tab:focus-visible{outline:2px solid var(--signal,#C9F24D);outline-offset:-2px;}.ds-tabs__tab.is-active{background:var(--ink,#E8F1F0);color:var(--ground,#0B1418);}"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Night-Watch Bulletin",
+    "overview": "The console reads as a public storm-and-flood warning board, not a SaaS dashboard. A subscriber opens it at 23:40 on a 3G connection to answer one question — how close am I to the danger line — and the interface answers it the way a hazard bulletin does: a full-bleed severity band, then measured values laid out against published thresholds on hairline rules, then the station board of nodes with their live reporting state. Nothing is centred for effect. Every block is justified by a number that has to be on screen. Dark is a night-watch board: observation-blue ground, cool ink, one acid-lime signal rationed across the whole screen. Light is the same document printed on cool paper — the identical rule system, the identical hierarchy, remapped rather than reimagined. Motion is the rive.app feel with none of the rive.app payload — hand-authored CSS transitions, SVG pathLength and three small rAF loops, tied to measured values and stopped for both the vestibular preference and the metered connection.",
+    "keyCharacteristics": [
+      "Hairline rules carry structure; shadows appear only for floating layers.",
+      "One brand signal colour, rationed to under 10% of any viewport.",
+      "A five-step severity ramp is the only decorative colour system.",
+      "Vietnamese leads, English equals; both set in the same workhorse gothic.",
+      "Every measured value is monospaced and tabular, so columns of numbers align.",
+      "Nothing delays first paint: shell sheet render-blocking, module sheet deferred and gated."
+    ],
+    "rules": [
+      {
+        "name": "The One Signal Rule",
+        "body": "--signal is the only brand colour and appears on under 10% of any viewport. If a screen needs more than one lime element, the others are wrong.",
+        "section": "colors"
+      },
+      {
+        "name": "The Signal Never Speaks as Text Rule",
+        "body": "Text in a signal hue uses --signal-ink, never --signal. In light theme the two are far apart in lightness because brand lime on paper reads at 1.9:1.",
+        "section": "colors"
+      },
+      {
+        "name": "The Eleven-Pixel Floor",
+        "body": "No functional text anywhere is set below 11px, in either theme, at any breakpoint. Decorative letterspacing is capped at .22em and comes down before the size does.",
+        "section": "typography"
+      },
+      {
+        "name": "The Measured Is Monospaced Rule",
+        "body": "Values that change, compare or align use JetBrains Mono with tabular figures. Labels use the display gothic. Prose uses the body sans.",
+        "section": "typography"
+      },
+      {
+        "name": "The Hairline-By-Default Rule",
+        "body": "A module gets depth from a rule and a background step, never from a box-shadow. Two shadows exist in the whole system and both mean 'this floats and you can dismiss it'.",
+        "section": "elevation"
+      },
+      {
+        "name": "The Colored-Edge Ban",
+        "body": "A card or callout is never marked with a thick border-left/border-right in a status colour. Status is carried by a glyph, a mono label, and at most a 1px hairline in the status hue.",
+        "section": "elevation"
+      }
+    ],
+    "dos": [
+      "Do set all functional text at 11px or above, in both themes, at every breakpoint — including decorative letterspaced micro-labels.",
+      "Do reach for --signal-ink for signal-hued text and --signal for signal-hued fills only.",
+      "Do build structure from --edge / --edge-strong hairlines and background steps before considering a shadow.",
+      "Do use gap:1px over a --rule background for tiled mosaics instead of doubling up borders.",
+      "Do put measured values in JetBrains Mono with tabular figures, and every value against a threshold the user can see.",
+      "Do let any motion that represents a measured value no-op cleanly under prefers-reduced-motion and under data-motion=\"low\".",
+      "Do preserve width and layout through every state change: loading buttons, hover reveals, carousel indicators animate on transform, opacity or colour.",
+      "Do keep light and dark as the same document: remap the same token names, never restructure for one theme.",
+      "Do carry status with a glyph plus text; colour is never the only signal.",
+      "Do put the primary action inline on the tier band, not centred beneath it."
+    ],
+    "donts": [
+      "Don't put a kicker or eyebrow line above a heading. The bulletin's own furniture — the tier band, the ruled masthead, page-header__meta — carries that role.",
+      "Don't thicken a left or right border into a status stripe.",
+      "Don't ship the Rive runtime or any external animation dependency. Motion is in-repo CSS/SVG.",
+      "Don't let a transition on width, margin or max-width run continuously — one user-initiated toggle is fine, a scroll-linked or auto-advancing layout shift is not.",
+      "Don't add a third shadow. Two exist; both mean 'this floats.'",
+      "Don't invent uptime, benchmark, testimonial or jurisdiction claims. Numbers come from the backend or mock-data.js.",
+      "Don't drop the mono role into a label or the display gothic into a measurement.",
+      "Don't paint route content before the module stylesheet is attached."
+    ]
+  }
+}

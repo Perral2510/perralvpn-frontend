@@ -28,7 +28,6 @@ function setVpnResetButtonBusy(button, busy) {
 function pageHeader(titleKey, descKey, meta = ''){
   return `<div class="page-header">
     <div class="page-header__main">
-      <span class="page-header__kicker">PERRAL NETWORK</span>
       <h1>${t(titleKey)}</h1>
       ${descKey ? `<p>${t(descKey)}</p>` : ''}
     </div>
@@ -37,28 +36,103 @@ function pageHeader(titleKey, descKey, meta = ''){
 }
 
 /* ---------------------------------------------------------
+   Service severity — the bulletin's whole reading frame.
+   Every number on the dashboard is measured against one of
+   these five thresholds, and the tier decides what the board
+   says and which action it offers.
+   --------------------------------------------------------- */
+const STATION_STATE_KEYS = {
+  online: 'status_online',
+  error: 'status_error',
+  maint: 'status_maint',
+};
+
+function serviceSeverity({ hasPlan, expired, usedPercent, daysLeft }){
+  if (!hasPlan) return 5;
+  if (expired) return 5;
+  if (usedPercent >= 92 || daysLeft <= 1) return 4;
+  if (usedPercent >= 75 || daysLeft <= 3) return 3;
+  if (usedPercent >= 50 || daysLeft <= 7) return 2;
+  return 1;
+}
+
+function severityTierOfPercent(percent){
+  if (percent >= 92) return 4;
+  if (percent >= 75) return 3;
+  if (percent >= 50) return 2;
+  return 1;
+}
+
+/* A contour is drawn from the measured ratio alone: radius grows
+   with consumption and the line roughens as it approaches the
+   threshold. No sampled history, no invented series. */
+const ISOBAR_VIEW = { w: 1140, h: 230, cx: 570, cy: 115, squash: .26, minRadius: 36, maxRadius: 470 };
+
+function isobarRadius(ratio){
+  return ISOBAR_VIEW.minRadius + Math.max(0, Math.min(1, ratio)) * (ISOBAR_VIEW.maxRadius - ISOBAR_VIEW.minRadius);
+}
+
+function isobarPath({ ratio, seed }){
+  const { cx, cy, squash } = ISOBAR_VIEW;
+  const clamped = Math.max(0, Math.min(1, ratio));
+  const radius = isobarRadius(ratio);
+  const roughness = 0.015 + clamped * 0.035;
+  const steps = 56;
+  const points = [];
+  for (let i = 0; i < steps; i += 1){
+    const angle = (i / steps) * Math.PI * 2;
+    const wobble = Math.sin(angle * 3 + seed) * 0.62 + Math.sin(angle * 5 - seed * 1.7) * 0.38;
+    const r = radius * (1 + roughness * wobble);
+    points.push(`${(cx + Math.cos(angle) * r).toFixed(1)} ${(cy + Math.sin(angle) * r * squash).toFixed(1)}`);
+  }
+  return `M${points.join('L')}Z`;
+}
+
+function buildIsobarField(rings){
+  const { w, h, cx, cy, squash } = ISOBAR_VIEW;
+  const paths = rings.map((ring, index) => `
+    <path class="isobar${ring.tier >= 4 ? ' isobar--high' : ''}" pathLength="1" data-draw style="--draw-i:${index};--ring-color:${ring.color}" d="${isobarPath({ ...ring, seed: index + 1 })}"></path>`).join('');
+  const marks = rings.map((ring, index) => {
+    const spread = (index - (rings.length - 1) / 2) * 0.78;
+    const angle = -Math.PI / 2 + spread;
+    const radius = isobarRadius(ring.ratio) + 10;
+    return `<text class="isobar-field__mark" x="${(cx + Math.cos(angle) * radius).toFixed(0)}" y="${(cy + Math.sin(angle) * radius * squash).toFixed(0)}">${escapeHTML(ring.shortLabel)}</text>`;
+  }).join('');
+  const reading = rings.map(ring => `${ring.shortLabel}`).join(' · ');
+  const limit = `<ellipse class="isobar-limit" cx="${cx}" cy="${cy}" rx="${ISOBAR_VIEW.maxRadius}" ry="${(ISOBAR_VIEW.maxRadius * squash).toFixed(1)}"></ellipse>`;
+  return `<svg viewBox="0 0 ${w} ${h}" preserveAspectRatio="xMidYMid slice" role="img" aria-label="${escapeHTML(`${t('isobar_title')}: ${reading}`)}">
+    ${limit}
+    <g class="isobar-field__center"><line x1="${cx - 10}" y1="${cy}" x2="${cx + 10}" y2="${cy}"/><line x1="${cx}" y1="${cy - 10}" x2="${cx}" y2="${cy + 10}"/></g>
+    ${paths}
+    ${marks}
+  </svg>`;
+}
+
+/* ---------------------------------------------------------
    1) DASHBOARD
    --------------------------------------------------------- */
 PAGES['#/dashboard'] = async (root) => {
   root.innerHTML = `
     <div class="page-container page-enter">
-      <div class="skeleton" style="height:150px;border-radius:18px;margin-bottom:24px;"></div>
-      <div class="grid grid-2" style="margin-bottom:24px;">
+      <div class="skeleton" style="height:64px;border-radius:4px;margin-bottom:14px;"></div>
+      <div class="skeleton" style="height:104px;border-radius:4px;margin-bottom:18px;"></div>
+      <div class="grid grid-2">
         <div class="skeleton skel-card"></div>
         <div class="skeleton skel-card"></div>
       </div>
-      ${skeletonCards(3)}
     </div>`;
 
-  const [user, promosResult, menuResult, billing, vpnManagementResult] = await Promise.all([
+  const [user, promosResult, menuResult, billing, vpnManagementResult, nodesResult] = await Promise.all([
     RealAPI.getUser().catch(() => null),
     MockAPI.getPromos().catch(() => []),
     MockAPI.getQuickMenu().catch(() => []),
     RealAPI.getBilling().catch(() => null),
-    RealAPI.getVpnManagement().catch(() => ({ ok: false }))
+    RealAPI.getVpnManagement().catch(() => ({ ok: false })),
+    MockAPI.getNodes().catch(() => []),
   ]);
   const promos = Array.isArray(promosResult) ? promosResult : [];
   const menu = Array.isArray(menuResult) ? menuResult : [];
+  const nodes = Array.isArray(nodesResult) ? nodesResult : [];
   if (!user) {
     showToast({ type: 'error', title: 'Phiên đăng nhập đã hết hạn' });
     location.hash = '#/login';
@@ -82,6 +156,9 @@ PAGES['#/dashboard'] = async (root) => {
   const dataUsedBytes = Number(vpnManagement?.dataUsedBytes || 0);
   const dataMaxBytes = Number(vpnManagement?.dataMaxBytes || 0);
   const machinesMax = Number(vpnManagement?.machinesMax ?? activeSubscription?.devices ?? 0);
+  // Backend không phải lúc nào cũng báo số thiết bị đang trực tuyến; thà bỏ
+  // vòng đo còn hơn vẽ một con số 0 giả.
+  const machinesOnline = Number.isFinite(Number(vpnManagement?.machinesOnline)) ? Number(vpnManagement.machinesOnline) : null;
   const compactNumber = (value) => String(Number(value.toFixed(2)));
   const formatData = (bytes) => {
     if (!Number.isFinite(bytes) || bytes <= 0) return '0 KB';
@@ -89,10 +166,33 @@ PAGES['#/dashboard'] = async (root) => {
     if (bytes < 1024 ** 3) return `${compactNumber(bytes / (1024 ** 2))} MB`;
     return `${compactNumber(bytes / (1024 ** 3))} GB`;
   };
-  const dataLabel = dataMaxBytes > 0 ? `${formatData(dataUsedBytes)} / ${formatData(dataMaxBytes)}` : `${formatData(dataUsedBytes)} / Không giới hạn`;
+  const dataLabel = dataMaxBytes > 0 ? `${formatData(dataUsedBytes)} / ${formatData(dataMaxBytes)}` : `${formatData(dataUsedBytes)} / ${t('unlimited')}`;
   const dataPercent = dataMaxBytes > 0 ? Math.min(100, Math.max(0, Math.round((dataUsedBytes / dataMaxBytes) * 100))) : 0;
-  const deviceLimitLabel = machinesMax > 0 ? String(machinesMax) : 'Không giới hạn';
+  const deviceLimitLabel = machinesMax > 0 ? String(machinesMax) : t('unlimited');
   const planFeatures = Array.isArray(activeSubscription?.features) ? activeSubscription.features : [];
+
+  // Thời hạn còn lại đo bằng giờ để bản tin không làm tròn mất ngày cuối.
+  const lifetime = Boolean(activeSubscription?.lifetime);
+  const expiresAt = activeSubscription?.expiresAt ? new Date(activeSubscription.expiresAt) : null;
+  const msLeft = expiresAt && !Number.isNaN(expiresAt.getTime()) ? expiresAt.getTime() - Date.now() : 0;
+  const expired = Boolean(expiresAt) && msLeft <= 0 && !lifetime;
+  const daysLeft = lifetime ? Number.POSITIVE_INFINITY : Math.max(0, Math.floor(msLeft / 86400000));
+  const hoursLeft = lifetime ? Number.POSITIVE_INFINITY : Math.max(0, Math.floor(msLeft / 3600000));
+  const termRatio = lifetime ? 0 : Math.min(1, Math.max(0, (30 - daysLeft) / 30));
+  const deviceRatio = machinesMax > 0 && machinesOnline !== null ? Math.min(1, machinesOnline / machinesMax) : null;
+  const severity = serviceSeverity({ hasPlan: Boolean(activeSubscription), expired, usedPercent: dataPercent, daysLeft });
+
+  const dataLeftBytes = Math.max(0, dataMaxBytes - dataUsedBytes);
+  const bulletinFacts = [];
+  if (!activeSubscription) bulletinFacts.push(t('bulletin_fact_no_plan'));
+  else if (expired) bulletinFacts.push(`${activeSubscription.planName || t('nav_plan')} · ${t('bulletin_fact_expired')} ${formatDate(activeSubscription.expiresAt, STATE.lang)}.`);
+  else {
+    if (dataMaxBytes > 0 && dataPercent >= 75) bulletinFacts.push(`${t('bulletin_fact_quota')} ${dataPercent}% · ${t('bulletin_fact_remaining')} ${formatData(dataLeftBytes)}.`);
+    if (!lifetime && daysLeft <= 7) bulletinFacts.push(`${t('bulletin_fact_term')} ${daysLeft} ${t('bulletin_days_unit')}.`);
+    if (!bulletinFacts.length) bulletinFacts.push(`${dataMaxBytes > 0 ? `${t('bulletin_fact_remaining')} ${formatData(dataLeftBytes)}` : t('bulletin_fact_unlimited')}${lifetime ? ` · ${t('bulletin_fact_lifetime')}` : ` · ${t('bulletin_fact_term')} ${daysLeft} ${t('bulletin_days_unit')}`}.`);
+  }
+
+  const observedAt = new Date().toLocaleTimeString(STATE.lang === 'vi' ? 'vi-VN' : 'en-GB', { hour: '2-digit', minute: '2-digit' });
   const promoSlides = promos.length ? promos : [{
     title: 'Một đường truyền riêng, tốc độ thật.',
     titleEn: 'A private line. Real speed.',
@@ -101,16 +201,132 @@ PAGES['#/dashboard'] = async (root) => {
   }];
   const promoText = (p) => STATE.lang === 'vi' ? p.title : (p.titleEn || p.title);
   const promoDesc = (p) => STATE.lang === 'vi' ? p.desc : (p.descEn || p.desc);
+  const isobarRings = [
+    { id: 'quota', color: 'var(--signal)', labelKey: 'isobar_legend_quota', legendValue: `${dataPercent}%`, ratio: dataPercent / 100, tier: severityTierOfPercent(dataPercent), shortLabel: `${dataPercent}%` },
+    ...(deviceRatio === null ? [] : [{ id: 'devices', color: 'var(--steel)', labelKey: 'isobar_legend_devices', legendValue: `${machinesOnline}/${machinesMax}`, ratio: deviceRatio, tier: deviceRatio >= 0.8 ? 3 : 1, shortLabel: `${machinesOnline}/${machinesMax}` }]),
+    ...(lifetime ? [] : [{ id: 'term', color: 'var(--t3)', labelKey: 'isobar_legend_term', legendValue: `${daysLeft} ${t('bulletin_days_unit')}`, ratio: termRatio, tier: severityTierOfPercent(termRatio * 100), shortLabel: `${daysLeft}${t('bulletin_days_short')}` }]),
+  ];
+
   root.innerHTML = `
     <div class="page-container page-enter">
       <div class="page-header">
         <div class="page-header__main">
-          <span class="page-header__kicker">PERRAL NETWORK · ${t('nav_dashboard')}</span>
           <h1>${t('welcome_back')}</h1>
           <p>${escapeHTML(user.name)}</p>
         </div>
         <span class="page-header__meta mono">${t('topup')} · ${formatCurrency(accountBalance)}</span>
       </div>
+
+      <section class="tier-band" data-tier="${severity}" data-wipe aria-label="${t('bulletin_eyebrow')}">
+        <div class="tier-band__body">
+          <div class="tier-band__line">
+            <span class="tier-band__flag"><i></i>${escapeHTML(t(`tier_${severity}`))}</span>
+            <span class="tier-band__level">${escapeHTML(activeSubscription?.planName || t('tier_5'))}</span>
+          </div>
+          <p class="tier-band__text">${escapeHTML(bulletinFacts.join(' '))}</p>
+          <div class="tier-band__scale" aria-hidden="true">
+            ${[1, 2, 3, 4, 5].map(step => `<span class="tier-band__tick ${step <= severity ? 'is-reached' : ''}"></span>`).join('')}
+          </div>
+        </div>
+        <div class="tier-band__action">
+          <button class="btn btn-primary" data-nav="#/plan">${activeSubscription ? t('nav_plan') : t('buy_now')} ${icon('arrowUpRight')}</button>
+        </div>
+      </section>
+
+      <section class="bulletin-strip" aria-label="${t('bulletin_eyebrow')}">
+        <div class="bulletin-strip__cell" data-rise>
+          <span class="bulletin-strip__label">${t('bulletin_quota_used')}</span>
+          <span class="bulletin-strip__value">${escapeHTML(formatData(dataUsedBytes))}<em>${escapeHTML(dataMaxBytes > 0 ? `/ ${formatData(dataMaxBytes)}` : t('unlimited'))}</em></span>
+          <div class="threshold-meter" data-tier="${severityTierOfPercent(dataPercent)}" style="--meter:${dataPercent}%"><span class="threshold-meter__fill"></span><span class="threshold-meter__mark"></span></div>
+          <span class="bulletin-strip__sub">${dataPercent}% ${t('bulletin_of_plan')}</span>
+        </div>
+        <div class="bulletin-strip__cell" data-rise>
+          <span class="bulletin-strip__label">${t('bulletin_quota_left')}</span>
+          <span class="bulletin-strip__value">${escapeHTML(dataMaxBytes > 0 ? formatData(dataLeftBytes) : t('unlimited'))}<em>${escapeHTML(activeSubscription?.capacity ? `/ ${activeSubscription.capacity}` : '')}</em></span>
+          <div class="threshold-meter" data-tier="1" style="--meter:${dataMaxBytes > 0 ? Math.max(0, 100 - dataPercent) : 100}%"><span class="threshold-meter__fill"></span><span class="threshold-meter__mark"></span></div>
+          <span class="bulletin-strip__sub">${escapeHTML(deviceLimitLabel)} ${t('device_limit').toLowerCase()}${machinesOnline === null ? '' : ` · ${machinesOnline} ${t('devices_online').toLowerCase()}`}</span>
+        </div>
+        <div class="bulletin-strip__cell" data-rise>
+          <span class="bulletin-strip__label">${t('bulletin_term_left')}</span>
+          <span class="bulletin-strip__value">${lifetime ? '∞' : (hoursLeft < 24 ? `<span data-count="${hoursLeft}" data-count-format="value">0</span><em>${t('bulletin_hours_unit')}</em>` : `<span data-count="${daysLeft}" data-count-format="value">0</span><em>${t('bulletin_days_unit')}</em>`)}</span>
+          <div class="threshold-meter" data-tier="${lifetime ? 1 : severityTierOfPercent(termRatio * 100)}" style="--meter:${lifetime ? 100 : Math.max(0, Math.min(100, (daysLeft / 30) * 100))}%"><span class="threshold-meter__fill"></span><span class="threshold-meter__mark"></span></div>
+          <span class="bulletin-strip__sub">${lifetime ? t('lifetime_term') : escapeHTML(activeSubscription?.expiresAt ? formatDate(activeSubscription.expiresAt, STATE.lang) : '—')}</span>
+        </div>
+      </section>
+
+      <div class="grid grid-2">
+        <div class="card plan-card plan-card--pro ${activeSubscription ? '' : 'plan-card--empty'}">
+          <div class="plan-card__pro-head">
+            <div class="plan-card__pro-mark">PR</div>
+            <div class="plan-card__pro-title"><span>${activeSubscription ? t('current_plan') : t('nav_plan')}</span><h3>${escapeHTML(activeSubscription?.planName || t('no_data_title'))}</h3></div>
+            <span class="plan-card__pro-status"><i></i> ${activeSubscription && !expired ? t('tier_1') : t('expired')}</span>
+          </div>
+          ${activeSubscription ? `<div class="plan-card__pro-subhead"><span>${t('expires_in')} <b>${activeSubscription.lifetime ? t('lifetime_term') : formatDate(activeSubscription.expiresAt, STATE.lang)}</b></span><span><b>${escapeHTML(deviceLimitLabel)}</b> ${t('device_limit').toLowerCase()}</span></div><div class="plan-card__pro-metrics"><div class="plan-metric"><span>${t('data_used')}</span><strong>${escapeHTML(dataLabel)}</strong><small>${dataPercent}%</small></div><div class="plan-metric"><span>${t('capacity')}</span><strong>${escapeHTML(activeSubscription.capacity)}</strong><small>${t('current_plan')}</small></div><div class="plan-metric"><span>${t('speed')}</span><strong>${escapeHTML(activeSubscription.speed)}</strong><small>${t('bandwidth_note')}</small></div></div><div class="plan-card__usage-grid plan-card__usage-grid--single"><div class="plan-usage"><div class="plan-usage__head"><span>${t('data_used')}</span><b>${dataPercent}%</b></div><div class="progress"><div class="progress__bar" style="width:${dataPercent}%"></div></div><small>${escapeHTML(dataLabel)}</small></div></div>${planFeatures.length ? `<div class="plan-card__features"><strong>${t('plan_features')}</strong><ul>${planFeatures.map(feature => `<li>${escapeHTML(feature)}</li>`).join('')}</ul></div>` : ''}` : `<div class="plan-empty-state"><strong>${t('tier_5')}</strong><span>${t('plan_desc')}</span><button class="btn btn-sm btn-accent" data-nav="#/plan">${t('nav_plan')}</button></div>`}
+          <div class="plan-card__actions"><button class="btn btn-sm btn-outline" data-nav="#/knowledge">${icon('book')} ${t('guide')}</button><button class="btn btn-sm btn-outline" id="btnAppleId">${icon('key')} ${t('get_apple_id')}</button><button class="btn btn-sm btn-outline" id="btnResetLink">${icon('refresh')} ${t('reset_link')}</button></div>
+          <div class="plan-card__sync"><button class="btn btn-sm btn-accent" id="btnSyncApp" ${activeSubscription ? '' : 'disabled'} aria-haspopup="dialog">${icon('refresh')} ${t('sync_app_label')}</button></div>
+        </div>
+
+        <div class="bulletin-side">
+          <div class="card id-card">
+            <div class="id-card__top">
+              <img class="avatar id-card__avatar" src="${user.avatar || initialsAvatarUrl(user.name)}" alt="${escapeHTML(user.name)}">
+              <div class="id-card__who">
+                <strong>${escapeHTML(user.name)} ${user.verified ? `<span class="badge badge-signal">${icon('check')} ${t('verified')}</span>` : ''}</strong>
+                <span>${escapeHTML(user.email)}</span>
+              </div>
+            </div>
+            <div class="id-card__meta">
+              <div><span>${t('join_date')}</span><strong>${formatDate(user.joinDate, STATE.lang)}</strong></div>
+              <div><span>${t('user_id')}</span><strong>${escapeHTML(user.userId)}</strong></div>
+              <div><span>${machinesOnline === null ? t('device_limit') : t('devices_online')}</span><strong>${escapeHTML(machinesOnline === null || machinesMax <= 0 ? deviceLimitLabel : `${machinesOnline}/${machinesMax}`)}</strong></div>
+            </div>
+            <div class="id-card__actions">
+              <button class="btn btn-primary" id="btnTopup">${icon('wallet')} ${t('topup')} · ${formatCurrency(accountBalance)}</button>
+              <button class="btn btn-secondary" id="btnZalo">Zalo</button>
+              <button class="btn btn-secondary" id="btnTelegram">Telegram</button>
+            </div>
+          </div>
+
+          <section class="card notation-key" data-rise aria-label="${t('notation_key_title')}">
+            <div class="notation-key__head">
+              <span class="station-board__eyebrow">${t('notation_key_title')}</span>
+              <span class="notation-key__lead">${t('notation_key_lead')}</span>
+            </div>
+            <ul class="notation-key__ramp">
+              ${[1, 2, 3, 4, 5].map(step => `<li class="notation-key__step" data-tier="${step}"><i></i><span>${escapeHTML(t(`tier_${step}`))}</span><b class="mono">${escapeHTML(t(`tier_threshold_${step}`))}</b></li>`).join('')}
+            </ul>
+            <p class="notation-key__note">${t('notation_key_note')}</p>
+          </section>
+        </div>
+      </div>
+
+      ${nodes.length ? `
+      <section class="station-board" aria-label="${t('station_board_title')}">
+        <div class="station-board__head">
+          <div><span class="station-board__eyebrow">${t('station_board_title')}</span><div class="text-sm text-secondary">${t('station_board_desc')}</div></div>
+          <span class="station-board__eyebrow mono">${t('isobar_observed_at')} ${escapeHTML(observedAt)}</span>
+        </div>
+        ${nodes.slice(0, 6).map((node, index) => `
+          <div class="station-row" data-state="${escapeHTML(node.status)}" data-rise>
+            <span class="station-row__code">${String(index + 1).padStart(2, '0')}</span>
+            <span class="station-row__name">${escapeHTML(node.name)}<small>${escapeHTML(node.location)}</small></span>
+            <span class="station-row__load"><span class="load-meter"><span class="load-meter__track"><span class="load-meter__fill ${node.load >= 85 ? 'is-critical' : node.load >= 65 ? 'is-busy' : ''}" style="width:${Math.min(100, Math.max(0, Number(node.load) || 0))}%"></span></span></span><b>${Number(node.load) || 0}%</b></span>
+            <span class="station-row__latency">${escapeHTML(String(node.latency))}ms</span>
+            <span class="station-row__state"><i></i>${escapeHTML(t(STATION_STATE_KEYS[node.status] || 'status_online'))}</span>
+          </div>`).join('')}
+      </section>` : ''}
+
+      <section class="isobar-field" aria-label="${t('isobar_title')}">
+        <div class="isobar-field__head">
+          <div><span class="station-board__eyebrow">${t('isobar_title')}</span><div class="text-sm text-secondary">${t('isobar_desc')}</div></div>
+        </div>
+        <div class="isobar-field__canvas" data-parallax>
+          <div data-parallax-layer>${buildIsobarField(isobarRings)}</div>
+        </div>
+        <div class="isobar-field__legend">
+          ${isobarRings.map(ring => `<span style="color:${ring.color}"><i></i>${t(ring.labelKey)} <b class="isobar-field__value">${escapeHTML(ring.legendValue)}</b></span>`).join('')}
+        </div>
+      </section>
 
       <section class="hero ${promoSlides.length === 1 ? 'hero--single' : ''}" id="promoCarousel" role="region" aria-roledescription="carousel" aria-label="${t('app_name')}">
         <div class="hero__track" id="carouselTrack">
@@ -118,7 +334,6 @@ PAGES['#/dashboard'] = async (root) => {
             <article class="hero__slide" role="group" aria-roledescription="slide" aria-label="${promoIndex + 1} / ${promoSlides.length}">
               <span class="hero__index mono">0${promoIndex + 1} — 0${promoSlides.length}</span>
               <div class="hero__copy">
-                <span class="hero__eyebrow">${t('app_name')} · ${t('nav_dashboard')}</span>
                 <h2 class="hero__title">${escapeHTML(promoText(p))}</h2>
                 <p class="hero__desc">${escapeHTML(promoDesc(p))}</p>
                 <div class="hero__actions">
@@ -127,8 +342,7 @@ PAGES['#/dashboard'] = async (root) => {
                 </div>
               </div>
               <div class="hero__graphic" aria-hidden="true">
-                <span class="hero__bar"></span><span class="hero__bar"></span><span class="hero__bar"></span>
-                <span class="hero__bar"></span><span class="hero__bar"></span><span class="hero__bar"></span><span class="hero__bar"></span>
+                <span class="hero__hatch"></span>
               </div>
             </article>`).join('')}
         </div>
@@ -142,39 +356,6 @@ PAGES['#/dashboard'] = async (root) => {
           </div>
         </div>
       </section>
-
-      <div class="grid grid-2" style="margin-bottom:18px;">
-        <div class="card id-card">
-          <div class="id-card__top">
-            <img class="avatar id-card__avatar" src="${user.avatar || EMPTY_AVATAR_DATA_URL}" alt="${escapeHTML(user.name)}" loading="lazy">
-            <div class="id-card__who">
-              <strong>${escapeHTML(user.name)} ${user.verified ? `<span class="badge badge-signal">${icon('check')} ${t('verified')}</span>` : ''}</strong>
-              <span>${escapeHTML(user.email)}</span>
-            </div>
-          </div>
-          <div class="id-card__meta">
-            <div><span>${t('join_date')}</span><strong>${formatDate(user.joinDate, STATE.lang)}</strong></div>
-            <div><span>${t('user_id')}</span><strong>${escapeHTML(user.userId)}</strong></div>
-            <div><span>${t('devices_online')}</span><strong>${escapeHTML(deviceLimitLabel)}</strong></div>
-          </div>
-          <div class="id-card__actions">
-            <button class="btn btn-primary" id="btnTopup">${icon('wallet')} ${t('topup')} · ${formatCurrency(accountBalance)}</button>
-            <button class="btn btn-secondary" id="btnZalo">Zalo</button>
-            <button class="btn btn-secondary" id="btnTelegram">Telegram</button>
-          </div>
-        </div>
-
-        <div class="card plan-card plan-card--pro ${activeSubscription ? '' : 'plan-card--empty'}">
-          <div class="plan-card__pro-head">
-            <div class="plan-card__pro-mark">PR</div>
-            <div class="plan-card__pro-title"><span>${activeSubscription ? 'Gói đang kích hoạt' : 'Gói dịch vụ'}</span><h3>${escapeHTML(activeSubscription?.planName || 'Chưa có gói đang hoạt động')}</h3></div>
-            <span class="plan-card__pro-status"><i></i> ${activeSubscription ? 'Đang hoạt động' : 'Chưa kích hoạt'}</span>
-          </div>
-          ${activeSubscription ? `<div class="plan-card__pro-subhead"><span>Hạn sử dụng <b>${activeSubscription.lifetime ? 'Vĩnh viễn' : formatDate(activeSubscription.expiresAt, STATE.lang)}</b></span><span><b>${escapeHTML(deviceLimitLabel)}</b> thiết bị tối đa</span></div><div class="plan-card__pro-metrics"><div class="plan-metric"><span>Data đã dùng</span><strong>${escapeHTML(dataLabel)}</strong><small>${dataPercent}% dung lượng gói</small></div><div class="plan-metric"><span>Dung lượng gói</span><strong>${escapeHTML(activeSubscription.capacity)}</strong><small>theo gói đã mua</small></div><div class="plan-metric"><span>Tốc độ</span><strong>${escapeHTML(activeSubscription.speed)}</strong><small>băng thông dịch vụ</small></div></div><div class="plan-card__usage-grid plan-card__usage-grid--single"><div class="plan-usage"><div class="plan-usage__head"><span>Dữ liệu sử dụng</span><b>${dataPercent}%</b></div><div class="progress"><div class="progress__bar" style="width:${dataPercent}%"></div></div><small>${escapeHTML(dataLabel)}</small></div></div>${planFeatures.length ? `<div class="plan-card__features"><strong>Chức năng gói</strong><ul>${planFeatures.map(feature => `<li>${escapeHTML(feature)}</li>`).join('')}</ul></div>` : ''}` : `<div class="plan-empty-state"><strong>Bạn chưa có gói VPN hoạt động</strong><span>Chọn gói phù hợp và thanh toán qua SePay để bắt đầu sử dụng.</span><button class="btn btn-sm btn-accent" data-nav="#/plan">Xem các gói cước</button></div>`}
-          <div class="plan-card__actions"><button class="btn btn-sm btn-outline" data-nav="#/knowledge">${icon('book')} ${t('guide')}</button><button class="btn btn-sm btn-outline" id="btnAppleId">${icon('key')} ${t('get_apple_id')}</button><button class="btn btn-sm btn-outline" id="btnResetLink">${icon('refresh')} ${t('reset_link')}</button></div>
-          <div class="plan-card__sync"><button class="btn btn-sm btn-accent" id="btnSyncApp" ${activeSubscription ? '' : 'disabled'} aria-haspopup="dialog">${icon('refresh')} Đồng bộ máy chủ về app</button></div>
-        </div>
-      </div>
 
       <div class="card quick-card">
         <div class="card-title">${t('quick_menu')}</div>
@@ -248,8 +429,6 @@ PAGES['#/dashboard'] = async (root) => {
       </div>`,
       size: '340px',
       onMount: (modalBackdrop) => {
-        modalBackdrop.classList.add('sync-picker-backdrop');
-        modalBackdrop.querySelector('.modal')?.classList.add('sync-picker-modal');
         qsa('[data-sync-action]', modalBackdrop).forEach((option) => option.addEventListener('click', async () => {
           const action = option.dataset.syncAction;
           closeModal();

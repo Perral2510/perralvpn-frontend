@@ -58,7 +58,6 @@ PAGES['#/plan'] = async (root) => {
     <div class="page-container page-enter">
       <div class="plan-catalog-head">
         <div>
-          <span class="page-header__kicker">PERRAL NETWORK · CATALOG</span>
           <h1>Chọn gói phù hợp với bạn nhất</h1>
         </div>
         <div class="plan-filter" role="tablist" aria-label="Bộ lọc gói dịch vụ">
@@ -138,33 +137,6 @@ PAGES['#/plan'] = async (root) => {
     paint();
   }));
 };
-
-function openPurchaseModal(plan){
-  const backdrop = openModal({
-    title: t('buy_now'),
-    bodyHTML: `
-      <p>${escapeHTML(plan.name)} — <strong>${formatCurrency(plan.price)}</strong></p>
-      <div class="field">
-        <label>Phương thức thanh toán</label>
-        <select class="input" id="payMethod">
-          <option>Ví PerralVPN</option>
-          <option>Chuyển khoản ngân hàng</option>
-          <option>Thẻ cào điện thoại</option>
-        </select>
-      </div>
-    `,
-    footerHTML: `<button class="btn btn-secondary" data-act="cancel">${t('cancel')}</button><button class="btn btn-primary" data-act="pay">${t('confirm')}</button>`,
-  });
-  backdrop.querySelector('[data-act="cancel"]').addEventListener('click', closeModal);
-  backdrop.querySelector('[data-act="pay"]').addEventListener('click', async (e) => {
-    const btn = e.currentTarget;
-    btn.disabled = true;
-    btn.innerHTML = `<span class="spinner"></span> ${t('loading')}`;
-    const res = await MockAPI.purchasePlan(plan.id);
-    closeModal();
-    if (res.ok) showToast({ type: 'success', title: t('toast_saved'), message: res.orderId });
-  });
-}
 
 /* ---------------------------------------------------------
    5) NODE STATUS

@@ -11,13 +11,16 @@ const SAVED_LANG = (() => {
     return 'vi';
   }
 })();
+/* Light and dark are equals. Only an explicit choice is stored; with
+   nothing saved the operating system decides, which is what
+   shell-boot.js already painted — this must agree or the first
+   theme button flips the page. */
 const SAVED_THEME = (() => {
   try {
     const value = localStorage.getItem(THEME_STORAGE_KEY);
-    return value === 'dark' || value === 'light' ? value : 'light';
-  } catch {
-    return 'light';
-  }
+    if (value === 'dark' || value === 'light') return value;
+  } catch {}
+  return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
 })();
 
 const STATE = {

@@ -259,7 +259,7 @@ PAGES['#/traffic'] = async (root) => {
   };
   const maxLabel = max > 0 ? formatTraffic(max) : 'Không giới hạn';
   const remainingLabel = max > 0 ? formatTraffic(Math.max(0, max - used)) : 'Không giới hạn';
-  const ringStyle = `background:conic-gradient(var(--signal-strong) ${usedPercent}%, var(--surface-3) 0);`;
+  const ringStyle = `background:conic-gradient(var(--signal) ${usedPercent}%, var(--panel-3) 0);`;
   const container = qs('.page-container', root);
   container.innerHTML = `
     ${pageHeader('traffic_title', 'traffic_desc', maxLabel)}

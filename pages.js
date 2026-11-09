@@ -403,29 +403,36 @@ PAGES['#/dashboard'] = async (root) => {
   qs('#btnTelegram', root).addEventListener('click', () => window.open(TELEGRAM_GROUP_URL, '_blank', 'noopener,noreferrer'));
   qs('#btnAppleId', root).addEventListener('click', () => window.open(APPLE_ID_TRIAL_URL, '_blank', 'noopener,noreferrer'));
   const syncTrigger = qs('#btnSyncApp', root);
-  const getSyncData = async () => {
-    showToast({ type: 'info', title: 'Đang đồng bộ subscription...' });
-    if (typeof RealAPI.syncVpnSubscription !== 'function' || typeof RealAPI.getVpnSubscription !== 'function') {
-      showToast({ type: 'error', title: 'API đồng bộ chưa được cập nhật. Vui lòng tải lại trang.' });
-      return null;
-    }
-    const result = await RealAPI.syncVpnSubscription();
-    if (!result.ok) {
-      showToast({ type: 'error', title: result.error || 'Không thể đồng bộ subscription.' });
-      return null;
-    }
-    if (result.data?.subscriptionUrl) return result.data;
-    const refreshed = await RealAPI.getVpnSubscription();
-    if (refreshed?.ok && refreshed.data?.subscriptionUrl) return refreshed.data;
-    showToast({ type: 'error', title: refreshed?.error || 'Máy chủ chưa trả về liên kết subscription.' });
-    return null;
+  // POST /account/vpn/sync re-provisions the client on 3x-ui, so it is tried
+  // first. It also fails whenever 3x-ui is unreachable, and gating the copy on
+  // it left users with a working stored link unable to copy anything: the
+  // read-only GET is now the fallback, flagged as not freshly synced.
+  let syncPromise = null;
+  const resolveSync = () => {
+    if (syncPromise) return syncPromise;
+    syncPromise = (async () => {
+      if (typeof RealAPI.syncVpnSubscription !== 'function' || typeof RealAPI.getVpnSubscription !== 'function') {
+        return { error: t('sync_outdated') };
+      }
+      const dismissProgress = showToast({ type: 'info', title: t('sync_progress'), duration: 0 });
+      try {
+        const synced = await RealAPI.syncVpnSubscription();
+        if (synced?.ok && synced.data?.subscriptionUrl) return { data: synced.data };
+        const stored = await RealAPI.getVpnSubscription();
+        if (stored?.ok && stored.data?.subscriptionUrl) return { data: stored.data, stale: true };
+        return {};
+      } finally {
+        dismissProgress();
+      }
+    })().finally(() => { syncPromise = null; });
+    return syncPromise;
   };
   const openSyncPicker = () => {
-    const backdrop = openModal({
-      title: 'Đồng bộ máy chủ về app',
-      bodyHTML: `<div class="sync-picker" role="menu" aria-label="Tùy chọn đồng bộ ứng dụng">
-        <button class="sync-picker__option" type="button" role="menuitem" data-sync-action="copy"><span class="sync-picker__icon">${icon('copy')}</span><span>Sao chép subscription URL</span></button>
-        <button class="sync-picker__option" type="button" role="menuitem" data-sync-action="qr"><span class="sync-picker__icon">${icon('grid')}</span><span>Quét mã QR subscription</span></button>
+    openModal({
+      title: t('sync_app_label'),
+      bodyHTML: `<div class="sync-picker" role="menu" aria-label="${escapeHTML(t('sync_app_label'))}">
+        <button class="sync-picker__option" type="button" role="menuitem" data-sync-action="copy"><span class="sync-picker__icon">${icon('copy')}</span><span>${escapeHTML(t('sync_picker_copy'))}</span></button>
+        <button class="sync-picker__option" type="button" role="menuitem" data-sync-action="qr"><span class="sync-picker__icon">${icon('grid')}</span><span>${escapeHTML(t('sync_picker_qr'))}</span></button>
       </div>`,
       size: '340px',
       onMount: (modalBackdrop) => {
@@ -433,32 +440,37 @@ PAGES['#/dashboard'] = async (root) => {
           const action = option.dataset.syncAction;
           closeModal();
           if (!activeSubscription) {
-            showToast({ type: 'warning', title: 'Chưa có gói VPN', message: 'Mua và kích hoạt gói trước khi đồng bộ.' });
+            showToast({ type: 'warning', title: t('sync_no_plan_title'), message: t('sync_no_plan_desc') });
             return;
           }
-          const syncData = await getSyncData();
-          if (!syncData?.subscriptionUrl) return;
-          const syncLink = syncData.subscriptionUrl;
+          const sync = await resolveSync();
+          if (!sync.data) {
+            showToast({ type: 'error', title: t('sync_fail_title'), message: sync.error || t('sync_fail_desc') });
+            return;
+          }
           if (action === 'copy') {
-            const ok = await copyToClipboard(syncLink);
-            showToast({ type: ok ? 'success' : 'error', title: ok ? 'Đã sao chép liên kết' : 'Không thể sao chép liên kết' });
+            const ok = await copyToClipboard(sync.data.subscriptionUrl);
+            if (!ok) {
+              showToast({ type: 'error', title: t('copy_fail_title'), message: t('copy_fail_desc') });
+              return;
+            }
+            showToast(sync.stale
+              ? { type: 'warning', title: t('sync_stale_title'), message: t('sync_stale_desc') }
+              : { type: 'success', title: t('copy_ok_title') });
             return;
           }
-          if (action === 'qr') {
-            const qrUrl = syncData.qrDataUrl || buildDemoQrDataUrl(syncLink);
-            openModal({
-              title: 'Quét mã QR để đăng ký',
-              bodyHTML: `<div class="sync-qr"><div class="topup-modal__qr-wrap"><img src="${qrUrl}" alt="Mã QR liên kết máy chủ" style="width:220px;height:220px;background:#fff;padding:10px;border-radius:12px;"></div><p class="text-secondary text-sm">Dùng camera hoặc ứng dụng VPN để quét liên kết máy chủ.</p></div>`,
-              size: '420px',
-            });
+          if (!sync.data.qrDataUrl) {
+            showToast({ type: 'error', title: t('sync_qr_missing_title'), message: t('sync_qr_missing_desc') });
             return;
           }
-          if (action === 'copy') return;
-
+          openModal({
+            title: t('sync_qr_title'),
+            bodyHTML: `<div class="sync-qr"><div class="topup-modal__qr-wrap"><img src="${sync.data.qrDataUrl}" alt="${escapeHTML(t('sync_qr_alt'))}" style="width:220px;height:220px;background:#fff;padding:10px;border-radius:12px;"></div><p class="text-secondary text-sm">${escapeHTML(t('sync_qr_hint'))}</p>${sync.stale ? `<p class="text-secondary text-sm">${escapeHTML(t('sync_stale_desc'))}</p>` : ''}</div>`,
+            size: '420px',
+          });
         }));
       },
     });
-    return backdrop;
   };
   syncTrigger?.addEventListener('click', openSyncPicker);
   qs('#btnResetLink', root).addEventListener('click', () => {
@@ -496,22 +508,6 @@ PAGES['#/dashboard'] = async (root) => {
 function routeFor(labelKey){
   const found = Object.entries(ROUTE_LABELS).find(([, v]) => v === labelKey);
   return found ? found[0] : '#/dashboard';
-}
-
-function buildDemoQrDataUrl(payload){
-  const size = 29;
-  let hash = 2166136261;
-  for (const char of payload) hash = Math.imul(hash ^ char.charCodeAt(0), 16777619) >>> 0;
-  const cells = Array.from({length:size}, () => Array(size).fill(false));
-  const reserved = Array.from({length:size}, () => Array(size).fill(false));
-  const set = (x, y, value, mark = true) => { if (x >= 0 && y >= 0 && x < size && y < size) { cells[y][x] = value; reserved[y][x] = mark; } };
-  const finder = (ox, oy) => { for (let y = -1; y < 8; y++) for (let x = -1; x < 8; x++) { const inside = x >= 0 && x < 7 && y >= 0 && y < 7; const black = inside && (x === 0 || x === 6 || y === 0 || y === 6 || (x >= 2 && x <= 4 && y >= 2 && y <= 4)); set(ox + x, oy + y, black); } };
-  finder(0, 0); finder(size - 7, 0); finder(0, size - 7);
-  for (let i = 8; i < size - 8; i++) { set(i, 6, i % 2 === 0); set(6, i, i % 2 === 0); }
-  for (let y = 0; y < size; y++) for (let x = 0; x < size; x++) if (!reserved[y][x]) { hash = Math.imul(hash ^ (x * 31 + y * 17 + payload.length), 16777619) >>> 0; cells[y][x] = ((hash >>> ((x + y) % 24)) & 1) === 1; }
-  const rects = []; for (let y = 0; y < size; y++) for (let x = 0; x < size; x++) if (cells[y][x]) rects.push(`<rect x="${x}" y="${y}" width="1" height="1"/>`);
-  const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${size} ${size}" shape-rendering="crispEdges"><rect width="${size}" height="${size}" fill="white"/> <g fill="#111827">${rects.join('')}</g></svg>`;
-  return `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(svg)}`;
 }
 
 function openTopupModal(){

@@ -61,7 +61,7 @@ function icon(name){ return ICONS[name] || ''; }
 const TOAST_ICON = { success: 'checkCircle', error: 'alertCircle', warning: 'alertTriangle', info: 'info' };
 function showToast({ type = 'info', title, message, duration = 4200 }){
   const region = qs('#toastRegion');
-  if (!region) return;
+  if (!region) return () => {};
   const el = document.createElement('div');
   el.className = `toast ${type}`;
   el.setAttribute('role', 'status');
@@ -80,6 +80,7 @@ function showToast({ type = 'info', title, message, duration = 4200 }){
   };
   el.querySelector('.toast__close').addEventListener('click', remove);
   if (duration) setTimeout(remove, duration);
+  return remove;
 }
 
 /* ---- Modal ---- */

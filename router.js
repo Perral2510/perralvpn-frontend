@@ -6,7 +6,7 @@
    ========================================================= */
 let appIntroPlayed = false;
 
-const CHUNK_VERSION = 'bulletin-8';
+const CHUNK_VERSION = 'bulletin-9';
 
 /* Route renderers are split by the traffic they carry, not by the
    order they were written. Nothing here pulls a chunk a visitor

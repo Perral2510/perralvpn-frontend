@@ -8,7 +8,7 @@ web
 
 ## Stack
 
-Vanilla static HTML/CSS/JS (no build step, no framework, no package.json). Served as Render `runtime: static` with `staticPublishPath: .` and `autoDeployTrigger: commit`. Hash router (`#/route`) over a global `PAGES` registry. Visual truth lives in one stylesheet (`ui.css`). Confirmed constraint for this redesign: **no bundler, no external CDN** — the runtime CSP is `script-src 'self'`, so all motion must be authored in-repo.
+Vanilla static HTML/CSS/JS (no build step, no framework, no package.json). Served as Render `runtime: static` with `staticPublishPath: .` and `autoDeployTrigger: commit`. Hash router (`#/route`) over a global `PAGES` registry. Visual truth lives in two stylesheets: `ui-shell.css` (blocking — tokens, app shell, critical above-fold rules) and `ui-bulletin.css` (console modules, attached by `shell-boot.js` after first paint). Confirmed constraint for this redesign: **no bundler, no external CDN** — the runtime CSP is `script-src 'self'`, so all motion must be authored in-repo.
 
 ## Users
 
@@ -22,13 +22,12 @@ Self-service account console for a VPN subscription: understand what you paid fo
 
 ## Positioning
 
-The console is operated by the same person who runs the service, so it exposes real operational state (per-node status, live traffic, quota consumption) rather than a marketing abstraction of it. Support is one tap away into the actual human channels (Zalo group, Telegram group), not a ticket queue.
+The console is operated by the same person who runs the service, so it exposes real operational state (node reporting, quota consumption, plan expiry) rather than a marketing abstraction of it. Support is one tap away into the actual human channels (Zalo group, Telegram group), not a ticket queue.
 
 ## Operating Context
 
 - Purchase flow: pick plan and cycle → Sepay checkout (`pay.sepay.vn` / `pay-sandbox.sepay.vn`) → order history → success screen.
-- Data consumption is monitored on `#/traffic`; node health on `#/node`; plan and node region changes on `#/plan` and `#/changepro`.
-- Referral/affiliate activity on `#/invite`.
+- Quota and term consumption is read on `#/dashboard`; plan and node region changes on `#/plan` and `#/changepro`.
 - Account credentials and password change on `#/account`.
 - Setup guidance on `#/knowledge`; client download/activation on `#/application`.
 - Bilingual by default: every string routes through `i18n.js` with `vi` and `en`; language choice persists in `localStorage`.
@@ -36,7 +35,7 @@ The console is operated by the same person who runs the service, so it exposes r
 
 ## Capabilities and Constraints
 
-- 11 in-shell routes plus 3 standalone auth routes (`#/login`, `#/register`, `#/forgot-password`) render into `#pageContent` inside `.app-shell`; auth routes strip the shell via `auth-mode` / `body.auth-page`.
+- 10 in-shell routes plus 3 standalone auth routes (`#/login`, `#/register`, `#/forgot-password`) render into `#pageContent` inside `.app-shell`; auth routes strip the shell via `auth-mode` / `body.auth-page`.
 - API is a separate backend at `https://api.perral.dpdns.org/api` (`frontend-config.js`), reached through `RealAPI`; unauthenticated users are redirected to `#/login` by the router.
 - `mock-data.js` supplies demo state used when the backend is unreachable.
 - Runtime CSP (render.yaml) additionally restricts: `style-src 'self' 'unsafe-inline' https://fonts.googleapis.com`, `font-src 'self' https://fonts.gstatic.com data:`, `img-src 'self' data: https://api.dicebear.com`, `connect-src 'self' https://api.perral.dpdns.org`. Any new asset or host must be added there or it will be blocked in production.
@@ -57,8 +56,8 @@ The console is operated by the same person who runs the service, so it exposes r
 ## Evidence on Hand
 
 - Real route inventory and navigation labels in `state.js` (`NAV_CONFIG`, `ROUTE_LABELS`).
-- Full bilingual copy in `i18n.js` (~500 lines) — the source of truth for wording; redesign copy must extend it, not replace it.
-- Existing incumbent design system "Ink & Signal" in `ui.css` (token block at the top, ~3,300 lines total) — evidence and anti-reference for the new world, but its DOM hook names are load-bearing and stay.
+- Full bilingual copy in `i18n.js` (538 lines, 238 keys per locale) — the source of truth for wording; redesign copy must extend it, not replace it.
+- The incumbent design system "Ink & Signal" lived in the pre-redesign `ui.css` (~3,300 lines with the token block at the top); the rewrite replaced that look but kept its DOM hook names, which are load-bearing.
 - Support channel URLs (`ZALO_GROUP_URL`, `TELEGRAM_GROUP_URL`) and payment endpoints already wired in code.
 - Absences future work must not fabricate: no testimonials, no customer logos, no benchmark or uptime numbers, no pricing beyond what the backend/`mock-data.js` returns, no privacy-policy or jurisdiction claims.
 

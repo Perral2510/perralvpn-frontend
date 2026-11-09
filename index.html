@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Trang chủ · PerralVPN</title>
-<meta name="description" content="PerralVPN — Bảng điều khiển quản lý tài khoản dịch vụ VPN: mua gói, theo dõi dung lượng, trạng thái node và cộng tác viên.">
+<meta name="description" content="PerralVPN — Bảng điều khiển quản lý tài khoản dịch vụ VPN: mua gói, theo dõi dung lượng và báo cáo node.">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#EDF1EE">
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0B1418">
 <meta name="color-scheme" content="light dark">
@@ -12,7 +12,7 @@
 <!-- Open Graph -->
 <meta property="og:type" content="website">
 <meta property="og:title" content="PerralVPN — Quản lý tài khoản VPN">
-<meta property="og:description" content="Bảng điều khiển hiện đại để quản lý gói dịch vụ, node, dung lượng và cộng tác viên PerralVPN.">
+<meta property="og:description" content="Bảng điều khiển hiện đại để quản lý gói dịch vụ, node và dung lượng PerralVPN.">
 <meta property="og:image" content="https://api.dicebear.com/7.x/shapes/svg?seed=PerralVPN">
 <meta property="og:site_name" content="PerralVPN">
 
@@ -23,10 +23,10 @@
 <!-- The bulletin sheet is fetched at priority but never blocks render;
      shell-boot.js attaches it and releases the route view once it lands.
      Both hrefs must carry the same ?v= as SHEET_VERSION. -->
-<link rel="preload" as="style" href="ui-bulletin.css?v=bulletin-9">
+<link rel="preload" as="style" href="ui-bulletin.css?v=bulletin-10">
 
-<link rel="stylesheet" href="ui-shell.css?v=bulletin-9">
-<script src="shell-boot.js?v=bulletin-9"></script>
+<link rel="stylesheet" href="ui-shell.css?v=bulletin-10">
+<script src="shell-boot.js?v=bulletin-10"></script>
 </head>
 <body>
 
@@ -140,16 +140,16 @@
 <!-- Core: everything the shell and the dashboard need to be interactive.
      Page chunks 2–4 are pulled by router.js only for the routes that use
      them, so a visitor never downloads a screen they never open. -->
-<script defer src="state.js?v=bulletin-9"></script>
-<script defer src="i18n.js?v=bulletin-9"></script>
-<script defer src="mock-data.js?v=bulletin-9"></script>
-<script defer src="utils.js?v=bulletin-9"></script>
-<script defer src="frontend-config.js?v=bulletin-9"></script>
-<script defer src="api.js?v=bulletin-9"></script>
-<script defer src="ui.js?v=bulletin-9"></script>
-<script defer src="pages.js?v=bulletin-9"></script>
-<script defer src="motion.js?v=bulletin-9"></script>
-<script defer src="router.js?v=bulletin-9"></script>
-<script defer src="app.js?v=bulletin-9"></script>
+<script defer src="state.js?v=bulletin-10"></script>
+<script defer src="i18n.js?v=bulletin-10"></script>
+<script defer src="mock-data.js?v=bulletin-10"></script>
+<script defer src="utils.js?v=bulletin-10"></script>
+<script defer src="frontend-config.js?v=bulletin-10"></script>
+<script defer src="api.js?v=bulletin-10"></script>
+<script defer src="ui.js?v=bulletin-10"></script>
+<script defer src="pages.js?v=bulletin-10"></script>
+<script defer src="motion.js?v=bulletin-10"></script>
+<script defer src="router.js?v=bulletin-10"></script>
+<script defer src="app.js?v=bulletin-10"></script>
 </body>
 </html>

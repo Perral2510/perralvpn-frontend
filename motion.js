@@ -63,54 +63,11 @@ const Motion = (() => {
     });
   }
 
-  /* ---- the isobar layer leans toward the pointer, a few pixels ---- */
-  // A Map, not a WeakMap: weak entries cannot be enumerated at all, and the
-  // sweep below is what keeps detached canvases from piling up.
-  const parallaxTargets = new Map();
-  let parallaxBound = false;
-  let parallaxFrame = 0;
-  let pointer = { x: 0, y: 0 };
-
-  function applyParallax(){
-    parallaxFrame = 0;
-    parallaxTargets.forEach((layer, field) => {
-      if (!field.isConnected){ parallaxTargets.delete(field); return; }
-      const box = field.getBoundingClientRect();
-      if (box.bottom < 0 || box.top > window.innerHeight) return;
-      const dx = (pointer.x - (box.left + box.width / 2)) / box.width;
-      const dy = (pointer.y - (box.top + box.height / 2)) / box.height;
-      layer.style.transform = `translate3d(${(dx * 7).toFixed(2)}px, ${(dy * 5).toFixed(2)}px, 0)`;
-    });
-  }
-
-  function bindParallax(scope){
-    if (reducedMotion() || lowData() || !window.matchMedia('(hover: hover)').matches) return;
-    const fields = scope.querySelectorAll('[data-parallax]');
-    if (!fields.length) return;
-    parallaxTargets.forEach((layer, field) => {
-      if (!field.isConnected) parallaxTargets.delete(field);
-    });
-    fields.forEach(field => {
-      if (parallaxTargets.has(field)) return;
-      const layer = field.querySelector('[data-parallax-layer]') || field.firstElementChild;
-      if (layer) parallaxTargets.set(field, layer);
-    });
-    if (parallaxBound) return;
-    parallaxBound = true;
-    // Driven by the pointer, not by a standing rAF loop: getBoundingClientRect
-    // forces layout, so an idle page should never pay for it.
-    document.addEventListener('pointermove', (event) => {
-      pointer = { x: event.clientX, y: event.clientY };
-      if (!parallaxFrame) parallaxFrame = requestAnimationFrame(applyParallax);
-    }, { passive: true });
-  }
-
   /* ---- entry point ---- */
   function bind(scope){
     if (!scope || !scope.querySelectorAll) return;
     stagger(scope);
     countUp(scope);
-    bindParallax(scope);
   }
 
   /* Page renderers repaint whole sections after data arrives, so bind

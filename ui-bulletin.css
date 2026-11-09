@@ -357,88 +357,97 @@
 .station-row[data-state="maint"] .station-row__state i{ background:var(--warn); }
 
 /* ---------------------------------------------------------
-   17. Isobar field — traffic drawn as contour lines
+   17. Threshold scale — one dot per reading, placed on the
+   published tier bands. Text carries every number; the plot
+   only answers where a reading sits against its own limit.
    --------------------------------------------------------- */
-.isobar-field{
+.scale-field{
   position:relative;
   border:var(--edge);
   border-radius:var(--radius-md);
   background:var(--panel);
   overflow:hidden;
 }
-.isobar-field__head{
+.scale-field__head{
   display:flex;
   align-items:baseline;
   justify-content:space-between;
   gap:var(--space-4);
+  flex-wrap:wrap;
   padding:10px var(--space-5);
   border-bottom:var(--edge);
 }
-.isobar-field__canvas{
-  position:relative;
-  height:230px;
-}
-/* The parallax layer promotes itself to a containing block, so it has to
-   carry the canvas height itself or the absolutely placed SVG collapses. */
-.isobar-field__canvas > [data-parallax-layer]{ position:absolute; inset:0; }
-.isobar-field__canvas::before{
-  content:"";
-  position:absolute; inset:0;
-  background-image:
-    repeating-linear-gradient(90deg, var(--rule) 0 1px, transparent 1px 64px),
-    repeating-linear-gradient(0deg, var(--rule) 0 1px, transparent 1px 46px);
-  opacity:.45;
-  pointer-events:none;
-}
-.isobar-field__canvas svg{ position:absolute; inset:0; width:100%; height:100%; }
-.isobar{
-  fill:none;
-  stroke:var(--ring-color, var(--rule-strong));
-  stroke-width:1.25;
-  stroke-linecap:round;
-  opacity:.85;
-}
-.isobar--high{ stroke-width:2.25; opacity:1; }
-/* the dotted outer ellipse is the plan allowance — every ring is read against it */
-.isobar-limit{
-  fill:none;
-  stroke:var(--rule-strong);
-  stroke-width:1;
-  stroke-dasharray:2 6;
-  stroke-linecap:round;
-  opacity:.7;
-  vector-effect:non-scaling-stroke;
-}
-.isobar-field__mark{
-  fill:var(--ink-3);
-  font-family:var(--font-mono);
-  font-size:11px;
-  letter-spacing:.08em;
-  text-anchor:middle;
-  dominant-baseline:middle;
-}
-.isobar-field__center line{
-  stroke:var(--rule-strong);
-  stroke-width:1;
-  vector-effect:non-scaling-stroke;
-}
-.isobar-field__legend{
-  display:flex;
+.scale-grid{
+  display:grid;
+  grid-template-columns:172px minmax(0,1fr) 158px;
   align-items:center;
-  gap:var(--space-4);
-  flex-wrap:wrap;
-  padding:9px var(--space-5);
-  border-top:var(--edge);
-  background:var(--panel-2);
+  gap:var(--space-4) var(--space-5);
+  padding:var(--space-5);
+}
+.scale-label{ min-width:0; }
+.scale-label span{
+  display:block;
   font-family:var(--font-mono);
   font-size:11px;
-  letter-spacing:.12em;
+  letter-spacing:.16em;
   text-transform:uppercase;
   color:var(--ink-4);
+  margin-bottom:3px;
 }
-.isobar-field__legend span{ display:inline-flex; align-items:center; gap:6px; }
-.isobar-field__legend i{ width:14px; height:1px; background:currentColor; }
-.isobar-field__value{ color:var(--ink); font-variant-numeric:tabular-nums; }
+.scale-label strong{ font-size:20px; font-weight:600; letter-spacing:-.01em; }
+.scale-track{
+  position:relative;
+  height:26px;
+  border-block:1px solid var(--rule);
+  background:linear-gradient(90deg,
+    color-mix(in srgb, var(--t1) 10%, transparent) 0 50%,
+    color-mix(in srgb, var(--t2) 16%, transparent) 50% 75%,
+    color-mix(in srgb, var(--t3) 20%, transparent) 75% 92%,
+    color-mix(in srgb, var(--t4) 24%, transparent) 92% 100%);
+}
+.scale-track__tick{ position:absolute; top:0; bottom:0; left:var(--at); width:1px; background:var(--rule-strong); }
+.scale-track__dot{
+  position:absolute;
+  top:50%; left:var(--at);
+  width:13px; height:13px;
+  margin:-6.5px 0 0 -6.5px;
+  border-radius:50%;
+  background:var(--dot, var(--t1));
+  box-shadow:0 0 0 3px color-mix(in srgb, var(--dot, var(--t1)) 20%, transparent);
+  animation:dot-land .5s var(--ease-out) both;
+  animation-delay:calc(var(--dot-i, 0) * 120ms + 120ms);
+}
+.scale-track__dot[data-tier="2"]{ --dot:var(--t2); }
+.scale-track__dot[data-tier="3"]{ --dot:var(--t3); }
+.scale-track__dot[data-tier="4"]{ --dot:var(--t4); }
+.scale-foot{
+  font-family:var(--font-mono);
+  font-size:11px;
+  letter-spacing:.04em;
+  color:var(--ink-3);
+  text-align:right;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+.scale-axis{
+  grid-column:2;
+  position:relative;
+  height:15px;
+  border-top:1px solid var(--rule);
+  font-family:var(--font-mono);
+  font-size:11px;
+  letter-spacing:.1em;
+  color:var(--ink-4);
+  font-weight:400;
+}
+.scale-axis b{ position:absolute; top:4px; left:var(--at); transform:translateX(-50%); }
+.scale-axis b.is-start{ left:0; transform:none; }
+.scale-axis b.is-end{ left:auto; right:0; transform:none; }
+@keyframes dot-land{
+  from{ opacity:0; transform:scale(.35); }
+  to{ opacity:1; transform:scale(1); }
+}
 
 /* ---------------------------------------------------------
    18. Identity card + quick tiles
@@ -467,7 +476,7 @@
 .id-card__who span{ font-size:12px; color:var(--ink-3); }
 .id-card__meta{
   display:grid;
-  grid-template-columns:repeat(3, minmax(0,1fr));
+  grid-template-columns:repeat(2, minmax(0,1fr));
   border-top:var(--edge);
   border-bottom:var(--edge);
 }
@@ -908,7 +917,7 @@
 }
 
 /* ---------------------------------------------------------
-   21. Node status extras
+   21. Load meters
    --------------------------------------------------------- */
 .load-meter{ display:flex; align-items:center; gap:8px; min-width:0; flex:1; }
 .load-meter__track{
@@ -928,12 +937,6 @@
 .load-meter__fill.is-busy{ background:var(--t3); }
 .load-meter__fill.is-critical{ background:var(--t4); }
 .load-meter b{ font-family:var(--font-mono); font-size:11px; font-weight:500; font-variant-numeric:tabular-nums; color:var(--ink-2); width:34px; text-align:right; }
-.node-latency{
-  font-family:var(--font-mono);
-  font-size:12px;
-  font-variant-numeric:tabular-nums;
-  color:var(--ink-2);
-}
 
 /* ---------------------------------------------------------
    22. Utilities
@@ -977,199 +980,7 @@
 .table-foot__range{ font-family:var(--font-mono); font-size:11px; color:var(--ink-4); letter-spacing:.08em; }
 
 /* ---------------------------------------------------------
-   24. Invite / affiliate
-   --------------------------------------------------------- */
-.invite-hero{
-  position:relative;
-  display:grid;
-  grid-template-columns:minmax(0,1fr) auto;
-  align-items:center;
-  gap:var(--space-6);
-  padding:var(--space-6);
-  border:var(--edge-strong);
-  border-radius:var(--radius-md);
-  background:var(--panel);
-  overflow:hidden;
-}
-.invite-hero__label{
-  display:block;
-  font-family:var(--font-mono);
-  font-size:11px;
-  letter-spacing:.2em;
-  text-transform:uppercase;
-  color:var(--ink-4);
-  margin-bottom:6px;
-}
-.invite-hero__value{
-  font-family:var(--font-mono);
-  font-size:clamp(26px, 3.4vw, 40px);
-  font-weight:500;
-  line-height:1;
-  font-variant-numeric:tabular-nums;
-  letter-spacing:-.015em;
-}
-.invite-hero__sub{ margin-top:8px; font-size:12px; color:var(--ink-3); max-width:52ch; line-height:1.6; }
-.invite-hero__actions{ display:flex; gap:var(--space-2); flex-wrap:wrap; }
-.invite-hero__actions .btn-accent{
-  background:var(--signal);
-  color:var(--on-signal);
-  border-color:var(--signal);
-}
-
-.invite-stats{
-  display:grid;
-  grid-template-columns:repeat(4, minmax(0,1fr));
-  gap:1px;
-  background:var(--rule);
-  border:var(--edge);
-  border-radius:var(--radius-md);
-  overflow:hidden;
-  margin-bottom:var(--space-5);
-}
-.invite-stat{
-  display:flex; flex-direction:column; gap:5px;
-  padding:var(--space-4) var(--space-5);
-  background:var(--panel);
-}
-.invite-stat span{
-  font-family:var(--font-mono);
-  font-size:11px;
-  letter-spacing:.18em;
-  text-transform:uppercase;
-  color:var(--ink-4);
-}
-.invite-stat strong{
-  font-family:var(--font-mono);
-  font-size:19px;
-  font-weight:500;
-  font-variant-numeric:tabular-nums;
-  line-height:1;
-}
-.invite-stat strong small{ font-size:11px; color:var(--ink-4); }
-
-.ns-list{ display:grid; gap:1px; background:var(--rule); border:var(--edge); border-radius:var(--radius-sm); overflow:hidden; }
-.ns-row{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:var(--space-3);
-  padding:9px var(--space-4);
-  background:var(--panel);
-}
-.ns-row code{
-  font-family:var(--font-mono);
-  font-size:12px;
-  color:var(--ink-2);
-  overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
-}
-.ns-row .btn{ flex:none; }
-
-/* ---------------------------------------------------------
-   25. Traffic
-   --------------------------------------------------------- */
-.traffic-stats{
-  display:grid;
-  grid-template-columns:repeat(3, minmax(0,1fr));
-  gap:1px;
-  background:var(--rule);
-  border:var(--edge);
-  border-radius:var(--radius-md);
-  overflow:hidden;
-  margin-bottom:var(--space-5);
-}
-.traffic-stat{
-  display:flex; flex-direction:column; gap:5px;
-  padding:var(--space-4) var(--space-5);
-  background:var(--panel);
-}
-.traffic-stat span{
-  font-family:var(--font-mono);
-  font-size:11px;
-  letter-spacing:.18em;
-  text-transform:uppercase;
-  color:var(--ink-4);
-}
-.traffic-stat strong{
-  font-family:var(--font-mono);
-  font-size:20px;
-  font-weight:500;
-  line-height:1;
-  font-variant-numeric:tabular-nums;
-}
-.traffic-stat strong.is-good{ color:var(--t1); }
-.traffic-stat small{ font-size:11px; color:var(--ink-4); }
-
-.usage-panel{
-  display:grid;
-  grid-template-columns:196px minmax(0,1fr);
-  align-items:center;
-  gap:var(--space-6);
-}
-.usage-ring{
-  position:relative;
-  width:196px; height:196px;
-  border-radius:50%;
-}
-.usage-ring::before{
-  content:"";
-  position:absolute;
-  inset:16px;
-  border-radius:50%;
-  background:var(--panel);
-  border:var(--edge);
-}
-.usage-ring__center{
-  position:absolute; inset:0;
-  display:flex; flex-direction:column;
-  align-items:center; justify-content:center;
-  gap:2px;
-}
-.usage-ring__center strong{
-  font-family:var(--font-mono);
-  font-size:28px;
-  font-weight:500;
-  font-variant-numeric:tabular-nums;
-  line-height:1;
-}
-.usage-ring__center span{
-  font-family:var(--font-mono);
-  font-size:11px;
-  letter-spacing:.2em;
-  text-transform:uppercase;
-  color:var(--ink-4);
-}
-.usage-legend{ display:flex; flex-direction:column; gap:var(--space-4); }
-.usage-legend__row{ display:flex; flex-direction:column; gap:7px; }
-.usage-legend__head{
-  display:flex; align-items:baseline; justify-content:space-between; gap:var(--space-3);
-  font-size:12px;
-  color:var(--ink-3);
-}
-.usage-legend__head b{ font-family:var(--font-mono); font-size:12px; font-weight:500; font-variant-numeric:tabular-nums; color:var(--ink); }
-.usage-legend__track{
-  height:7px;
-  background:var(--panel-3);
-  border:1px solid var(--rule);
-  overflow:hidden;
-}
-.usage-legend__fill{
-  display:block;
-  height:100%;
-  background:var(--steel);
-  transition:width var(--dur-4) var(--ease-out);
-}
-.usage-legend__fill.is-up{ background:var(--signal); }
-.usage-legend__fill.is-down{ background:var(--steel); }
-.usage-note{
-  font-size:11px;
-  line-height:1.6;
-  color:var(--ink-4);
-  padding-top:var(--space-3);
-  border-top:var(--edge);
-}
-
-/* ---------------------------------------------------------
-   26. Control centre
+   24. Control centre
    --------------------------------------------------------- */
 .control-grid{ display:grid; grid-template-columns:repeat(2, minmax(0,1fr)); gap:var(--space-5); }
 .info-grid{
@@ -1187,6 +998,9 @@
   background:var(--panel);
   min-width:0;
 }
+/* Odd readings on a two-up grid: the last one runs full width so the rule
+   background never shows through as an empty cell. */
+.info-grid > div:last-child{ grid-column:1 / -1; }
 .info-grid span{
   font-family:var(--font-mono);
   font-size:11px;
@@ -1201,7 +1015,7 @@
 }
 
 /* ---------------------------------------------------------
-   27. Account
+   25. Account
    --------------------------------------------------------- */
 .account-page{ gap:var(--space-5); }
 .account-hero{
@@ -1390,7 +1204,7 @@
 .account-help-card p{ font-size:11px; line-height:1.6; color:var(--ink-3); }
 
 /* ---------------------------------------------------------
-   28. Checkout + payment result
+   26. Checkout + payment result
    --------------------------------------------------------- */
 .checkout-grid{ display:grid; grid-template-columns:minmax(0,1fr) 372px; gap:var(--space-5); align-items:start; }
 .checkout-col{ display:flex; flex-direction:column; gap:var(--space-5); min-width:0; }
@@ -1546,7 +1360,7 @@
 .result-actions{ display:flex; gap:var(--space-2); justify-content:center; flex-wrap:wrap; }
 
 /* ---------------------------------------------------------
-   29. Auth
+   27. Auth
    --------------------------------------------------------- */
 /* Auth owns the whole viewport — the sidebar, topbar and scrim would only
    crowd the form and offer navigation away from a signed-out session. */
@@ -1678,7 +1492,7 @@ body.auth-page{ background:var(--ground); }
 .auth-card #resetFields{ display:flex; flex-direction:column; gap:var(--space-4); }
 
 /* ---------------------------------------------------------
-   30. Knowledge base + applications
+   28. Knowledge base + applications
    --------------------------------------------------------- */
 .kb-search{ position:relative; display:flex; align-items:center; }
 .kb-search .icon{
@@ -1726,7 +1540,9 @@ body.auth-page{ background:var(--ground); }
   flex-wrap:wrap;
 }
 .tab-btn{
+  flex:1 1 auto;
   padding:9px 18px;
+  text-align:center;
   background:var(--panel);
   border:0;
   color:var(--ink-3);
@@ -1794,7 +1610,7 @@ body.auth-page{ background:var(--ground); }
 .sync-qr p{ font-size:11px; line-height:1.6; color:var(--ink-4); max-width:38ch; }
 
 /* ---------------------------------------------------------
-   31. Support FAB + channel choice
+   29. Support FAB + channel choice
    --------------------------------------------------------- */
 .support-fab{
   position:fixed;
@@ -1877,10 +1693,10 @@ body.auth-page{ background:var(--ground); }
 .support-choice small{ font-size:11px; color:var(--ink-4); }
 
 /* ---------------------------------------------------------
-   32. Motion engine hooks
+   30. Motion engine hooks
    Signature motions of the bulletin world: the masthead wipes,
-   modules rise in report order, contours draw, thresholds
-   sweep, binary choices flip. motion.js claims the engine
+   modules rise in report order, scale dots land on their band,
+   thresholds sweep, binary choices flip. motion.js claims the engine
    attribute; without it every hook below is inert and the
    layout stays fully visible.
    --------------------------------------------------------- */
@@ -1910,9 +1726,8 @@ body.auth-page{ background:var(--ground); }
   from{ transform:scaleX(0); }
   to{ transform:scaleX(1); }
 }
-/* pathLength="1" normalises the contour, so a draw needs no
+/* pathLength="1" normalises the brand mark's strokes, so a draw needs no
    measurement pass and no JavaScript maths */
-@keyframes contour-draw{ to{ stroke-dashoffset:0; } }
 @keyframes mark-draw{ to{ stroke-dashoffset:0; } }
 @keyframes half-flip{
   0%{ transform:rotateX(0deg); }
@@ -1933,17 +1748,9 @@ body.auth-page{ background:var(--ground); }
 [data-wipe]{ animation:wipe-in var(--dur-4) var(--ease-out) both; }
 
 /* scales sweep out of the rule they hang on */
-.threshold-meter__fill,
-.usage-legend__fill{
+.threshold-meter__fill{
   transform-origin:left center;
   animation:sweep-in var(--dur-4) var(--ease-out) both;
-}
-
-.isobar[data-draw]{
-  stroke-dasharray:1;
-  stroke-dashoffset:1;
-  animation:contour-draw var(--dur-4) var(--ease-out) forwards;
-  animation-delay:calc(var(--draw-i, 0) * 90ms);
 }
 
 /* binary choices flip on their shared edge — two faces, one click */
@@ -1952,12 +1759,6 @@ body.auth-page{ background:var(--ground); }
 .tab-btn.active{
   transform-style:preserve-3d;
   animation:half-flip var(--dur-2) var(--ease-spring);
-}
-
-/* pointer parallax on the isobar layer */
-.isobar-field__canvas[data-parallax] > [data-parallax-layer]{
-  transition:transform 220ms var(--ease-out);
-  will-change:transform;
 }
 
 /* the mark draws its four bars once, on the intro sweep */
@@ -1994,14 +1795,12 @@ body.auth-page{ background:var(--ground); }
   to{ opacity:1; transform:none; }
 }
 /* ---------------------------------------------------------
-   33. Responsive
+   31. Responsive
    --------------------------------------------------------- */
 @media (max-width:1240px){
   .tier-grid{ grid-template-columns:repeat(auto-fill, minmax(248px, 1fr)); }
   .hero__slide{ grid-template-columns:minmax(0,1fr) 236px; }
   .hero__copy{ padding-right:var(--space-4); }
-  .usage-panel{ grid-template-columns:168px minmax(0,1fr); }
-  .usage-ring{ width:168px; height:168px; }
 }
 
 @media (max-width:1080px){
@@ -2016,9 +1815,6 @@ body.auth-page{ background:var(--ground); }
   .hero__graphic{ display:none; }
   .hero__controls{ padding:9px var(--space-4); }
   .hero__index{ top:var(--space-3); right:var(--space-4); }
-  .invite-stats{ grid-template-columns:repeat(2, minmax(0,1fr)); }
-  .traffic-stats{ grid-template-columns:repeat(1, minmax(0,1fr)); }
-  .traffic-stat + .traffic-stat{ border-top:var(--edge); }
   .station-row{ grid-template-columns:48px minmax(0,1fr) 112px 78px; }
   .station-row__latency{ display:none; }
 }
@@ -2028,8 +1824,6 @@ body.auth-page{ background:var(--ground); }
   .grid-2{ grid-template-columns:minmax(0,1fr); }
   .plan-card__pro-metrics{ grid-template-columns:repeat(3, minmax(0,1fr)); }
   .tier-grid{ grid-template-columns:repeat(auto-fill, minmax(232px, 1fr)); }
-  .usage-panel{ grid-template-columns:1fr; justify-items:center; gap:var(--space-5); }
-  .usage-legend{ width:100%; }
   .control-grid{ grid-template-columns:minmax(0,1fr); }
   .util-grid{ grid-template-columns:minmax(0,1fr); }
   .auth-wrap{ grid-template-columns:minmax(0,1fr); gap:var(--space-6); }
@@ -2072,14 +1866,11 @@ body.auth-page{ background:var(--ground); }
   .page-header__meta{ align-self:flex-start; }
   .hero__slide{ padding:var(--space-6) var(--space-4); }
   .hero__title{ font-size:24px; }
-  .id-card__meta{ grid-template-columns:repeat(3, minmax(0,1fr)); }
   .plan-card__pro-metrics{ grid-template-columns:repeat(3, minmax(0,1fr)); }
   .plan-card__actions{ flex-wrap:wrap; }
   .plan-card__actions .btn{ flex:1 1 46%; }
   .account-hero{ padding:var(--space-5) var(--space-4); }
   .info-grid{ grid-template-columns:repeat(2, minmax(0,1fr)); }
-  .invite-hero{ grid-template-columns:minmax(0,1fr); }
-  .invite-stat strong{ font-size:17px; }
   .plan-spec-list strong{ font-size:11px; }
   .checkout-grid{ grid-template-columns:minmax(0,1fr); }
 }
@@ -2101,20 +1892,23 @@ body.auth-page{ background:var(--ground); }
   .hero__actions{ gap:var(--space-3); }
   .hero__controls{ padding:8px var(--space-3); }
   .quick-grid{ grid-template-columns:repeat(2, minmax(0,1fr)); }
-  /* A 230px-tall canvas at this width slices the contour field down to its
-     centre mark; shortening it keeps all three readings inside the frame. */
-  .isobar-field__canvas{ height:150px; }
   .plan-card{ padding:var(--space-4); }
   .plan-card__pro-head{ grid-template-columns:auto minmax(0,1fr); row-gap:var(--space-2); }
   .plan-card__pro-status{ grid-column:1 / -1; justify-self:start; }
   .plan-card__pro-subhead{ gap:var(--space-3); font-size:11px; }
   .plan-card__pro-metrics{ grid-template-columns:minmax(0,1fr); }
   .plan-metric:nth-child(3){ display:none; }
-  .id-card__meta{ grid-template-columns:repeat(2, minmax(0,1fr)); }
-  .id-card__meta > div:nth-child(3){ grid-column:1 / -1; border-left:0; border-top:var(--edge); padding-left:0; }
+  .id-card__meta{ grid-template-columns:minmax(0,1fr); }
+  .id-card__meta > div{ border-left:0; padding-left:0; }
+  .id-card__meta > div + div{ border-top:var(--edge); }
   .bulletin-strip{ grid-template-columns:minmax(0,1fr); }
   .bulletin-strip__cell{ border-left:0; border-top:var(--edge); padding:var(--space-3) var(--space-4); }
   .bulletin-strip__cell:first-child{ border-top:0; }
+  .scale-grid{ grid-template-columns:minmax(0,1fr); gap:var(--space-2) var(--space-4); padding:var(--space-4); }
+  .scale-grid > .scale-label{ margin-top:var(--space-4); }
+  .scale-grid > .scale-label:first-child{ margin-top:0; }
+  .scale-foot{ text-align:left; }
+  .scale-axis{ grid-column:1; margin-top:var(--space-3); }
   .tier-grid{ grid-template-columns:minmax(0,1fr); }
   .plan-catalog-head{ flex-direction:column; align-items:flex-start; gap:var(--space-3); }
   .plan-filter{ width:100%; }
@@ -2132,12 +1926,6 @@ body.auth-page{ background:var(--ground); }
   .account-id-pill{ display:none; }
   .auth-card{ padding:var(--space-5) var(--space-4); }
   .auth-card h1{ font-size:20px; }
-  .invite-stats{ grid-template-columns:minmax(0,1fr); }
-  .invite-stat{ padding:var(--space-3) var(--space-4); }
-  .ns-row{ flex-direction:column; align-items:stretch; }
-  .ns-row code{ white-space:normal; }
-  .traffic-stat{ padding:var(--space-3) var(--space-4); }
-  .traffic-stat strong{ font-size:17px; }
   .summary-row.total .amount{ font-size:17px; }
   .result-card{ padding:var(--space-5) var(--space-4); }
   .result-meta{ grid-template-columns:minmax(0,1fr); }
@@ -2160,7 +1948,7 @@ body.auth-page{ background:var(--ground); }
 }
 
 /* ---------------------------------------------------------
-   34. Reduced motion + reduced data
+   32. Reduced motion + reduced data
    Ambient motion is a privilege, not a default: it stops for
    both the vestibular preference and the metered connection.
    --------------------------------------------------------- */
@@ -2172,8 +1960,8 @@ body.auth-page{ background:var(--ground); }
     transform:none;
     clip-path:none;
   }
-  .isobar[data-draw]{ stroke-dasharray:none; stroke-dashoffset:0; animation:none !important; }
-  .threshold-meter__fill, .load-meter__fill, .usage-legend__fill{ transition:none; }
+  .scale-track__dot{ animation:none !important; }
+  .threshold-meter__fill, .load-meter__fill{ transition:none; }
   .support-fab__pulse, .account-session__online,
   .plan-card__pro-status i, .auth-live-dot::before,
   .station-row[data-state="error"] .station-row__state i,
@@ -2187,4 +1975,4 @@ body.auth-page{ background:var(--ground); }
 :root[data-motion="low"] .auth-live-dot::before{ animation:none; }
 :root[data-motion="low"] .hero__track{ transition-duration:var(--dur-2); }
 :root[data-motion="low"] [data-rise]{ animation-duration:var(--dur-1); animation-delay:0ms; }
-:root[data-motion="low"] .isobar-field__canvas[data-parallax] > *{ transition:none; }
+:root[data-motion="low"] .scale-track__dot{ animation-duration:var(--dur-1); animation-delay:0ms; }

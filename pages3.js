@@ -3,7 +3,7 @@
    ========================================================= */
 
 /* ---------------------------------------------------------
-   7) ORDERS
+   6) ORDERS
    --------------------------------------------------------- */
 PAGES['#/order'] = async (root) => {
   root.innerHTML = `
@@ -116,189 +116,6 @@ PAGES['#/order'] = async (root) => {
   paint();
 };
 
-/* ---------------------------------------------------------
-   8) INVITE / AFFILIATE
-   --------------------------------------------------------- */
-PAGES['#/invite'] = async (root) => {
-  root.innerHTML = `
-    <div class="page-container page-enter">
-      ${pageHeader('invite_title', 'invite_desc')}
-      ${skeletonCards(4)}
-    </div>
-  `;
-
-  const data = await MockAPI.getInvite();
-
-  const paint = () => {
-    const container = qs('.page-container', root);
-    container.innerHTML = `
-      ${pageHeader('invite_title', 'invite_desc')}
-
-      <div class="invite-hero">
-        <div>
-          <span class="invite-hero__label">${t('commission_balance')}</span>
-          <div class="invite-hero__value">${formatCurrency(data.commissionBalance)}</div>
-          <p class="invite-hero__sub">Hoa hồng được ghi nhận sau khi đơn của người được giới thiệu thanh toán thành công.</p>
-        </div>
-        <div class="invite-hero__actions">
-          <button class="btn btn-outline" id="btnTransfer">${icon('arrowUpRight')} ${t('transfer')}</button>
-          <button class="btn btn-accent" id="btnWithdraw">${icon('wallet')} ${t('withdraw')}</button>
-        </div>
-      </div>
-
-      <div class="invite-stats">
-        <div class="invite-stat"><span>${t('stat_registers')}</span><strong>${data.registers}</strong></div>
-        <div class="invite-stat"><span>${t('stat_rate')}</span><strong>${escapeHTML(data.rate)}</strong></div>
-        <div class="invite-stat"><span>${t('stat_pending')}</span><strong>${formatCurrency(data.pendingCommission)}</strong></div>
-        <div class="invite-stat"><span>${t('stat_total')}</span><strong>${formatCurrency(data.totalCommission)}</strong></div>
-      </div>
-
-      <div class="card" style="margin-bottom:18px;">
-        <div class="card-title">${t('util_subweb_title')}</div>
-        <p class="util-card__lead">${t('util_subweb_desc')}</p>
-        <div class="ns-list">
-          ${data.subdomainNS.map(ns => `
-            <div class="ns-row">
-              <code>${escapeHTML(ns)}</code>
-              <button class="btn btn-sm btn-secondary" data-copy2="${escapeHTML(ns)}">${icon('copy')} ${t('copy')}</button>
-            </div>
-          `).join('')}
-        </div>
-      </div>
-
-      <div class="card">
-        <div class="card-title">${t('referral_codes')}<button class="btn btn-sm btn-primary" id="btnCreateCode">${icon('plus')} ${t('create_code')}</button></div>
-        ${data.codes.length ? `
-          <div class="table-wrap" tabindex="0" role="region" aria-label="${t('referral_codes')}">
-            <table class="data-table">
-              <thead><tr><th class="no-sort">${t('col_code')}</th><th class="no-sort">${t('col_uses')}</th><th class="no-sort">${t('col_created_at')}</th></tr></thead>
-              <tbody>${data.codes.map(c => `<tr><td class="mono">${escapeHTML(c.code)}</td><td>${c.uses}</td><td class="mono">${escapeHTML(c.createdAt)}</td></tr>`).join('')}</tbody>
-            </table>
-          </div>
-        ` : emptyState({ title: t('no_data_title'), desc: t('no_codes_desc'), iconName: 'users' })}
-      </div>
-    `;
-
-    qsa('[data-copy2]', container).forEach(btn => btn.addEventListener('click', async () => {
-      const ok = await copyToClipboard(btn.dataset.copy2);
-      if (ok){
-        const original = btn.innerHTML;
-        btn.innerHTML = `${icon('check')} ${t('copied')}`;
-        showToast({ type: 'success', title: t('toast_copied') });
-        setTimeout(() => { btn.innerHTML = original; }, 1600);
-      }
-    }));
-
-    qs('#btnCreateCode', container).addEventListener('click', async (e) => {
-      const btn = e.currentTarget;
-      btn.disabled = true; btn.innerHTML = `<span class="spinner"></span>`;
-      const res = await MockAPI.createReferralCode();
-      data.codes.push(res.entry);
-      showToast({ type: 'success', title: t('toast_code_created'), message: res.entry.code });
-      paint();
-    });
-
-    qs('#btnWithdraw', container).addEventListener('click', () => openWithdrawModal('withdraw'));
-    qs('#btnTransfer', container).addEventListener('click', () => openWithdrawModal('transfer'));
-  };
-
-  paint();
-};
-
-function openWithdrawModal(kind){
-  const titleKey = kind === 'withdraw' ? 'withdraw' : 'transfer';
-  const backdrop = openModal({
-    title: t(titleKey),
-    bodyHTML: `
-      <div class="field"><label>Số tiền</label><input class="input" type="number" min="10000" step="10000" value="100000"></div>
-      <div class="field mb-0"><label>Số tài khoản / Ví nhận</label><input class="input" placeholder="Nhập thông tin nhận tiền"></div>
-    `,
-    footerHTML: `<button class="btn btn-secondary" data-act="cancel">${t('cancel')}</button><button class="btn btn-primary" data-act="ok">${t('confirm')}</button>`,
-  });
-  backdrop.querySelector('[data-act="cancel"]').addEventListener('click', closeModal);
-  backdrop.querySelector('[data-act="ok"]').addEventListener('click', () => {
-    closeModal();
-    showToast({ type: 'success', title: t('toast_saved') });
-  });
-}
-
-/* ---------------------------------------------------------
-   9) TRAFFIC DETAILS — live usage from 3x-ui
-   --------------------------------------------------------- */
-PAGES['#/traffic'] = async (root) => {
-  root.innerHTML = `
-    <div class="page-container page-enter">
-      ${pageHeader('traffic_title', 'traffic_desc')}
-      <div class="card" style="margin-bottom:24px;"><div class="skeleton" style="height:260px;"></div></div>
-    </div>
-  `;
-
-  const result = await RealAPI.getVpnManagement().catch(() => ({ ok: false }));
-  if (!result.ok || !result.data) {
-    const container = qs('.page-container', root);
-    container.innerHTML = `${pageHeader('traffic_title', 'traffic_desc')}${result.data === null ? emptyState({ title: 'Chưa có gói VPN đang hoạt động', desc: 'Dữ liệu sử dụng sẽ xuất hiện sau khi gói được kích hoạt.', iconName: 'barchart' }) : errorState({ onRetryAttr: 'data-retry-traffic' })}`;
-    qs('[data-retry-traffic]', root)?.addEventListener('click', () => PAGES['#/traffic'](root));
-    return;
-  }
-
-  const data = result.data;
-  const used = Number(data.dataUsedBytes || 0);
-  const max = Number(data.dataMaxBytes || 0);
-  const upload = Number(data.uploadBytes || 0);
-  const download = Number(data.downloadBytes || 0);
-  const total = upload + download;
-  const usedPercent = max > 0 ? Math.min(100, Math.max(0, (used / max) * 100)) : 0;
-  const uploadPercent = total > 0 ? Math.round((upload / total) * 100) : 0;
-  const downloadPercent = total > 0 ? 100 - uploadPercent : 0;
-  const compactNumber = (value) => String(Number(value.toFixed(2)));
-  const formatTraffic = (bytes) => {
-    if (!Number.isFinite(bytes) || bytes <= 0) return '0 KB';
-    if (bytes < 1024 ** 2) return `${compactNumber(bytes / 1024)} KB`;
-    if (bytes < 1024 ** 3) return `${compactNumber(bytes / (1024 ** 2))} MB`;
-    return `${compactNumber(bytes / (1024 ** 3))} GB`;
-  };
-  const maxLabel = max > 0 ? formatTraffic(max) : 'Không giới hạn';
-  const remainingLabel = max > 0 ? formatTraffic(Math.max(0, max - used)) : 'Không giới hạn';
-  const ringStyle = `background:conic-gradient(var(--signal) ${usedPercent}%, var(--panel-3) 0);`;
-  const container = qs('.page-container', root);
-  container.innerHTML = `
-    ${pageHeader('traffic_title', 'traffic_desc', maxLabel)}
-    <div class="traffic-stats">
-      <div class="traffic-stat"><span>${t('data_used')}</span><strong>${formatTraffic(used)}</strong><small>trên ${maxLabel}</small></div>
-      <div class="traffic-stat"><span>Dung lượng còn lại</span><strong class="is-good">${remainingLabel}</strong><small>${max > 0 ? `${Math.max(0, 100 - Math.round(usedPercent))}% khả dụng` : 'Theo gói không giới hạn'}</small></div>
-      <div class="traffic-stat"><span>Tổng lưu lượng</span><strong>${formatTraffic(total)}</strong><small>Upload + Download</small></div>
-    </div>
-    <div class="card" style="margin-bottom:18px;">
-      <div class="card-title">Tổng quan sử dụng thực tế</div>
-      <div class="usage-panel">
-        <div class="usage-ring" style="${ringStyle}">
-          <div class="usage-ring__center">
-            <strong>${max > 0 ? `${Math.round(usedPercent)}%` : '∞'}</strong>
-            <span>đã dùng</span>
-          </div>
-        </div>
-        <div class="usage-legend">
-          <div class="usage-legend__row">
-            <div class="usage-legend__head"><span>Tải lên</span><b>${formatTraffic(upload)} · ${uploadPercent}%</b></div>
-            <div class="usage-legend__track"><span class="usage-legend__fill is-up" style="width:${uploadPercent}%"></span></div>
-          </div>
-          <div class="usage-legend__row">
-            <div class="usage-legend__head"><span>Tải xuống</span><b>${formatTraffic(download)} · ${downloadPercent}%</b></div>
-            <div class="usage-legend__track"><span class="usage-legend__fill is-down" style="width:${downloadPercent}%"></span></div>
-          </div>
-          <p class="usage-note">Số liệu được lấy trực tiếp từ upload/download của client trên 3x-ui. Không sử dụng dữ liệu mẫu hoặc lịch sử giả.</p>
-        </div>
-      </div>
-    </div>
-    <div class="table-wrap" tabindex="0" role="region" aria-label="${t('traffic_title')} — bảng lưu lượng">
-      <table class="data-table">
-        <thead><tr><th class="no-sort">Thời điểm cập nhật</th><th class="no-sort">Tải lên</th><th class="no-sort">Tải xuống</th><th class="no-sort">Tổng đã dùng</th></tr></thead>
-        <tbody><tr><td class="mono">${formatDate(data.updatedAt, STATE.lang)}</td><td class="mono">${formatTraffic(upload)}</td><td class="mono">${formatTraffic(download)}</td><td class="mono">${formatTraffic(total)}</td></tr></tbody>
-      </table>
-    </div>
-  `;
-};
-
 async function handlePasswordChangeSubmit(event, root) {
   event.preventDefault();
   const form = event.currentTarget;
@@ -329,7 +146,7 @@ async function handlePasswordChangeSubmit(event, root) {
 }
 
 /* ---------------------------------------------------------
-   10) CONTROL CENTER
+   7) CONTROL CENTER
    --------------------------------------------------------- */
 PAGES['#/control'] = async (root) => {
   root.innerHTML = `
@@ -338,7 +155,7 @@ PAGES['#/control'] = async (root) => {
       ${skeletonCards(3)}
     </div>
   `;
-  const [user, plan] = await Promise.all([RealAPI.getUser().catch(() => null), MockAPI.getCurrentPlan()]);
+  const user = await RealAPI.getUser().catch(() => null);
   if (!user) { location.hash = '#/login'; return; }
 
   const container = qs('.page-container', root);
@@ -354,7 +171,6 @@ PAGES['#/control'] = async (root) => {
           <div><span>${t('user_id')}</span><strong class="mono">${escapeHTML(user.userId)}</strong></div>
           <div><span>Email</span><strong>${escapeHTML(user.email)}</strong></div>
           <div><span>${t('join_date')}</span><strong class="mono">${formatDate(user.joinDate, STATE.lang)}</strong></div>
-          <div><span>${t('devices_online')}</span><strong class="mono">${plan.devicesOnline}/${plan.deviceLimit}</strong></div>
         </div>
       </section>
       <section class="card account-section">
@@ -379,7 +195,7 @@ PAGES['#/control'] = async (root) => {
 
 
 /* ---------------------------------------------------------
-   11) ACCOUNT MANAGEMENT
+   8) ACCOUNT MANAGEMENT
    --------------------------------------------------------- */
 PAGES['#/account'] = async (root) => {
   root.innerHTML = `

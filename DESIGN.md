@@ -205,7 +205,7 @@ The palette is a deep observation ground with a cool ink ramp and one acid signa
 
 The shell is a fixed `248px` sticky sidebar plus a flexible `main-content`; collapsing to `64px` (`--sidebar-w-collapsed`) is a user-initiated toggle, animated once over `--dur-3`. The topbar is `56px` (`52px` under 860px), sticky, and blurs the ground behind it. Content columns cap at `--content-max: 1360px`, centred, padded `24px 20px 40px` and reducing to `12px 12px 32px` at 600px.
 
-Density comes from **1px-gap grids**: `.tier-grid`, `.quick-grid` and `.plan-filter` set `gap:1px` over a `--rule` background and `overflow:hidden`, so adjacent modules share a hairline instead of carrying two borders. This is the mosaic — modules read as one printed sheet with registers, not as floating cards. Named grid areas (`--edge`-ruled rows in `.bulletin-strip`, `.station-row`, `.traffic-stats`) divide columns with `border-left`, collapsing to `border-top` on narrow viewports.
+Density comes from **1px-gap grids**: `.tier-grid`, `.quick-grid` and `.plan-filter` set `gap:1px` over a `--rule` background and `overflow:hidden`, so adjacent modules share a hairline instead of carrying two borders. This is the mosaic — modules read as one printed sheet with registers, not as floating cards. Named grid areas (`--edge`-ruled rows in `.bulletin-strip`, `.station-row`) divide columns with `border-left`, collapsing to `border-top` on narrow viewports.
 
 The full-bleed exception is `.tier-band`: it bleeds with `margin-inline: calc(var(--space-5) * -1)` and its negative margin shrinks in step with the container padding at every breakpoint, so the bleed never creates horizontal overflow.
 
@@ -262,9 +262,13 @@ Near-square, print-finished corners: `2 / 3 / 4 / 6px` (`--radius-xs → --radiu
 - **Error:** `.field.has-error` reveals `.error-msg` (11.5px, `--bad`, led by a `5px` square) and shifts the border to `--bad` with a mixed focus glow.
 - **Checkbox:** `16px`, `--radius-xs`, `--edge-strong`; checked fills `--signal` and a `clip-path` tick scales in on `--ease-spring`.
 
+### Tabs
+- **Tiled row:** `gap:1px` over a `--rule` background inside one hairline frame, `--panel` per tab, display/body 12px uppercase at `.06–.08em`, `--ink-3` at rest → `--panel-2` + `--ink` on hover → ink fill with `--ground` text when active. Colour only; no underline, no pill.
+- **Fill rule (`.tabs` / `.tab-btn`):** tabs take `flex:1 1 auto` with centred labels, so a short platform row (Android · iOS · Windows · macOS · Linux) divides the panel evenly instead of leaving dead rule-background at the trailing edge. `flex-wrap:wrap` lets narrow viewports drop to a second full-width row.
+- **Compact variant (`.plan-filter`):** natural width at `8px 16px`; under 600px the row goes full-width and each tab takes `flex:1` at 11px.
+
 ### Navigation
-- **Style:** `--ink-2` ink on transparent, `--radius-sm`, `min-height:36px`, `6px 9px`, 13px/500 body sans, `18px` icon slot.
-- **States:** hover `--nav-hover-bg` + `--ink`; active `--nav-active-bg` (`--panel-3` dark, `--ink` in light) with a `--signal` icon. Only the icon takes the signal colour, never the label.
+- **Style:** `--ink-2` ink on transparent, `--radius-sm`, `min-height:36px`, `6px 9px`, 13px/500 body sans, `18px` icon slot.- **States:** hover `--nav-hover-bg` + `--ink`; active `--nav-active-bg` (`--panel-3` dark, `--ink` in light) with a `--signal` icon. Only the icon takes the signal colour, never the label.
 - **Groups:** `.nav-group__title` display 11px at `.16em` uppercase, `--ink-4`; groups divide with a top hairline.
 - **Collapsed:** labels, group titles and meta hide; items centre into the `64px` rail.
 - **Mobile:** under 860px the sidebar is a fixed drawer translating `-102% → 0` on `--dur-3` with a blurred scrim.
@@ -275,11 +279,11 @@ Full-bleed severity statement. `data-tier` 1–5 sets `--band-bg` / `--band-ink`
 ### Station Board (signature)
 Node reporting as a transit departure board: `54px` mono code column, name with an uppercase region sub-line, load bar, right-aligned tabular latency, and a state chip. Rows are hairline-separated inside one panel. **Neighbour-relative focus** — hovering the board dims every non-hovered row to `.58` while the engaged row takes `--panel-2`. Below 1080px the latency column drops out; below 420px the load column does.
 
-### Isobar Field (signature)
-Traffic drawn as contour rings rather than a line chart: a `230px` canvas (`150px` under 600px, so the pointer-sliced frame still contains all three readings) with a hairline graph grid at `64px`/`46px`, `1.25px` rings stepping up to a `2.25px` high ring, and a dotted outer ellipse marking the plan allowance so every ring reads against its threshold. The field is authored in a `1140 × 230` viewBox with `squash .26` and radii `36 → 470`, so the outermost ring spans roughly three-fifths of the panel instead of sitting as a small cluster in a wide void. `vector-effect: non-scaling-stroke` keeps the rules hairline at any zoom. The layer leans at most `±7px` toward the pointer, and only on hover-capable, unmetered, non-reduced-motion devices.
+### Threshold Scale (signature)
+Consumption shown as dots on a shared 0–100% scale instead of a ring field. Each reading gets one row: a mono uppercase label over a 20px tabular percentage, a `26px` track ruled top and bottom and banded in `10/16/20/24%` colour mixes at the published tier thresholds (`50`, `75`, `92`), and a right-aligned mono footnote carrying the raw figures. A `13px` dot in the tier's own ramp colour, ringed by a `3px` halo of the same colour at 20%, marks the reading; it pops in on `--ease-out` with a `120ms` stagger and no-ops under reduced motion and `data-motion="low"`. One axis under the last row carries `0 · 50 · 75 · 92 · 100%`, its end labels pinned to the edges so nothing overflows the frame. A reading only appears when its plan actually has a threshold, so unlimited data and lifetime terms drop their rows rather than drawing a zero. The grid is `172px / 1fr / 158px` and collapses to a single column under 600px.
 
 ### Notation Key (signature)
-The board's fixed legend: the five ramp swatches with their published tier names and the thresholds `serviceSeverity()` actually enforces (`≥ 50% or ≤ 7 days`, and so on), closed by one line stating what the white tick on a meter means. It is the only place the ramp is spelled out, so the colours stay a notation rather than a mood. Rows are hairline-separated (`1px` gaps on `--rule`) inside one module; the swatch is `16 × 7px` and takes the theme's own ramp token. It sits directly under the identity card so the console's two-column mosaic closes at the same baseline as the plan module beside it.
+The board's fixed legend: the five ramp swatches with their published tier names and the thresholds `serviceSeverity()` actually enforces (`≥ 50% or ≤ 7 days`, and so on), closed by one line that reads the instruments — the white tick on a strip meter is the current level, the hairlines on the scale are the tier thresholds, each dot is one reading against the plan's 100%. It is the only place the ramp is spelled out, so the colours stay a notation rather than a mood. Rows are hairline-separated (`1px` gaps on `--rule`) inside one module; the swatch is `16 × 7px` and takes the theme's own ramp token. It sits directly under the identity card so the console's two-column mosaic closes at the same baseline as the plan module beside it.
 
 ### Promo Slide
 The referral carousel's right panel is a printed `45°` hatch in `--rule-strong`, masked to fade in from the copy edge over the hairline rule field. It is ornament and nothing else: no slide draws bars, rings or sparklines for numbers it has not measured.

@@ -7,7 +7,7 @@
    bulletin sheet lands, then attach that sheet.
    ========================================================= */
 
-const SHEET_VERSION = 'bulletin-9';
+const SHEET_VERSION = 'bulletin-10';
 
 (function bootShell(){
   const root = document.documentElement;

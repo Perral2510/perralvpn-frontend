@@ -63,49 +63,24 @@ function severityTierOfPercent(percent){
   return 1;
 }
 
-/* A contour is drawn from the measured ratio alone: radius grows
-   with consumption and the line roughens as it approaches the
-   threshold. No sampled history, no invented series. */
-const ISOBAR_VIEW = { w: 1140, h: 230, cx: 570, cy: 115, squash: .26, minRadius: 36, maxRadius: 470 };
+/* Each reading is one dot placed on the tier scale the bulletin already
+   publishes, so the plot needs no axis of its own. */
+const SCALE_TICKS = [50, 75, 92];
 
-function isobarRadius(ratio){
-  return ISOBAR_VIEW.minRadius + Math.max(0, Math.min(1, ratio)) * (ISOBAR_VIEW.maxRadius - ISOBAR_VIEW.minRadius);
-}
-
-function isobarPath({ ratio, seed }){
-  const { cx, cy, squash } = ISOBAR_VIEW;
-  const clamped = Math.max(0, Math.min(1, ratio));
-  const radius = isobarRadius(ratio);
-  const roughness = 0.015 + clamped * 0.035;
-  const steps = 56;
-  const points = [];
-  for (let i = 0; i < steps; i += 1){
-    const angle = (i / steps) * Math.PI * 2;
-    const wobble = Math.sin(angle * 3 + seed) * 0.62 + Math.sin(angle * 5 - seed * 1.7) * 0.38;
-    const r = radius * (1 + roughness * wobble);
-    points.push(`${(cx + Math.cos(angle) * r).toFixed(1)} ${(cy + Math.sin(angle) * r * squash).toFixed(1)}`);
-  }
-  return `M${points.join('L')}Z`;
-}
-
-function buildIsobarField(rings){
-  const { w, h, cx, cy, squash } = ISOBAR_VIEW;
-  const paths = rings.map((ring, index) => `
-    <path class="isobar${ring.tier >= 4 ? ' isobar--high' : ''}" pathLength="1" data-draw style="--draw-i:${index};--ring-color:${ring.color}" d="${isobarPath({ ...ring, seed: index + 1 })}"></path>`).join('');
-  const marks = rings.map((ring, index) => {
-    const spread = (index - (rings.length - 1) / 2) * 0.78;
-    const angle = -Math.PI / 2 + spread;
-    const radius = isobarRadius(ring.ratio) + 10;
-    return `<text class="isobar-field__mark" x="${(cx + Math.cos(angle) * radius).toFixed(0)}" y="${(cy + Math.sin(angle) * radius * squash).toFixed(0)}">${escapeHTML(ring.shortLabel)}</text>`;
-  }).join('');
-  const reading = rings.map(ring => `${ring.shortLabel}`).join(' · ');
-  const limit = `<ellipse class="isobar-limit" cx="${cx}" cy="${cy}" rx="${ISOBAR_VIEW.maxRadius}" ry="${(ISOBAR_VIEW.maxRadius * squash).toFixed(1)}"></ellipse>`;
-  return `<svg viewBox="0 0 ${w} ${h}" preserveAspectRatio="xMidYMid slice" role="img" aria-label="${escapeHTML(`${t('isobar_title')}: ${reading}`)}">
-    ${limit}
-    <g class="isobar-field__center"><line x1="${cx - 10}" y1="${cy}" x2="${cx + 10}" y2="${cy}"/><line x1="${cx}" y1="${cy - 10}" x2="${cx}" y2="${cy + 10}"/></g>
-    ${paths}
-    ${marks}
-  </svg>`;
+function buildScaleField(rows){
+  const cells = rows.map((row, index) => `
+    <div class="scale-label"><span>${escapeHTML(t(row.labelKey))}</span><strong class="mono">${escapeHTML(row.percentLabel)}</strong></div>
+    <div class="scale-track" data-rise aria-hidden="true">${
+      SCALE_TICKS.map(tick => `<i class="scale-track__tick" style="--at:${tick}%"></i>`).join('')
+    }<span class="scale-track__dot" data-tier="${row.tier}" style="--at:${row.percent}%;--dot-i:${index}"></span></div>
+    <div class="scale-foot mono">${escapeHTML(row.foot)}</div>`).join('');
+  const axis = `<span class="scale-axis" aria-hidden="true">${
+    [0, ...SCALE_TICKS, 100].map(tick => {
+      const edge = tick === 0 ? ' class="is-start"' : tick === 100 ? ' class="is-end"' : '';
+      return `<b${edge} style="--at:${tick}%">${tick === 100 ? `${tick}%` : tick}</b>`;
+    }).join('')
+  }</span>`;
+  return cells + axis;
 }
 
 /* ---------------------------------------------------------
@@ -156,9 +131,6 @@ PAGES['#/dashboard'] = async (root) => {
   const dataUsedBytes = Number(vpnManagement?.dataUsedBytes || 0);
   const dataMaxBytes = Number(vpnManagement?.dataMaxBytes || 0);
   const machinesMax = Number(vpnManagement?.machinesMax ?? activeSubscription?.devices ?? 0);
-  // Backend không phải lúc nào cũng báo số thiết bị đang trực tuyến; thà bỏ
-  // vòng đo còn hơn vẽ một con số 0 giả.
-  const machinesOnline = Number.isFinite(Number(vpnManagement?.machinesOnline)) ? Number(vpnManagement.machinesOnline) : null;
   const compactNumber = (value) => String(Number(value.toFixed(2)));
   const formatData = (bytes) => {
     if (!Number.isFinite(bytes) || bytes <= 0) return '0 KB';
@@ -179,7 +151,6 @@ PAGES['#/dashboard'] = async (root) => {
   const daysLeft = lifetime ? Number.POSITIVE_INFINITY : Math.max(0, Math.floor(msLeft / 86400000));
   const hoursLeft = lifetime ? Number.POSITIVE_INFINITY : Math.max(0, Math.floor(msLeft / 3600000));
   const termRatio = lifetime ? 0 : Math.min(1, Math.max(0, (30 - daysLeft) / 30));
-  const deviceRatio = machinesMax > 0 && machinesOnline !== null ? Math.min(1, machinesOnline / machinesMax) : null;
   const severity = serviceSeverity({ hasPlan: Boolean(activeSubscription), expired, usedPercent: dataPercent, daysLeft });
 
   const dataLeftBytes = Math.max(0, dataMaxBytes - dataUsedBytes);
@@ -201,11 +172,21 @@ PAGES['#/dashboard'] = async (root) => {
   }];
   const promoText = (p) => STATE.lang === 'vi' ? p.title : (p.titleEn || p.title);
   const promoDesc = (p) => STATE.lang === 'vi' ? p.desc : (p.descEn || p.desc);
-  const isobarRings = [
-    { id: 'quota', color: 'var(--signal)', labelKey: 'isobar_legend_quota', legendValue: `${dataPercent}%`, ratio: dataPercent / 100, tier: severityTierOfPercent(dataPercent), shortLabel: `${dataPercent}%` },
-    ...(deviceRatio === null ? [] : [{ id: 'devices', color: 'var(--steel)', labelKey: 'isobar_legend_devices', legendValue: `${machinesOnline}/${machinesMax}`, ratio: deviceRatio, tier: deviceRatio >= 0.8 ? 3 : 1, shortLabel: `${machinesOnline}/${machinesMax}` }]),
-    ...(lifetime ? [] : [{ id: 'term', color: 'var(--t3)', labelKey: 'isobar_legend_term', legendValue: `${daysLeft} ${t('bulletin_days_unit')}`, ratio: termRatio, tier: severityTierOfPercent(termRatio * 100), shortLabel: `${daysLeft}${t('bulletin_days_short')}` }]),
-  ];
+  const scaleReadings = [];
+  if (dataMaxBytes > 0) scaleReadings.push({
+    labelKey: 'bulletin_quota_used',
+    percent: dataPercent,
+    percentLabel: `${dataPercent}%`,
+    tier: severityTierOfPercent(dataPercent),
+    foot: `${formatData(dataUsedBytes)} / ${formatData(dataMaxBytes)}`,
+  });
+  if (!lifetime) scaleReadings.push({
+    labelKey: 'scale_term_elapsed',
+    percent: Math.round(termRatio * 100),
+    percentLabel: `${Math.round(termRatio * 100)}%`,
+    tier: severityTierOfPercent(termRatio * 100),
+    foot: `${t('bulletin_term_left')} ${daysLeft} ${t('bulletin_days_unit')}`,
+  });
 
   root.innerHTML = `
     <div class="page-container page-enter">
@@ -244,7 +225,7 @@ PAGES['#/dashboard'] = async (root) => {
           <span class="bulletin-strip__label">${t('bulletin_quota_left')}</span>
           <span class="bulletin-strip__value">${escapeHTML(dataMaxBytes > 0 ? formatData(dataLeftBytes) : t('unlimited'))}<em>${escapeHTML(activeSubscription?.capacity ? `/ ${activeSubscription.capacity}` : '')}</em></span>
           <div class="threshold-meter" data-tier="1" style="--meter:${dataMaxBytes > 0 ? Math.max(0, 100 - dataPercent) : 100}%"><span class="threshold-meter__fill"></span><span class="threshold-meter__mark"></span></div>
-          <span class="bulletin-strip__sub">${escapeHTML(deviceLimitLabel)} ${t('device_limit').toLowerCase()}${machinesOnline === null ? '' : ` · ${machinesOnline} ${t('devices_online').toLowerCase()}`}</span>
+          <span class="bulletin-strip__sub">${escapeHTML(deviceLimitLabel)} ${t('device_limit').toLowerCase()}</span>
         </div>
         <div class="bulletin-strip__cell" data-rise>
           <span class="bulletin-strip__label">${t('bulletin_term_left')}</span>
@@ -278,7 +259,6 @@ PAGES['#/dashboard'] = async (root) => {
             <div class="id-card__meta">
               <div><span>${t('join_date')}</span><strong>${formatDate(user.joinDate, STATE.lang)}</strong></div>
               <div><span>${t('user_id')}</span><strong>${escapeHTML(user.userId)}</strong></div>
-              <div><span>${machinesOnline === null ? t('device_limit') : t('devices_online')}</span><strong>${escapeHTML(machinesOnline === null || machinesMax <= 0 ? deviceLimitLabel : `${machinesOnline}/${machinesMax}`)}</strong></div>
             </div>
             <div class="id-card__actions">
               <button class="btn btn-primary" id="btnTopup">${icon('wallet')} ${t('topup')} · ${formatCurrency(accountBalance)}</button>
@@ -304,7 +284,7 @@ PAGES['#/dashboard'] = async (root) => {
       <section class="station-board" aria-label="${t('station_board_title')}">
         <div class="station-board__head">
           <div><span class="station-board__eyebrow">${t('station_board_title')}</span><div class="text-sm text-secondary">${t('station_board_desc')}</div></div>
-          <span class="station-board__eyebrow mono">${t('isobar_observed_at')} ${escapeHTML(observedAt)}</span>
+          <span class="station-board__eyebrow mono">${t('station_observed_at')} ${escapeHTML(observedAt)}</span>
         </div>
         ${nodes.slice(0, 6).map((node, index) => `
           <div class="station-row" data-state="${escapeHTML(node.status)}" data-rise>
@@ -316,17 +296,13 @@ PAGES['#/dashboard'] = async (root) => {
           </div>`).join('')}
       </section>` : ''}
 
-      <section class="isobar-field" aria-label="${t('isobar_title')}">
-        <div class="isobar-field__head">
-          <div><span class="station-board__eyebrow">${t('isobar_title')}</span><div class="text-sm text-secondary">${t('isobar_desc')}</div></div>
+      ${scaleReadings.length ? `
+      <section class="scale-field" aria-label="${escapeHTML(t('scale_title'))}">
+        <div class="scale-field__head">
+          <div><span class="station-board__eyebrow">${t('scale_title')}</span><div class="text-sm text-secondary">${t('scale_desc')}</div></div>
         </div>
-        <div class="isobar-field__canvas" data-parallax>
-          <div data-parallax-layer>${buildIsobarField(isobarRings)}</div>
-        </div>
-        <div class="isobar-field__legend">
-          ${isobarRings.map(ring => `<span style="color:${ring.color}"><i></i>${t(ring.labelKey)} <b class="isobar-field__value">${escapeHTML(ring.legendValue)}</b></span>`).join('')}
-        </div>
-      </section>
+        <div class="scale-grid">${buildScaleField(scaleReadings)}</div>
+      </section>` : ''}
 
       <section class="hero ${promoSlides.length === 1 ? 'hero--single' : ''}" id="promoCarousel" role="region" aria-roledescription="carousel" aria-label="${t('app_name')}">
         <div class="hero__track" id="carouselTrack">
@@ -406,7 +382,7 @@ PAGES['#/dashboard'] = async (root) => {
   // POST /account/vpn/sync re-provisions the client on 3x-ui, so it is tried
   // first. It also fails whenever 3x-ui is unreachable, and gating the copy on
   // it left users with a working stored link unable to copy anything: the
-  // read-only GET is now the fallback, flagged as not freshly synced.
+  // read-only GET is now the fallback.
   let syncPromise = null;
   const resolveSync = () => {
     if (syncPromise) return syncPromise;
@@ -419,7 +395,7 @@ PAGES['#/dashboard'] = async (root) => {
         const synced = await RealAPI.syncVpnSubscription();
         if (synced?.ok && synced.data?.subscriptionUrl) return { data: synced.data };
         const stored = await RealAPI.getVpnSubscription();
-        if (stored?.ok && stored.data?.subscriptionUrl) return { data: stored.data, stale: true };
+        if (stored?.ok && stored.data?.subscriptionUrl) return { data: stored.data };
         return {};
       } finally {
         dismissProgress();
@@ -454,9 +430,7 @@ PAGES['#/dashboard'] = async (root) => {
               showToast({ type: 'error', title: t('copy_fail_title'), message: t('copy_fail_desc') });
               return;
             }
-            showToast(sync.stale
-              ? { type: 'warning', title: t('sync_stale_title'), message: t('sync_stale_desc') }
-              : { type: 'success', title: t('copy_ok_title') });
+            showToast({ type: 'success', title: t('copy_ok_title') });
             return;
           }
           if (!sync.data.qrDataUrl) {
@@ -465,7 +439,7 @@ PAGES['#/dashboard'] = async (root) => {
           }
           openModal({
             title: t('sync_qr_title'),
-            bodyHTML: `<div class="sync-qr"><div class="topup-modal__qr-wrap"><img src="${sync.data.qrDataUrl}" alt="${escapeHTML(t('sync_qr_alt'))}" style="width:220px;height:220px;background:#fff;padding:10px;border-radius:12px;"></div><p class="text-secondary text-sm">${escapeHTML(t('sync_qr_hint'))}</p>${sync.stale ? `<p class="text-secondary text-sm">${escapeHTML(t('sync_stale_desc'))}</p>` : ''}</div>`,
+            bodyHTML: `<div class="sync-qr"><div class="topup-modal__qr-wrap"><img src="${sync.data.qrDataUrl}" alt="${escapeHTML(t('sync_qr_alt'))}" style="width:220px;height:220px;background:#fff;padding:10px;border-radius:12px;"></div><p class="text-secondary text-sm">${escapeHTML(t('sync_qr_hint'))}</p></div>`,
             size: '420px',
           });
         }));

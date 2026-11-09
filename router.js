@@ -6,18 +6,15 @@
    ========================================================= */
 let appIntroPlayed = false;
 
-const CHUNK_VERSION = 'bulletin-9';
+const CHUNK_VERSION = 'bulletin-10';
 
 /* Route renderers are split by the traffic they carry, not by the
    order they were written. Nothing here pulls a chunk a visitor
    on the dashboard would never open. */
 const ROUTE_CHUNKS = {
   '#/plan': 'pages2.js',
-  '#/node': 'pages2.js',
   '#/changepro': 'pages2.js',
   '#/order': 'pages3.js',
-  '#/invite': 'pages3.js',
-  '#/traffic': 'pages3.js',
   '#/control': 'pages3.js',
   '#/account': 'pages3.js',
   '#/checkout': 'pages4.js',
